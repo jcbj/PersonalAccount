@@ -68,6 +68,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        GlobalData.DataStoreHelper.initDataStore(this);
+
         // Set up the login form.
 
         Button mRegisterButton = (Button) findViewById(R.id.login_regist_button);
@@ -104,6 +106,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form_SV);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        GlobalData.log("LoginActivity.onDestroy", GlobalData.LogType.eMessage, "onDestroy is exec, DataStore is close.");
+
+        GlobalData.DataStoreHelper.closeDataStore();
     }
 
     private void populateAutoComplete() {
@@ -165,7 +176,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mUserView.getText().toString();
+        String user = mUserView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -178,13 +189,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             cancel = true;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+        // Check for a valid user address.
+        if (TextUtils.isEmpty(user)) {
             mUserView.setError(getString(R.string.error_field_required));
             focusView = mUserView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mUserView.setError(getString(R.string.error_invalid_email));
+        } else if (!isUserValid(user)) {
+            mUserView.setError(getString(R.string.error_invalid_user));
             focusView = mUserView;
             cancel = true;
         }
@@ -197,19 +208,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(user, password);
             mAuthTask.execute((Void) null);
         }
     }
 
-    private boolean isEmailValid(String email) {
+    private boolean isUserValid(String user) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return user.length() >= 2;
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() >= 2;
     }
 
     /**
@@ -308,11 +319,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
+        private final String mUser;
         private final String mPassword;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
+        UserLoginTask(String user, String password) {
+            mUser = user;
             mPassword = password;
         }
 
@@ -321,31 +332,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-                // Simulate network access.
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
+            //执行异步的代码，后台线程中执行，执行完调用onPostExecute
+            return GlobalData.DataStoreHelper.login(mUser,mPassword);
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
+//            UI线程中执行，不能执行耗时操作
             mAuthTask = null;
             showProgress(false);
 
             if (success) {
-                finish();
+//                finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

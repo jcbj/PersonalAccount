@@ -69,10 +69,10 @@ public class SQLCipherHelper implements IDataStoreHelper {
                 if (!file.mkdirs()) {
                     GlobalData.log(tag, GlobalData.LogType.eError, "Database path is mkdirs(" + file.getPath() + ") failed.");
                 }
-            }
 
-            if (!file.delete()) {
-                GlobalData.log(tag, GlobalData.LogType.eError, "Database path is delete() failed.");
+                if (!file.delete()) {
+                    GlobalData.log(tag, GlobalData.LogType.eError, "Database path is delete() failed.");
+                }
             }
         } catch (Exception ex) {
             GlobalData.log(tag, GlobalData.LogType.eException,"getDatabasePath: " + ex.getMessage());
