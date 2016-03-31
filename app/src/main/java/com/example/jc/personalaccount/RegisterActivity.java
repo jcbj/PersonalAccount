@@ -10,10 +10,16 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -103,8 +109,77 @@ public class RegisterActivity extends AppCompatActivity {
         String repassword = mRePasswordView.getText().toString();
         String email = mEmailView.getText().toString();
 
-        mAuthTask = new UserRegisterTask(user, password, email);
-        mAuthTask.execute((Void) null);
+        Boolean cancel = false;
+        View focusView = null;
+
+        if (TextUtils.isEmpty(user)) {
+            mUserView.setError(getString(R.string.error_field_required));
+            focusView = mUserView;
+            cancel = true;
+        } else if (user.length() < 2) {
+            mUserView.setError(getString(R.string.error_invalid_user));
+            focusView = mUserView;
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError(getString(R.string.error_field_required));
+            focusView = mPasswordView;
+            cancel = true;
+        } else if (password.length() < 2) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
+        } else if (0 != password.compareTo(repassword)) {
+            mRePasswordView.setError(getString(R.string.error_two_notsame));
+            focusView = mRePasswordView;
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            cancel = true;
+        } else if (!this.isEmail(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            cancel = true;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
+            mAuthTask = new UserRegisterTask(user, password, email);
+            mAuthTask.execute((Void) null);
+        }
+    }
+
+    //判断email格式是否正确
+    public boolean isEmail(String email) {
+        String str = "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$";
+        Pattern p = Pattern.compile(str);
+        Matcher m = p.matcher(email);
+
+        return m.matches();
+    }
+
+    //判断手机格式是否正确
+    public boolean isMobileNO(String mobiles) {
+        Pattern p = Pattern
+                .compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
+        Matcher m = p.matcher(mobiles);
+
+        return m.matches();
+    }
+
+    //判断是否全是数字
+    public boolean isNumeric(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        if (!isNum.matches()) {
+            return false;
+        }
+        return true;
     }
 
     //异步执行注册功能
@@ -118,6 +193,12 @@ public class RegisterActivity extends AppCompatActivity {
             mUser = user;
             mPassword = password;
             mEmail = email;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgress(true);
         }
 
         @Override
@@ -138,7 +219,8 @@ public class RegisterActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
-//                finish();
+                Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.register_success_to_login),Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER,0,0);
             } else {
                 new AlertDialog.Builder(mContext).setTitle(getString(R.string.common_str_information))
                         .setMessage(getString(R.string.error_register_failed))
@@ -146,6 +228,5 @@ public class RegisterActivity extends AppCompatActivity {
                         .show();
             }
         }
-
     }
 }

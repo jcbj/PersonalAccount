@@ -16,6 +16,9 @@ public class GlobalData {
 
     public static IDataStoreHelper DataStoreHelper = DataStoreFactory.getDataStoreHelper(StoreType);
 
+    //当前登录用户名
+    public static String CurrentUser = "Admin";
+
     //Log
     public static enum LogType {
         eMessage,           //普通提示信息

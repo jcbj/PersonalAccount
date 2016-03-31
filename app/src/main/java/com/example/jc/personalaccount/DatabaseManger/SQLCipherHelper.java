@@ -34,8 +34,8 @@ public class SQLCipherHelper implements IDataStoreHelper {
     //Fields
     private static final String DATABASENAME = "PersonalAccount.db";
     private static final String KEYENCRYPT = "JCyoyo";
-    private static final String USERIDTABLENAME = "UserIDTable";
     private static final String SQLITE_MASTER = "sqlite_master";
+    private static final String USERIDTABLENAME = "UserIDTable";
 
     private SQLiteDatabase database = null;
 
@@ -108,16 +108,31 @@ public class SQLCipherHelper implements IDataStoreHelper {
         return bIsSuccess;
     }
 
-
     public Boolean register(String name, String password, String email) {
-        String sql = "INSERT INTO " + USERIDTABLENAME + " (name,password,email) values('" + name + "','" + password + "','" + email +"')";
+        String sqlCheckExist = "SELECT * FROM " + USERIDTABLENAME + " WHERE name = ?";
+
+        if (this.checkIsExist(sqlCheckExist,new String[] {name})) {
+
+            GlobalData.log(ID + ".register", GlobalData.LogType.eMessage,name + " is register but name is exist");
+
+            return false;
+        }
+
+        String  sql = "INSERT INTO " + USERIDTABLENAME + " (name,password,email) values('" + name + "','" + password + "','" + email +"')";
         this.execSQL(sql);
 
-        Boolean bIsSuccess = this.login(name,password);
+        if (this.checkIsExist(sqlCheckExist,new String[] {name})) {
+            GlobalData.log(ID + ".register", GlobalData.LogType.eMessage,name + " is register success");
+            return true;
+        }
 
-        GlobalData.log(ID + ".register", GlobalData.LogType.eMessage,name + " is register " + (bIsSuccess?"success.":"failed."));
+        if (this.login(name,password)) {
+            return true;
+        }
 
-        return bIsSuccess;
+        GlobalData.log(ID + ".register", GlobalData.LogType.eMessage,name + " is register failed");
+
+        return false;
     }
 
     //Database
