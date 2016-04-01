@@ -16,8 +16,15 @@ public class GlobalData {
 
     public static IDataStoreHelper DataStoreHelper = DataStoreFactory.getDataStoreHelper(StoreType);
 
+    //Intent Parameter
+    public static String EXTRA_USERNAME = "UserName";
+
+
+    //*****************
+
     //当前登录用户名
     public static String CurrentUser = "Admin";
+    public static Boolean IsInitDatabase = false;
 
     //Log
     public static enum LogType {

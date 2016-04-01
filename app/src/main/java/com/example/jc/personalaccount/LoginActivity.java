@@ -3,6 +3,7 @@ package com.example.jc.personalaccount;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -68,10 +69,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        GlobalData.DataStoreHelper.initDataStore(this);
-
         // Set up the login form.
-
         Button mRegisterButton = (Button) findViewById(R.id.login_regist_button);
         mRegisterButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -106,6 +104,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form_SV);
         mProgressView = findViewById(R.id.login_progress);
+
+        try {
+            //从注册页面跳转过来，赋缺省值
+            Intent intent = this.getIntent();
+            String name = intent.getStringExtra(GlobalData.EXTRA_USERNAME);
+            if (TextUtils.isEmpty(name)) {
+                if (!GlobalData.IsInitDatabase) {
+                    GlobalData.IsInitDatabase = GlobalData.DataStoreHelper.initDataStore(this);
+
+                    if (!GlobalData.IsInitDatabase)
+                    {
+                        new AlertDialog.Builder(this).setTitle(getString(R.string.common_str_information))
+                                .setMessage(getString(R.string.error_init_database_failed))
+                                .setPositiveButton(getString(R.string.common_btn_ok),null)
+                                .show();
+                    }
+                }
+            } else {
+                mUserView.setText(name);
+            }
+        } catch (Exception ex) {
+            GlobalData.log("LoginActivity.onCreate", GlobalData.LogType.eException,ex.getMessage());
+        }
     }
 
     @Override
@@ -331,14 +352,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
+            Boolean isLogin;
             try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+                //执行异步的代码，后台线程中执行，执行完调用onPostExecute
+                isLogin = GlobalData.DataStoreHelper.login(mUser,mPassword);
+            } catch (Exception e) {
                 return false;
             }
 
-            //执行异步的代码，后台线程中执行，执行完调用onPostExecute
-            return GlobalData.DataStoreHelper.login(mUser,mPassword);
+            return isLogin;
         }
 
         @Override

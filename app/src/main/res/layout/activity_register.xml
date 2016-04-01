@@ -11,11 +11,12 @@
 
     <!-- Register progress -->
     <ProgressBar
-        android:id="@+id/regiter_progress"
+        android:id="@+id/register_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:layout_centerHorizontal="true"
         android:visibility="gone" />
 
     <LinearLayout
@@ -29,7 +30,7 @@
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
-                android:id="@+id/regist_user"
+                android:id="@+id/register_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_user"

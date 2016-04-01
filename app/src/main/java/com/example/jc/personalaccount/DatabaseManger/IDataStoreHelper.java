@@ -16,6 +16,8 @@ public interface IDataStoreHelper {
     //登录
     Boolean login(String name, String password);
 
+    void unlogin();
+
     //注册
     Boolean register(String name, String password, String email);
 }

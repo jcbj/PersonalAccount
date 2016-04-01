@@ -1,6 +1,7 @@
 package com.example.jc.personalaccount.DatabaseManger;
 
 import android.content.Context;
+import android.support.v4.app.NavUtils;
 
 import com.example.jc.personalaccount.GlobalData;
 
@@ -105,7 +106,15 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
         GlobalData.log(ID + ".login", GlobalData.LogType.eMessage,name + " is login " + (bIsSuccess?"success.":"failed."));
 
+        if (bIsSuccess) {
+            GlobalData.CurrentUser = name;
+        }
+
         return bIsSuccess;
+    }
+
+    public void unlogin() {
+        GlobalData.CurrentUser = null;
     }
 
     public Boolean register(String name, String password, String email) {

@@ -27,7 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
     private UserRegisterTask mAuthTask = null;
 
     private View mProgressView;
-    private View mRegistView;
+    private View mRegisterView;
 
     private AutoCompleteTextView mUserView;
     private EditText mPasswordView;
@@ -39,9 +39,9 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mProgressView = (View) findViewById(R.id.register_repassword);
-        mRegistView = (View) findViewById(R.id.register_form_LL);
-        mUserView = (AutoCompleteTextView) findViewById(R.id.regist_user);
+        mProgressView = (View) findViewById(R.id.register_progress);
+        mRegisterView = (View) findViewById(R.id.register_form_LL);
+        mUserView = (AutoCompleteTextView) findViewById(R.id.register_user);
         mPasswordView = (EditText) findViewById(R.id.register_password);
         mRePasswordView = (EditText) findViewById(R.id.register_repassword);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.register_email);
@@ -51,6 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
+                intent.putExtra(GlobalData.EXTRA_USERNAME, mUserView.getText().toString());
                 startActivity(intent);
             }
         });
@@ -70,12 +71,12 @@ public class RegisterActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mRegistView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mRegistView.animate().setDuration(shortAnimTime)
+            mRegisterView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mRegisterView.animate().setDuration(shortAnimTime)
                     .alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mRegistView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    mRegisterView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -89,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
             });
         } else {
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mRegistView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mRegisterView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -204,13 +205,14 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
 
+            Boolean isRegister;
             try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+                isRegister = GlobalData.DataStoreHelper.register(mUser, mPassword, mEmail);
+            } catch (Exception e) {
                 return false;
             }
 
-            return GlobalData.DataStoreHelper.register(mUser, mPassword, mEmail);
+            return isRegister;
         }
 
         @Override
@@ -221,6 +223,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (success) {
                 Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.register_success_to_login),Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER,0,0);
+                toast.show();
             } else {
                 new AlertDialog.Builder(mContext).setTitle(getString(R.string.common_str_information))
                         .setMessage(getString(R.string.error_register_failed))
