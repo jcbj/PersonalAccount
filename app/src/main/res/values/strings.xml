@@ -26,4 +26,15 @@
 
     <string name="permission_rationale">"电子邮件需要获取联系人权限."
     </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="bottom_tab_home">主页</string>
+    <string name="bottom_tab_account">帐户</string>
+    <string name="bottom_tab_summary">总帐</string>
+    <string name="bottom_tab_detail">明细</string>
+    <string name="bottom_tab_car">汽车</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
