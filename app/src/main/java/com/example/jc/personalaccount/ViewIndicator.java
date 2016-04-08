@@ -27,22 +27,9 @@ public class ViewIndicator extends LinearLayout implements View.OnClickListener 
     // 对应的图标Tag
     private static final String[] mTAG_ICON = new String[]{"icon_tag_0","icon_tag_1","icon_tag_2","icon_tag_3",
             "icon_tag_4"};
-
-    private static final String TAG_ICON_0 = "icon_tag_0";
-    private static final String TAG_ICON_1 = "icon_tag_1";
-    private static final String TAG_ICON_2 = "icon_tag_2";
-    private static final String TAG_ICON_3 = "icon_tag_3";
-    private static final String TAG_ICON_4 = "icon_tag_4";
     // 对应的文字Tag
     private static final String[] mTAG_TEXT = new String[]{"text_tag_0","text_tag_1","text_tag_2","text_tag_3",
             "text_tag_4"};
-
-    private static final String TAG_TEXT_0 = "text_tag_0";
-    private static final String TAG_TEXT_1 = "text_tag_1";
-    private static final String TAG_TEXT_2 = "text_tag_2";
-    private static final String TAG_TEXT_3 = "text_tag_3";
-    private static final String TAG_TEXT_4 = "text_tag_4";
-
 
     private static final int[] mAllIconResID_Normal = new int[]{
             R.drawable.main_tab_item_home_normal,
@@ -173,12 +160,9 @@ public class ViewIndicator extends LinearLayout implements View.OnClickListener 
     public static void setIndicator(int which) {
         // /////////////////清除之前的状态/////////////////////////////////
 
-        ImageView prevIcon;
-        TextView prevText;
-
-        prevIcon = (ImageView) mIndicators[mCurIndicator].findViewWithTag(mTAG_ICON[mCurIndicator]);
-        prevIcon.setImageResource(mAllXmlResID[mCurIndicator]);
-        prevText = (TextView) mIndicators[mCurIndicator].findViewWithTag(mTAG_TEXT[mCurIndicator]);
+        ImageView prevIcon = (ImageView) mIndicators[mCurIndicator].findViewWithTag(mTAG_ICON[mCurIndicator]);
+        prevIcon.setImageResource(mAllIconResID_Normal[mCurIndicator]);
+        TextView prevText = (TextView) mIndicators[mCurIndicator].findViewWithTag(mTAG_TEXT[mCurIndicator]);
         prevText.setTextColor(COLOR_UNSELECT);
 
         // /////////////////更新前状态/////////////////////////////////
@@ -194,7 +178,7 @@ public class ViewIndicator extends LinearLayout implements View.OnClickListener 
     }
 
     public interface OnIndicateListener {
-        public void onIndicate(View v, int which);
+        void onIndicate(View v, int which);
     }
 
     public void setOnIndicateListener(OnIndicateListener listener) {
