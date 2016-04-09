@@ -1,53 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-              android:background="@color/skyblue"
-    tools:context="com.example.jc.personalaccount.MainActivity">
+    android:orientation="vertical"
+    android:background="@color/skyblue"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.jc.personalaccount.MainActivity"
+    >
 
     <fragment
         android:id="@+id/fragment_home"
         android:name="com.example.jc.personalaccount.FragmentHome"
-        android:layout_width="fill_parent"
-        android:layout_height="30sp"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
         android:layout_weight="1"/>
 
     <fragment
         android:id="@+id/fragment_summary"
         android:name="com.example.jc.personalaccount.FragmentSummary"
-        android:layout_width="fill_parent"
-        android:layout_height="30sp"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
         android:layout_weight="1"/>
 
     <fragment
         android:id="@+id/fragment_account"
         android:name="com.example.jc.personalaccount.FragmentAccount"
-        android:layout_width="fill_parent"
-        android:layout_height="30sp"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
         android:layout_weight="1"/>
 
     <fragment
         android:id="@+id/fragment_detail"
         android:name="com.example.jc.personalaccount.FragmentDetail"
-        android:layout_width="fill_parent"
-        android:layout_height="30sp"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
         android:layout_weight="1"/>
 
     <fragment
         android:id="@+id/fragment_car"
         android:name="com.example.jc.personalaccount.FragmentCar"
-        android:layout_width="fill_parent"
-        android:layout_height="30sp"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
         android:layout_weight="1"/>
 
     <com.example.jc.personalaccount.ViewIndicator
         android:id="@+id/indicator"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom">
 
     </com.example.jc.personalaccount.ViewIndicator>
-
 
 </LinearLayout>

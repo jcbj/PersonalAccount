@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 public class MainActivity extends FragmentActivity {
@@ -20,19 +21,16 @@ public class MainActivity extends FragmentActivity {
 
     private void setFragmentIndicator(int whichIsDefault) {
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
         mFragments = new Fragment[5];
-        mFragments[0] = getSupportFragmentManager().findFragmentById(R.id.fragment_home);
-        mFragments[1] = getSupportFragmentManager().findFragmentById(R.id.fragment_summary);
-        mFragments[2] = getSupportFragmentManager().findFragmentById(R.id.fragment_account);
-        mFragments[3] = getSupportFragmentManager().findFragmentById(R.id.fragment_detail);
-        mFragments[4] = getSupportFragmentManager().findFragmentById(R.id.fragment_car);
+        mFragments[0] = fragmentManager.findFragmentById(R.id.fragment_home);
+        mFragments[1] = fragmentManager.findFragmentById(R.id.fragment_summary);
+        mFragments[2] = fragmentManager.findFragmentById(R.id.fragment_account);
+        mFragments[3] = fragmentManager.findFragmentById(R.id.fragment_detail);
+        mFragments[4] = fragmentManager.findFragmentById(R.id.fragment_car);
 
-
-        getSupportFragmentManager().beginTransaction().hide(mFragments[0])
-                .hide(mFragments[1]).hide(mFragments[2]).hide(mFragments[3]).hide(mFragments[4]).show(mFragments[whichIsDefault])
-                .commit();
-
-//        showWhichFragment(whichIsDefault);
+        showWhichFragment(whichIsDefault);
 
         ViewIndicator mIndicator = (ViewIndicator) findViewById(R.id.indicator);
         ViewIndicator.setIndicator(whichIsDefault);
@@ -46,15 +44,11 @@ public class MainActivity extends FragmentActivity {
 
     private void showWhichFragment(int which) {
 
-        getSupportFragmentManager().beginTransaction().hide(mFragments[0])
-                .hide(mFragments[1]).hide(mFragments[2]).hide(mFragments[3]).hide(mFragments[4]).show(mFragments[which])
-                .commit();
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//
-//        for (int i = 0; i < mFragments.length; i++) {
-//            fragmentManager.beginTransaction().hide(mFragments[i]).commit();
-//        }
-//        fragmentManager.beginTransaction().show(mFragments[which]).commit();
+        for (int i = 0; i < mFragments.length; i++) {
+            fragmentManager.beginTransaction().hide(mFragments[i]).commit();
+        }
+        fragmentManager.beginTransaction().show(mFragments[which]).commit();
     }
 }
