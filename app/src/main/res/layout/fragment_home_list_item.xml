@@ -5,8 +5,8 @@
 
     <ImageView
         android:id="@+id/fragment_home_list_item_img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_margin="5dp"/>
 
     <LinearLayout
@@ -31,7 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="@color/lightblue"
-                android:width="40dp"/>
+                android:textSize="18sp"
+                android:width="50dp"/>
 
         </LinearLayout>
 
@@ -40,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/lightgray"
-            android:textSize="13px"
+            android:textSize="15sp"
             />
 
 
