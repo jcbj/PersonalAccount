@@ -16,6 +16,8 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        GlobalData.DataStoreHelper.createdUserIDDataStore(GlobalData.CurrentUser);
+
         setFragmentIndicator(0);
     }
 

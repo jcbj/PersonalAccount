@@ -2,7 +2,9 @@ package com.example.jc.personalaccount.DatabaseManger;
 
 import android.content.Context;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 
+import com.example.jc.personalaccount.Data.HomeInfos;
 import com.example.jc.personalaccount.GlobalData;
 
 import net.sqlcipher.Cursor;
@@ -10,6 +12,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import java.io.File;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -37,6 +40,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
     private static final String KEYENCRYPT = "JCyoyo";
     private static final String SQLITE_MASTER = "sqlite_master";
     private static final String USERIDTABLENAME = "UserIDTable";
+    private static final String HOMETABLENAME = "HomeTable";
 
     private SQLiteDatabase database = null;
 
@@ -144,6 +148,58 @@ public class SQLCipherHelper implements IDataStoreHelper {
         return false;
     }
 
+    //每个登录用户，都有自己单独的表来存储数据；以登录用户名来区别
+    public Boolean createdUserIDDataStore(String user) {
+        //1，创建Home页面表格
+        String tableName = user + "_" + HOMETABLENAME;
+        String sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                " (id INT PRIMARY KEY AUTOINCREMENT, " +
+                "title TEXT, " +
+                "price INT, " +
+                "description TEXT)";
+        this.execSQL(sql);
+
+        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+        if (!this.checkIsExist(sql,null)) {
+            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+        }
+
+        //Test
+        sql = "INSERT INTO " + tableName + " (title,price,description) values('标致408',120000,‘标致408汽车，购于2014年初’)";
+
+        this.execSQL(sql);
+
+        //2,
+
+        return false;
+    }
+
+    //Home
+    public HomeInfos[] getAllHomeInfos(String user) {
+        String tableName = user + "_" + HOMETABLENAME;
+        String sql = "SELECT * FROM " + tableName;
+        ArrayList<HomeInfos> list = new ArrayList<HomeInfos>();
+
+        Cursor cursor = this.querySQL(sql,null);
+        if (null != cursor) {
+            cursor.moveToFirst();
+            HomeInfos infos;
+            while (!cursor.isAfterLast()) {
+                infos = new HomeInfos();
+                infos.id = cursor.getInt(0);
+                infos.title = cursor.getString(1);
+                infos.price = cursor.getInt(2);
+                infos.description = cursor.getString(3);
+
+                list.add(infos);
+
+                cursor.moveToNext();
+            }
+        }
+
+        return list.toArray(new HomeInfos[list.size()]);
+    }
+
     //Database
     private void execSQL(String sql) {
         GlobalData.log(ID + ".execSQL",GlobalData.LogType.eMessage,sql);
@@ -211,20 +267,19 @@ public class SQLCipherHelper implements IDataStoreHelper {
     //创建用户信息表
     //ID,UserNmae,Password,Email
     private boolean createUserIDTable(String tableName) {
+        //IF NOT EXISTS:创建表之前先判断，如果表存在，则此语句不执行
+        String sql = "CREATE TABLE IF NOT EXISTS " + USERIDTABLENAME + " (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "name TEXT, password TEXT, email TEXT)";
+        this.execSQL(sql);
+
         String sqlCheckExist = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + USERIDTABLENAME + "'";
-        if (!this.checkIsExist(sqlCheckExist,null)) {
-            String sql = "CREATE TABLE " + USERIDTABLENAME + " (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT, email TEXT)";
-            this.execSQL(sql);
 
-            if (this.checkIsExist(sqlCheckExist,null)) {
-                GlobalData.log(ID + ".createUserIDTable", GlobalData.LogType.eMessage,"USERID TABLE is created success.");
-                return true;
-            } else {
-                GlobalData.log(ID + ".createUserIDTable", GlobalData.LogType.eMessage,"USERID TABLE is created failed.");
-                return false;
-            }
+        if (this.checkIsExist(sqlCheckExist,null)) {
+            GlobalData.log(ID + ".createUserIDTable", GlobalData.LogType.eMessage, "USERID TABLE is created success.");
+            return true;
+        } else {
+            GlobalData.log(ID + ".createUserIDTable", GlobalData.LogType.eMessage,"USERID TABLE is created failed.");
+            return false;
         }
-
-        return true;
     }
 }

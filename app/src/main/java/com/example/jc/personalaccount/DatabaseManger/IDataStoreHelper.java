@@ -2,6 +2,8 @@ package com.example.jc.personalaccount.DatabaseManger;
 
 import android.content.Context;
 
+import com.example.jc.personalaccount.Data.HomeInfos;
+
 /**
  * Created by jc on 16/3/28.
  */
@@ -20,4 +22,10 @@ public interface IDataStoreHelper {
 
     //注册
     Boolean register(String name, String password, String email);
+
+    //根据登录用户建表，如果已经存在则不用
+    Boolean createdUserIDDataStore(String user);
+
+    //Home
+    HomeInfos[] getAllHomeInfos(String user);
 }

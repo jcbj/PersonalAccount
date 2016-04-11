@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.example.jc.personalaccount.Data.HomeInfos;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,9 +30,9 @@ public class FragmentHome extends Fragment {
                 getActivity(),
                 getData(),
                 R.layout.fragment_home_list_item,
-                new String[]{"img", "title", "price", "summary"},
+                new String[]{"img", "title", "price", "description"},
                 new int[]{R.id.fragment_home_list_item_img, R.id.fragment_home_list_item_title, R.id
-                        .fragment_home_list_item_price, R.id.fragment_home_list_item_summary});
+                        .fragment_home_list_item_price, R.id.fragment_home_list_item_description});
 
         this.mListView.setAdapter(adapter);
 
@@ -44,29 +46,40 @@ public class FragmentHome extends Fragment {
         map.put("img", R.drawable.home_camera);
         map.put("title","Canoe 7D");
         map.put("price","7000");
-        map.put("summary", "数码相机，购于2012年底，配两个镜头，一个闪光灯，三脚架等物品。");
+        map.put("description", "数码相机，购于2012年底，配两个镜头，一个闪光灯，三脚架等物品。");
         list.add(map);
 
         map = new HashMap<String, Object>();
         map.put("img", R.drawable.home_watch);
         map.put("title", "Apple Watch");
         map.put("price","3000");
-        map.put("summary", "苹果手表，购于2016年初，测试使用。");
+        map.put("description", "苹果手表，购于2016年初，测试使用。");
         list.add(map);
 
         map = new HashMap<String, Object>();
         map.put("img", R.drawable.home_garage_band);
         map.put("title", "Garage-Band");
         map.put("price","1000");
-        map.put("summary", "吉他，购于2015年中，测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！");
+        map.put("description", "吉他，购于2015年中，测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！");
         list.add(map);
 
         map = new HashMap<String, Object>();
         map.put("img", R.drawable.home_itunes_radio);
         map.put("title","Radio");
         map.put("price","800");
-        map.put("summary", "收音机，测试，蓝牙鼠标自动断开，唤醒比较慢，用着还不错。");
+        map.put("description", "收音机，测试，蓝牙鼠标自动断开，唤醒比较慢，用着还不错。");
         list.add(map);
+
+        HomeInfos[] infos = GlobalData.DataStoreHelper.getAllHomeInfos(GlobalData.CurrentUser);
+
+        if (infos.length > 0) {
+            map = new HashMap<String, Object>();
+            map.put("img", R.drawable.home_itunes_radio);
+            map.put("title",infos[0].title);
+            map.put("price",infos[0].price);
+            map.put("description", infos[0].description);
+            list.add(map);
+        }
 
         return list;
     }
