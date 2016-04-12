@@ -2,7 +2,7 @@ package com.example.jc.personalaccount.DatabaseManger;
 
 import android.content.Context;
 
-import com.example.jc.personalaccount.Data.HomeInfos;
+import com.example.jc.personalaccount.Data.BalanceSheetItem;
 
 /**
  * Created by jc on 16/3/28.
@@ -27,5 +27,5 @@ public interface IDataStoreHelper {
     Boolean createdUserIDDataStore(String user);
 
     //Home
-    HomeInfos[] getAllHomeInfos(String user);
+    BalanceSheetItem[] getAllHomeInfos(String user);
 }

@@ -1,15 +1,19 @@
 package com.example.jc.personalaccount.DatabaseManger;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.support.v4.app.NavUtils;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.util.Log;
 
-import com.example.jc.personalaccount.Data.HomeInfos;
+import com.example.jc.personalaccount.Data.BalanceSheetItem;
 import com.example.jc.personalaccount.GlobalData;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import java.util.ArrayList;
@@ -40,7 +44,9 @@ public class SQLCipherHelper implements IDataStoreHelper {
     private static final String KEYENCRYPT = "JCyoyo";
     private static final String SQLITE_MASTER = "sqlite_master";
     private static final String USERIDTABLENAME = "UserIDTable";
-    private static final String HOMETABLENAME = "HomeTable";
+    private static final String BALANCESHEETTABLENAME = "BalanceSheetTable";
+    private static final String[] BALANCESHEETTABLECOLUMNNAME = new String[]{"id","worthtype","name","worth",
+            "imagepath","imagethumb","description"};
 
     private SQLiteDatabase database = null;
 
@@ -150,13 +156,16 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     //每个登录用户，都有自己单独的表来存储数据；以登录用户名来区别
     public Boolean createdUserIDDataStore(String user) {
-        //1，创建Home页面表格
-        String tableName = user + "_" + HOMETABLENAME;
+        //1，创建资产负债表
+        String tableName = user + "_" + BALANCESHEETTABLENAME;
         String sql = "CREATE TABLE IF NOT EXISTS " + tableName +
-                " (id INT PRIMARY KEY AUTOINCREMENT, " +
-                "title TEXT, " +
-                "price INT, " +
-                "description TEXT)";
+                " (" + BALANCESHEETTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                BALANCESHEETTABLECOLUMNNAME[1] + " INT," +
+                BALANCESHEETTABLECOLUMNNAME[2] + "  TEXT," +
+                BALANCESHEETTABLECOLUMNNAME[3] + " INT," +
+                BALANCESHEETTABLECOLUMNNAME[4] + " TEXT," +
+                BALANCESHEETTABLECOLUMNNAME[5] + " BLOB," +
+                BALANCESHEETTABLECOLUMNNAME[6] + " TEXT)";
         this.execSQL(sql);
 
         sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
@@ -164,32 +173,41 @@ public class SQLCipherHelper implements IDataStoreHelper {
             Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
         }
 
-        //Test
-        sql = "INSERT INTO " + tableName + " (title,price,description) values('标致408',120000,‘标致408汽车，购于2014年初’)";
-
-        this.execSQL(sql);
-
         //2,
 
         return false;
     }
 
-    //Home
-    public HomeInfos[] getAllHomeInfos(String user) {
-        String tableName = user + "_" + HOMETABLENAME;
+    //Worth
+
+    /**
+     * 获取资产负债表中所有记录
+     * @param user:当前登录用户名
+     * @return
+     */
+    public BalanceSheetItem[] getAllHomeInfos(String user) {
+        String tableName = user + "_" + BALANCESHEETTABLENAME;
         String sql = "SELECT * FROM " + tableName;
-        ArrayList<HomeInfos> list = new ArrayList<HomeInfos>();
+        ArrayList<BalanceSheetItem> list = new ArrayList<>();
 
         Cursor cursor = this.querySQL(sql,null);
         if (null != cursor) {
             cursor.moveToFirst();
-            HomeInfos infos;
+            BalanceSheetItem infos;
             while (!cursor.isAfterLast()) {
-                infos = new HomeInfos();
+                infos = new BalanceSheetItem();
                 infos.id = cursor.getInt(0);
-                infos.title = cursor.getString(1);
-                infos.price = cursor.getInt(2);
-                infos.description = cursor.getString(3);
+                infos.worthType = ((0 == cursor.getInt(1)) ? BalanceSheetItem.WorthType.Property : BalanceSheetItem.WorthType.Debt);
+                infos.name = cursor.getString(2);
+                infos.worth = cursor.getInt(3);
+                infos.imagePath = cursor.getString(4);
+                byte[] imageByte = cursor.getBlob(5);
+                if (null != imageByte) {
+                    infos.imageThumb = BitmapFactory.decodeByteArray(imageByte,0,imageByte.length);
+                } else {
+                    infos.imageThumb = null;
+                }
+                infos.description = cursor.getString(6);
 
                 list.add(infos);
 
@@ -197,21 +215,79 @@ public class SQLCipherHelper implements IDataStoreHelper {
             }
         }
 
-        return list.toArray(new HomeInfos[list.size()]);
+        return list.toArray(new BalanceSheetItem[list.size()]);
+    }
+
+    /**
+     * 添加或编辑资产负债表中记录
+     * @param user： 当前登录用户名
+     * @param info： 待保存的数据
+     * @param isAdd：是新添加，还是编辑
+     * @return： 是否成功
+     */
+    public Boolean EditWorthItem(String user, BalanceSheetItem info, Boolean isAdd) {
+
+        if ((TextUtils.isEmpty(user)) || (null == info)) {
+            return false;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(BALANCESHEETTABLECOLUMNNAME[1],(info.worthType == BalanceSheetItem.WorthType.Property) ? 0 : 1);
+        values.put(BALANCESHEETTABLECOLUMNNAME[2],info.name);
+        values.put(BALANCESHEETTABLECOLUMNNAME[3],info.worth);
+        values.put(BALANCESHEETTABLECOLUMNNAME[4],info.imagePath);
+        final ByteArrayOutputStream os = new ByteArrayOutputStream();
+        info.imageThumb.compress(Bitmap.CompressFormat.PNG,100,os);
+        values.put(BALANCESHEETTABLECOLUMNNAME[5],os.toByteArray());
+        values.put(BALANCESHEETTABLECOLUMNNAME[6],info.description);
+
+        String tableName = user + "_" + BALANCESHEETTABLENAME;
+        if (isAdd) {
+            return this.insertSQL(tableName,BALANCESHEETTABLECOLUMNNAME[2],values);
+        } else {
+            return this.updateSQL(tableName, values, BALANCESHEETTABLECOLUMNNAME[0] + "=?", new String[]{String.valueOf
+                    (info
+                    .id)});
+        }
     }
 
     //Database
-    private void execSQL(String sql) {
+    private Boolean insertSQL(String table, String nullColumnHack, ContentValues values) {
+        try {
+            this.database.insert(table, nullColumnHack,values);
+        } catch (Exception ex) {
+            Log.e(ID + ".insertSQL",ex.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    private Boolean updateSQL(String table, ContentValues values, String whereClause, String[] whereArgs) {
+        try {
+            this.database.update(table, values, whereClause, whereArgs);
+        } catch (Exception ex) {
+            Log.e(ID + ".updateSQL",ex.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    private Boolean execSQL(String sql) {
         GlobalData.log(ID + ".execSQL",GlobalData.LogType.eMessage,sql);
 
         try {
             this.database.execSQL(sql);
+            return true;
         } catch (Exception ex) {
             GlobalData.log(ID + ".execSQL",GlobalData.LogType.eException,ex.getMessage());
+            return false;
         }
     }
 
-    private void execSQL(String sql, Objects[] objs) {
+    /*
+    private Boolean execSQL(String sql, Objects[] objs) {
 
         if (null == objs) {
             GlobalData.log(ID + ".execSQL1", GlobalData.LogType.eMessage,sql);
@@ -226,10 +302,13 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
         try {
             this.database.execSQL(sql,objs);
+            return true;
         } catch (Exception ex) {
             GlobalData.log(ID + ".execSQL1",GlobalData.LogType.eException,ex.getMessage());
+            return false;
         }
     }
+    */
 
     //selectionArgs: 只针对SQL语句中WHERE部分占位符替换，其它部分无效
     private Cursor querySQL(String sql, String[] selectionArgs) {
@@ -270,7 +349,9 @@ public class SQLCipherHelper implements IDataStoreHelper {
         //IF NOT EXISTS:创建表之前先判断，如果表存在，则此语句不执行
         String sql = "CREATE TABLE IF NOT EXISTS " + USERIDTABLENAME + " (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "name TEXT, password TEXT, email TEXT)";
-        this.execSQL(sql);
+        if (!this.execSQL(sql)) {
+            return false;
+        }
 
         String sqlCheckExist = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + USERIDTABLENAME + "'";
 
