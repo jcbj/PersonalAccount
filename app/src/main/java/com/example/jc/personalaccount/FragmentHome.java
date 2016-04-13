@@ -56,6 +56,7 @@ public class FragmentHome extends Fragment {
     }
 
     /***
+     * 此种方法计算不准确，
      * 动态设置listview的高度
      *
      * @param listView
