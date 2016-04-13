@@ -237,7 +237,9 @@ public class SQLCipherHelper implements IDataStoreHelper {
         values.put(BALANCESHEETTABLECOLUMNNAME[3],info.worth);
         values.put(BALANCESHEETTABLECOLUMNNAME[4],info.imagePath);
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
-        info.imageThumb.compress(Bitmap.CompressFormat.PNG,100,os);
+        if (null != info.imageThumb) {
+            info.imageThumb.compress(Bitmap.CompressFormat.PNG,100,os);
+        }
         values.put(BALANCESHEETTABLECOLUMNNAME[5],os.toByteArray());
         values.put(BALANCESHEETTABLECOLUMNNAME[6],info.description);
 

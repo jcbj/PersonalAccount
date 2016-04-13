@@ -18,6 +18,7 @@ public class GlobalData {
 
     //Intent Parameter
     public static String EXTRA_USERNAME = "UserName";
+    public static String EXTRA_HOME_EDIT_TYPE = "HOME_EDIT_TYPE";
 
 
     //*****************

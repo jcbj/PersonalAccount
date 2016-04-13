@@ -28,4 +28,6 @@ public interface IDataStoreHelper {
 
     //Home
     BalanceSheetItem[] getAllHomeInfos(String user);
+
+    Boolean EditWorthItem(String user, BalanceSheetItem info, Boolean isAdd);
 }

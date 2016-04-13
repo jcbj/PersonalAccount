@@ -1,10 +1,12 @@
 package com.example.jc.personalaccount;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -20,6 +22,8 @@ public class FragmentHome extends Fragment {
 
     private ListView mListViewProperty;
     private ListView mListViewDebt;
+    private Button mAddPropertyBtn;
+    private Button mAddDebtBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +43,17 @@ public class FragmentHome extends Fragment {
         this.mListViewProperty.setAdapter(adapterProperty);
         this.setListViewHeightBasedOnChildren(this.mListViewProperty);
 
+        mAddPropertyBtn = (Button) view.findViewById(R.id.fragment_home_property_add_button);
+        mAddPropertyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getActivity(), EditNetAssetsActivity.class);
+                intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, 0);
+                startActivity(intent);
+            }
+        });
+
         mListViewDebt = (ListView) view.findViewById(R.id.fragment_home_listview_debt);
         SimpleAdapter adapterDebt = new SimpleAdapter(
                 getActivity(),
@@ -51,6 +66,17 @@ public class FragmentHome extends Fragment {
                         R.id.fragment_home_list_item_description});
         this.mListViewDebt.setAdapter(adapterDebt);
         this.setListViewHeightBasedOnChildren(this.mListViewDebt);
+
+        mAddDebtBtn = (Button) view.findViewById(R.id.fragment_home_debt_add_button);
+        mAddDebtBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getActivity(), EditNetAssetsActivity.class);
+                intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, 1);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
