@@ -1,8 +1,11 @@
 package com.example.jc.personalaccount;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,20 +13,32 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 
 public class FragmentHome extends Fragment {
 
+    private RefreshTask mAuthTask;
     private ListView mListViewProperty;
     private ListView mListViewDebt;
     private Button mAddPropertyBtn;
     private Button mAddDebtBtn;
+    private TextView mPropertyTV;
+    private TextView mDebtTV;
+    private TextView mNetAssetsPropertyTV;
+    private TextView mNetAssetsDebtTV;
+    private TextView mNetAssetsTV;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,17 +46,13 @@ public class FragmentHome extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mListViewProperty = (ListView) view.findViewById(R.id.fragment_home_listview_property);
-        SimpleAdapter adapterProperty = new SimpleAdapter(
-                getActivity(),
-                getData(),
-                R.layout.fragment_home_list_item,
-                new String[]{"img", "name", "worth", "description"},
-                new int[]{R.id.fragment_home_list_item_img,
-                        R.id.fragment_home_list_item_name,
-                        R.id.fragment_home_list_item_worth,
-                        R.id.fragment_home_list_item_description});
-        this.mListViewProperty.setAdapter(adapterProperty);
-        this.setListViewHeightBasedOnChildren(this.mListViewProperty);
+        mListViewDebt = (ListView) view.findViewById(R.id.fragment_home_listview_debt);
+
+        mPropertyTV = (TextView)view.findViewById(R.id.fragment_home_property_value_text);
+        mDebtTV = (TextView)view.findViewById(R.id.fragment_home_debt_value_text);
+        mNetAssetsPropertyTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_property_tv);
+        mNetAssetsDebtTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_debt_tv);
+        mNetAssetsTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_tv);
 
         mAddPropertyBtn = (Button) view.findViewById(R.id.fragment_home_property_add_button);
         mAddPropertyBtn.setOnClickListener(new View.OnClickListener() {
@@ -54,19 +65,6 @@ public class FragmentHome extends Fragment {
             }
         });
 
-        mListViewDebt = (ListView) view.findViewById(R.id.fragment_home_listview_debt);
-        SimpleAdapter adapterDebt = new SimpleAdapter(
-                getActivity(),
-                getData(),
-                R.layout.fragment_home_list_item,
-                new String[]{"img", "name", "worth", "description"},
-                new int[]{R.id.fragment_home_list_item_img,
-                        R.id.fragment_home_list_item_name,
-                        R.id.fragment_home_list_item_worth,
-                        R.id.fragment_home_list_item_description});
-        this.mListViewDebt.setAdapter(adapterDebt);
-        this.setListViewHeightBasedOnChildren(this.mListViewDebt);
-
         mAddDebtBtn = (Button) view.findViewById(R.id.fragment_home_debt_add_button);
         mAddDebtBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,88 +76,130 @@ public class FragmentHome extends Fragment {
             }
         });
 
+        refresh();
+
         return view;
     }
 
-    /***
-     * 此种方法计算不准确，
-     * 动态设置listview的高度
-     *
-     * @param listView
-     */
-    public void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null) {
-            return;
-        }
-        int totalHeight = 0;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            View listItem = listAdapter.getView(i, null, listView);
-            listItem.measure(0, 0);
-            //在还没有构建View 之前无法取得View的度宽。 在此之前我们必须选 measure 一下.
-            totalHeight += listItem.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        // params.height += 5;
-        // if without this statement,the listview will be
-        // a
-        // little short
-        // listView.getDividerHeight()获取子项间分隔符占用的高度
-        // params.height最后得到整个ListView完整显示需要的高度
-        listView.setLayoutParams(params);
+    public void refresh() {
+        mAuthTask = new RefreshTask();
+        mAuthTask.execute((Void) null);
     }
 
-    private List<Map<String, Object>> getData() {
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+    private void setData() {
+
+        CalculateBalanceSheetData data = getData();
+
+        SimpleAdapter adapterProperty = new SimpleAdapter(
+                getActivity(),
+                data.listPropertyItems,
+                R.layout.fragment_home_list_item,
+                new String[]{"img", "name", "worth", "description"},
+                new int[]{R.id.fragment_home_list_item_img,
+                        R.id.fragment_home_list_item_name,
+                        R.id.fragment_home_list_item_worth,
+                        R.id.fragment_home_list_item_description});
+        this.mListViewProperty.setAdapter(adapterProperty);
+
+        SimpleAdapter adapterDebt = new SimpleAdapter(
+                getActivity(),
+                data.listDebtItems,
+                R.layout.fragment_home_list_item,
+                new String[]{"img", "name", "worth", "description"},
+                new int[]{R.id.fragment_home_list_item_img,
+                        R.id.fragment_home_list_item_name,
+                        R.id.fragment_home_list_item_worth,
+                        R.id.fragment_home_list_item_description});
+        this.mListViewDebt.setAdapter(adapterDebt);
+
+        this.mPropertyTV.setText((data.dPropertyAll / 100.0 / 10000.0) + " 万");
+        this.mDebtTV.setText((data.dDebtAll / 100.0 / 10000.0) + " 万");
+        this.mNetAssetsPropertyTV.setText((data.dPropertyAll / 100.0 / 10000.0) + "");
+        this.mNetAssetsDebtTV.setText((data.dDebtAll / 100.0 / 10000.0) + "");
+        this.mNetAssetsTV.setText(((data.dPropertyAll - data.dDebtAll) / 100.0 / 10000.0) + " 万");
+    }
+
+    private CalculateBalanceSheetData getData() {
+        CalculateBalanceSheetData result = new CalculateBalanceSheetData();
+        result.listPropertyItems = new ArrayList<Map<String, Object>>();
+        result.listDebtItems = new ArrayList<Map<String, Object>>();
+        result.dDebtAll = result.dPropertyAll = 0.0;
 
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("img", R.drawable.home_camera);
-        map.put("name","Canoe 7D");
-        map.put("worth","7000");
-        map.put("description", "数码相机，购于2012年底，配两个镜头，一个闪光灯，三脚架等物品。");
-        list.add(map);
+        BalanceSheetItem[] infos = GlobalData.DataStoreHelper.getAllBalanceSheetInfos(GlobalData.CurrentUser);
 
-        map = new HashMap<String, Object>();
-        map.put("img", R.drawable.home_watch);
-        map.put("name", "Apple Watch");
-        map.put("worth","3000");
-        map.put("description", "苹果手表，购于2016年初，测试使用。");
-        list.add(map);
-
-        map = new HashMap<String, Object>();
-        map.put("img", R.drawable.home_garage_band);
-        map.put("name", "Garage-Band");
-        map.put("worth","1000");
-        map.put("description", "吉他，购于2015年中，测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！");
-        list.add(map);
-
-        map = new HashMap<String, Object>();
-        map.put("img", R.drawable.home_itunes_radio);
-        map.put("name","Radio");
-        map.put("worth","800");
-        map.put("description", "收音机，测试，蓝牙鼠标自动断开，唤醒比较慢，用着还不错。");
-        list.add(map);
-
-        map = new HashMap<String, Object>();
-        map.put("img", R.drawable.home_garage_band);
-        map.put("name", "Garage-Band");
-        map.put("worth","1000");
-        map.put("description", "吉他，购于2015年中，测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！测试换行！");
-        list.add(map);
-
-        BalanceSheetItem[] infos = GlobalData.DataStoreHelper.getAllHomeInfos(GlobalData.CurrentUser);
+        int[] images = new int[]{R.drawable.home_camera, R.drawable.home_garage_band, R.drawable.home_itunes_radio, R
+                .drawable.home_watch};
 
         if (infos.length > 0) {
-            map = new HashMap<String, Object>();
-            map.put("img", R.drawable.home_itunes_radio);
-            map.put("name",infos[0].name);
-            map.put("worth",infos[0].worth);
-            map.put("description", infos[0].description);
-            list.add(map);
+            for (int i = 0; i < infos.length; i++) {
+                map = new HashMap<String, Object>();
+                map.put("img", images[i % images.length]);
+                map.put("name",infos[i].name.toString().trim());
+                map.put("worth",Double.toString(infos[i].worth / 100.0));
+                map.put("description", infos[i].description.toString());
+
+                if (infos[i].worthType == BalanceSheetItem.WorthType.Property) {
+                    result.listPropertyItems.add(map);
+                    result.dPropertyAll += infos[i].worth;
+                } else {
+                    result.listDebtItems.add(map);
+                    result.dDebtAll += infos[i].worth;
+                }
+            }
         }
 
-        return list;
+        return result;
     }
 
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class RefreshTask extends AsyncTask<Void, Void, Boolean> {
+
+        RefreshTask() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            try {
+                //执行异步的代码，后台线程中执行，执行完调用onPostExecute
+                setData();
+            } catch (Exception e) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            //UI线程中执行，不能执行耗时操作
+
+            if (!success) {
+                Toast toast = Toast.makeText(getActivity(),getString(R.string.common_load_failed),Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER,0,0);
+                toast.show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mAuthTask = null;
+        }
+    }
+
+    /**
+     * 从数据库获取数据以后处理玩，供界面显示
+     */
+    public class CalculateBalanceSheetData {
+        public List<Map<String, Object>> listPropertyItems;
+        public Double dPropertyAll;
+
+        public List<Map<String, Object>> listDebtItems;
+        public Double dDebtAll;
+    }
 }

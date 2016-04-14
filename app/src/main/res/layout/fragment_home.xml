@@ -44,7 +44,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:textSize="25sp"
-                    android:text="12万"
                     android:layout_gravity="center_vertical"
                     android:gravity="right"
                     android:layout_weight="1"/>
@@ -87,7 +86,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:textSize="25sp"
-                    android:text="10万"
                     android:layout_gravity="center_vertical"
                     android:gravity="right"
                     android:layout_weight="1"/>
@@ -135,13 +133,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
+            android:layout_gravity="center_vertical"
             android:layout_marginRight="10dp"
             >
 
             <TextView
                 android:id="@+id/fragment_home_net_assets_property_tv"
-                android:text="1000"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -149,7 +147,7 @@
 
             <TextView
                 android:text=" - "
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -157,16 +155,15 @@
 
             <TextView
                 android:id="@+id/fragment_home_net_assets_debt_tv"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:textColor="@color/white"
-                android:text="500"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"/>
 
             <TextView
                 android:text=" = "
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -174,9 +171,8 @@
 
             <TextView
                 android:id="@+id/fragment_home_net_assets_tv"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:textColor="@color/white"
-                android:text="500"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"/>

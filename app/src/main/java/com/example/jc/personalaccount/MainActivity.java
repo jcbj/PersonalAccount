@@ -1,10 +1,12 @@
 package com.example.jc.personalaccount;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.view.View;
 
 public class MainActivity extends FragmentActivity {
@@ -17,6 +19,18 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         setFragmentIndicator(0);
+
+        Intent intent = getIntent();
+        String tagName = intent.getStringExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME);
+        if (TextUtils.isEmpty(tagName)) {
+            return;
+        }
+        if (tagName.equals(GlobalData.STRING_ACTIVITY_EDIT_NETASSETS)) {
+            int isRefresh = intent.getIntExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,0);
+            if (0 != isRefresh) {
+                ((FragmentHome)mFragments[0]).refresh();
+            }
+        }
     }
 
     private void setFragmentIndicator(int whichIsDefault) {

@@ -185,7 +185,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
      * @param user:当前登录用户名
      * @return
      */
-    public BalanceSheetItem[] getAllHomeInfos(String user) {
+    public BalanceSheetItem[] getAllBalanceSheetInfos(String user) {
         String tableName = user + "_" + BALANCESHEETTABLENAME;
         String sql = "SELECT * FROM " + tableName;
         ArrayList<BalanceSheetItem> list = new ArrayList<>();

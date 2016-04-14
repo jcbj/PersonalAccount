@@ -27,7 +27,7 @@ public interface IDataStoreHelper {
     Boolean createdUserIDDataStore(String user);
 
     //Home
-    BalanceSheetItem[] getAllHomeInfos(String user);
+    BalanceSheetItem[] getAllBalanceSheetInfos(String user);
 
     Boolean EditWorthItem(String user, BalanceSheetItem info, Boolean isAdd);
 }

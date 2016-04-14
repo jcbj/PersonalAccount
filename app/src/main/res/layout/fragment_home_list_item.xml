@@ -48,6 +48,8 @@
             android:layout_height="wrap_content"
             android:textColor="@color/gray"
             android:textSize="15sp"
+            android:width="1000dp"
+
             />
 
     </LinearLayout>

@@ -5,16 +5,19 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
 
 public class EditNetAssetsActivity extends AppCompatActivity {
 
+    private int editCount = 0;
     private int type = 0;
     private EditText mETName;
     private EditText mETDescription;
@@ -53,15 +56,28 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                 item.imageThumb = null;
                 item.imagePath = null;
 
-                GlobalData.DataStoreHelper.EditWorthItem(GlobalData.CurrentUser,item,true);
+                if (GlobalData.DataStoreHelper.EditWorthItem(GlobalData.CurrentUser,item,true)) {
+                    editCount++;
+
+                    Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
+                    toast.show();
+                } else {
+                    new AlertDialog.Builder(getApplicationContext()).setTitle(getString(R.string.common_str_information))
+                            .setMessage(getString(R.string.common_save_failed))
+                            .setPositiveButton(getString(R.string.common_btn_ok),null)
+                            .show();
+                }
             }
         });
 
-        Button mCancelBtn = (Button) findViewById(R.id.fragment_home_edit_cancel_button);
-        mCancelBtn.setOnClickListener(new View.OnClickListener() {
+        Button mBackBtn = (Button) findViewById(R.id.fragment_home_edit_back_button);
+        mBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent1 = new Intent(EditNetAssetsActivity.this,MainActivity.class);
+                intent1.putExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME,GlobalData.STRING_ACTIVITY_EDIT_NETASSETS);
+                intent1.putExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,editCount);
                 startActivity(intent1);
             }
         });
