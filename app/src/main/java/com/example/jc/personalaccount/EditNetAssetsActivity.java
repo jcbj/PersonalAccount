@@ -36,7 +36,6 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                         .fragment_home_debt_title)});
         final Spinner typeSpinner = (Spinner) findViewById(R.id.fragment_home_edit_type_spinner);
         typeSpinner.setAdapter(typeSpinnerItems);
-        typeSpinner.setEnabled(false);
         //直接设置选中项，并立即生效
         typeSpinner.setSelection(type,true);
 
@@ -62,6 +61,10 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
                     toast.show();
+
+                    mETName.setText("");
+                    mETWorth.setText("");
+                    mETDescription.setText("");
                 } else {
                     new AlertDialog.Builder(getApplicationContext()).setTitle(getString(R.string.common_str_information))
                             .setMessage(getString(R.string.common_save_failed))
