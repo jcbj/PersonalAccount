@@ -9,6 +9,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -47,6 +49,42 @@ public class FragmentHome extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mListViewProperty = (ListView) view.findViewById(R.id.fragment_home_listview_property);
         mListViewDebt = (ListView) view.findViewById(R.id.fragment_home_listview_debt);
+
+        mListViewDebt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast toast = Toast.makeText(getActivity(),"点击 " + position,Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
+                toast.show();
+            }
+        });
+
+        mListViewDebt.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Toast toast = Toast.makeText(getActivity(),"长按 " + position,Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
+                toast.show();
+
+                return false;
+            }
+        });
+
+        mListViewDebt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                Toast toast = Toast.makeText(getActivity(),"选中 " + position,Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
+                toast.show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         mPropertyTV = (TextView)view.findViewById(R.id.fragment_home_property_value_text);
         mDebtTV = (TextView)view.findViewById(R.id.fragment_home_debt_value_text);

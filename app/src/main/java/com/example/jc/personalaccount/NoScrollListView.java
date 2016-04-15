@@ -4,11 +4,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ListView;
 
+import com.baoyz.swipemenulistview.SwipeMenuListView;
+
 /**
  * 自定义ListView,实现无滚动条模式
  * Created by jc on 16/4/13.
  */
-public class NoScrollListView extends ListView {
+public class NoScrollListView extends SwipeMenuListView {
 
     public NoScrollListView(Context context) {
         super(context);
