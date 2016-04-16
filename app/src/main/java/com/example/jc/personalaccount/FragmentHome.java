@@ -1,10 +1,15 @@
 package com.example.jc.personalaccount;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +23,10 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
 
 import java.util.ArrayList;
@@ -32,8 +41,8 @@ import java.util.Random;
 public class FragmentHome extends Fragment {
 
     private RefreshTask mAuthTask;
-    private ListView mListViewProperty;
-    private ListView mListViewDebt;
+    private SwipeMenuListView mListViewProperty;
+    private SwipeMenuListView mListViewDebt;
     private Button mAddPropertyBtn;
     private Button mAddDebtBtn;
     private TextView mPropertyTV;
@@ -47,8 +56,8 @@ public class FragmentHome extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        mListViewProperty = (ListView) view.findViewById(R.id.fragment_home_listview_property);
-        mListViewDebt = (ListView) view.findViewById(R.id.fragment_home_listview_debt);
+        mListViewProperty = (SwipeMenuListView) view.findViewById(R.id.fragment_home_listview_property);
+        mListViewDebt = (SwipeMenuListView) view.findViewById(R.id.fragment_home_listview_debt);
 
         mListViewDebt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -114,6 +123,33 @@ public class FragmentHome extends Fragment {
             }
         });
 
+        // step 1. create a MenuCreator
+        SwipeMenuCreator creator = this.buildSwipeMenuCreator(getActivity());
+        mListViewDebt.setMenuCreator(creator);
+
+        // step 2. listener item click event
+        mListViewDebt.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+
+                switch (index) {
+                    case 0:
+                        // open
+                        Toast toast = Toast.makeText(getActivity(),"Open click",Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.show();
+                        break;
+                    case 1:
+                        // delete
+                        Toast toast1 = Toast.makeText(getActivity(),"Delete click",Toast.LENGTH_SHORT);
+                        toast1.setGravity(Gravity.CENTER,0,0);
+                        toast1.show();
+                        break;
+                }
+                return false;
+            }
+        });
+
         refresh();
 
         return view;
@@ -122,6 +158,45 @@ public class FragmentHome extends Fragment {
     public void refresh() {
         mAuthTask = new RefreshTask();
         mAuthTask.execute((Void) null);
+    }
+
+    private SwipeMenuCreator buildSwipeMenuCreator(final Context context) {
+        return new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+                // create "open" item
+                SwipeMenuItem openItem = new SwipeMenuItem(context); //getApplicationContext()
+                // set item background
+                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9, 0xCE)));
+                // set item width
+                openItem.setWidth(dp2px(90));
+                // set item title
+                openItem.setTitle("Open");
+                // set item title fontsize
+                openItem.setTitleSize(18);
+                // set item title font color
+                openItem.setTitleColor(Color.WHITE);
+                // add to menu
+                menu.addMenuItem(openItem);
+
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(context);//getApplicationContext()
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9, 0x3F, 0x25)));
+                // set item width
+                deleteItem.setWidth(dp2px(90));
+                // set a icon
+                deleteItem.setIcon(R.drawable.ic_delete);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
+    }
+
+    private int dp2px(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                getResources().getDisplayMetrics());
     }
 
     private void setData() {
@@ -150,11 +225,11 @@ public class FragmentHome extends Fragment {
                         R.id.fragment_home_list_item_description});
         this.mListViewDebt.setAdapter(adapterDebt);
 
-        this.mPropertyTV.setText((data.dPropertyAll / 100.0 / 10000.0) + " 万");
-        this.mDebtTV.setText((data.dDebtAll / 100.0 / 10000.0) + " 万");
-        this.mNetAssetsPropertyTV.setText((data.dPropertyAll / 100.0 / 10000.0) + "");
-        this.mNetAssetsDebtTV.setText((data.dDebtAll / 100.0 / 10000.0) + "");
-        this.mNetAssetsTV.setText(((data.dPropertyAll - data.dDebtAll) / 100.0 / 10000.0) + " 万");
+        this.mPropertyTV.setText((data.dPropertyAll / 10000.0) + " 万");
+        this.mDebtTV.setText((data.dDebtAll / 10000.0) + " 万");
+        this.mNetAssetsPropertyTV.setText((data.dPropertyAll / 10000.0) + "");
+        this.mNetAssetsDebtTV.setText((data.dDebtAll / 10000.0) + "");
+        this.mNetAssetsTV.setText(((data.dPropertyAll - data.dDebtAll) / 10000.0) + " 万");
     }
 
     private CalculateBalanceSheetData getData() {
@@ -186,6 +261,9 @@ public class FragmentHome extends Fragment {
                 }
             }
         }
+
+        result.dPropertyAll = ((int)(result.dPropertyAll / 100)) * 1.0;
+        result.dDebtAll = ((int)(result.dDebtAll / 100)) * 1.0;
 
         return result;
     }
