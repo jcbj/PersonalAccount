@@ -50,6 +50,7 @@ public class FragmentHome extends Fragment {
     private TextView mNetAssetsPropertyTV;
     private TextView mNetAssetsDebtTV;
     private TextView mNetAssetsTV;
+    private CalculateBalanceSheetData mAdapterDate;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -135,15 +136,19 @@ public class FragmentHome extends Fragment {
                 switch (index) {
                     case 0:
                         // open
-                        Toast toast = Toast.makeText(getActivity(),"Open click",Toast.LENGTH_SHORT);
+                        Toast toast = Toast.makeText(getActivity(),"Open click: " + position ,Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER,0,0);
                         toast.show();
+
+                        editClick(position,2);
                         break;
                     case 1:
                         // delete
-                        Toast toast1 = Toast.makeText(getActivity(),"Delete click",Toast.LENGTH_SHORT);
+                        Toast toast1 = Toast.makeText(getActivity(),"Delete click: " + position,Toast.LENGTH_SHORT);
                         toast1.setGravity(Gravity.CENTER,0,0);
                         toast1.show();
+
+                        deleteClick(position,2);
                         break;
                 }
                 return false;
@@ -158,6 +163,28 @@ public class FragmentHome extends Fragment {
     public void refresh() {
         mAuthTask = new RefreshTask();
         mAuthTask.execute((Void) null);
+    }
+
+    private void editClick(int position, int type) {
+        Intent intent = new Intent(getActivity(),EditNetAssetsActivity.class);
+        intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE,type);
+        getActivity().startActivity(intent);
+    }
+
+    private void deleteClick(int position, int type) {
+        if (position < this.mAdapterDate.listDebtItems.size()) {
+
+            Map<String,Object> temp = (Map<String,Object>)((this.mAdapterDate.listDebtItems.toArray())[position]);
+            int id = -1;
+            try {
+                id = Integer.parseInt(temp.get("id").toString());
+                if (id != -1) {
+                    GlobalData.DataStoreHelper.deleteWorthItem(GlobalData.CurrentUser,id);
+                }
+            } catch (Exception ex) {
+                return;
+            }
+        }
     }
 
     private SwipeMenuCreator buildSwipeMenuCreator(final Context context) {
@@ -201,11 +228,11 @@ public class FragmentHome extends Fragment {
 
     private void setData() {
 
-        CalculateBalanceSheetData data = getData();
+        this.mAdapterDate = getData();
 
         SimpleAdapter adapterProperty = new SimpleAdapter(
                 getActivity(),
-                data.listPropertyItems,
+                this.mAdapterDate.listPropertyItems,
                 R.layout.fragment_home_list_item,
                 new String[]{"img", "name", "worth", "description"},
                 new int[]{R.id.fragment_home_list_item_img,
@@ -216,7 +243,7 @@ public class FragmentHome extends Fragment {
 
         SimpleAdapter adapterDebt = new SimpleAdapter(
                 getActivity(),
-                data.listDebtItems,
+                this.mAdapterDate.listDebtItems,
                 R.layout.fragment_home_list_item,
                 new String[]{"img", "name", "worth", "description"},
                 new int[]{R.id.fragment_home_list_item_img,
@@ -225,11 +252,11 @@ public class FragmentHome extends Fragment {
                         R.id.fragment_home_list_item_description});
         this.mListViewDebt.setAdapter(adapterDebt);
 
-        this.mPropertyTV.setText((data.dPropertyAll / 10000.0) + " 万");
-        this.mDebtTV.setText((data.dDebtAll / 10000.0) + " 万");
-        this.mNetAssetsPropertyTV.setText((data.dPropertyAll / 10000.0) + "");
-        this.mNetAssetsDebtTV.setText((data.dDebtAll / 10000.0) + "");
-        this.mNetAssetsTV.setText(((data.dPropertyAll - data.dDebtAll) / 10000.0) + " 万");
+        this.mPropertyTV.setText((this.mAdapterDate.dPropertyAll / 10000.0) + " 万");
+        this.mDebtTV.setText((this.mAdapterDate.dDebtAll / 10000.0) + " 万");
+        this.mNetAssetsPropertyTV.setText((this.mAdapterDate.dPropertyAll / 10000.0) + "");
+        this.mNetAssetsDebtTV.setText((this.mAdapterDate.dDebtAll / 10000.0) + "");
+        this.mNetAssetsTV.setText(((this.mAdapterDate.dPropertyAll - this.mAdapterDate.dDebtAll) / 10000.0) + " 万");
     }
 
     private CalculateBalanceSheetData getData() {
@@ -241,8 +268,11 @@ public class FragmentHome extends Fragment {
         Map<String, Object> map = new HashMap<String, Object>();
         BalanceSheetItem[] infos = GlobalData.DataStoreHelper.getAllBalanceSheetInfos(GlobalData.CurrentUser);
 
-        int[] images = new int[]{R.drawable.home_camera, R.drawable.home_garage_band, R.drawable.home_itunes_radio, R
-                .drawable.home_watch};
+        int[] images = new int[]{
+                R.drawable.home_camera,
+                R.drawable.home_garage_band,
+                R.drawable.home_itunes_radio,
+                R.drawable.home_watch};
 
         if (infos.length > 0) {
             for (int i = 0; i < infos.length; i++) {
@@ -251,6 +281,8 @@ public class FragmentHome extends Fragment {
                 map.put("name",infos[i].name.toString().trim());
                 map.put("worth",Double.toString(infos[i].worth / 100.0));
                 map.put("description", infos[i].description.toString());
+                map.put("id",infos[i].id);
+                map.put("imgpath",infos[i].imagePath);
 
                 if (infos[i].worthType == BalanceSheetItem.WorthType.Property) {
                     result.listPropertyItems.add(map);

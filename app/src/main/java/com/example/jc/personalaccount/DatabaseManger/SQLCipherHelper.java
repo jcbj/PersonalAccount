@@ -225,7 +225,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
      * @param isAdd：是新添加，还是编辑
      * @return： 是否成功
      */
-    public Boolean EditWorthItem(String user, BalanceSheetItem info, Boolean isAdd) {
+    public Boolean editWorthItem(String user, BalanceSheetItem info, Boolean isAdd) {
 
         if ((TextUtils.isEmpty(user)) || (null == info)) {
             return false;
@@ -248,9 +248,17 @@ public class SQLCipherHelper implements IDataStoreHelper {
             return this.insertSQL(tableName,BALANCESHEETTABLECOLUMNNAME[2],values);
         } else {
             return this.updateSQL(tableName, values, BALANCESHEETTABLECOLUMNNAME[0] + "=?", new String[]{String.valueOf
-                    (info
-                    .id)});
+                    (info.id)});
         }
+    }
+
+    public Boolean deleteWorthItem(String user, int id) {
+        if (TextUtils.isEmpty(user)) {
+            return false;
+        }
+
+        String sql = "DELETE FROM " + user + "_" + BALANCESHEETTABLENAME + " WHERE id='" + id + "'";
+        return this.execSQL(sql);
     }
 
     //Database

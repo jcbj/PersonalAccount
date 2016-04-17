@@ -1,6 +1,7 @@
 package com.example.jc.personalaccount.DatabaseManger;
 
 import android.content.Context;
+import android.text.BoringLayout;
 
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
 
@@ -29,5 +30,7 @@ public interface IDataStoreHelper {
     //Home
     BalanceSheetItem[] getAllBalanceSheetInfos(String user);
 
-    Boolean EditWorthItem(String user, BalanceSheetItem info, Boolean isAdd);
+    Boolean editWorthItem(String user, BalanceSheetItem info, Boolean isAdd);
+
+    Boolean deleteWorthItem(String user, int id);
 }

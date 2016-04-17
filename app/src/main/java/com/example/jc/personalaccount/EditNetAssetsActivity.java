@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
 
+import java.util.Map;
+
 public class EditNetAssetsActivity extends AppCompatActivity {
 
     private int editCount = 0;
@@ -30,6 +32,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
 
         Intent intent = this.getIntent();
         type = intent.getIntExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, 0);
+
 
         ArrayAdapter<String> typeSpinnerItems = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,
                 new String[]{getString(R.string.fragment_home_property_title),getString(R.string
@@ -55,7 +58,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                 item.imageThumb = null;
                 item.imagePath = null;
 
-                if (GlobalData.DataStoreHelper.EditWorthItem(GlobalData.CurrentUser,item,true)) {
+                if (GlobalData.DataStoreHelper.editWorthItem(GlobalData.CurrentUser,item,true)) {
                     editCount++;
 
                     Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);
