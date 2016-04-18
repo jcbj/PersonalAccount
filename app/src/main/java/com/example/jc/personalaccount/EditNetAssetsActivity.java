@@ -1,16 +1,23 @@
 package com.example.jc.personalaccount;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.BoringLayout;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -31,6 +38,9 @@ public class EditNetAssetsActivity extends AppCompatActivity {
     private Button mBackBtn;
     private Button mAddPictureBtn;
     private BalanceSheetItem mCurrentInfo;
+    private ImageView mImageView;
+    private int mWindowHeight;
+    private int mWindowWidth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +110,24 @@ public class EditNetAssetsActivity extends AppCompatActivity {
             }
         });
 
+        this.mAddPictureBtn = (Button)findViewById(R.id.fragment_home_edit_add_image_button);
+        this.mAddPictureBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent,0);
+            }
+        });
+
+        this.mImageView = (ImageView)findViewById(R.id.fragment_home_edit_image_view);
+        WindowManager manager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        Point outSize = new Point();
+        manager.getDefaultDisplay().getSize(outSize);
+        this.mWindowHeight = outSize.y;
+        this.mWindowWidth = outSize.x;
+
         //初始化页面
         this.mCurrentInfo = new BalanceSheetItem();
 
@@ -148,5 +176,34 @@ public class EditNetAssetsActivity extends AppCompatActivity {
             mETWorth.setText(Double.toString(this.mCurrentInfo.worth / 100.0));
             mETDescription.setText(this.mCurrentInfo.description);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (null != data) {
+            Uri uri = data.getData();
+            String imagePath = Utility.getPath(this,uri);
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(imagePath,options);
+            int imageWidth = options.outWidth;
+            int imageHeight = options.outHeight;
+
+            int scaleX = imageWidth / this.mWindowWidth;
+            int scaleY = imageHeight / this.mWindowHeight;
+            int scale = 1;
+            if ((scaleX >= scaleY) && (scaleX >= 1)) {
+                scale = scaleX;
+            } else if ((scaleY >= scaleX) && (scaleY >= 1)) {
+                scale = scaleY;
+            }
+            options.inJustDecodeBounds = false;
+            options.inSampleSize = scale;
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath,options);
+            this.mImageView.setImageBitmap(bitmap);
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
