@@ -2,6 +2,7 @@ package com.example.jc.personalaccount;
 
 import android.util.Log;
 
+import com.example.jc.personalaccount.Data.BalanceSheetItem;
 import com.example.jc.personalaccount.DatabaseManger.DataStoreFactory;
 import com.example.jc.personalaccount.DatabaseManger.IDataStoreHelper;
 
@@ -21,7 +22,7 @@ public class GlobalData {
     public static String EXTRA_USERNAME = "UserName";
     //资产负债表弹出编辑页面时传如参数：编辑资产[0]或编辑负债[1]
     public static String EXTRA_HOME_EDIT_TYPE = "HOME_EDIT_TYPE";
-    public static Map<String, Object> Home_Edit_data;
+    public static BalanceSheetItem EXTRA_Home_Edit_BSI_Data;
     public static String EXTRA_HOME_EDIT_DATA = "HOME_EDIT_DATA";
     //从编辑页面返回资产负债表，是否需要刷新，[0]不需要刷新，[1]需要刷新
     public static String EXTRA_EDIT_HOME_ISREFRESH = "EDIT_HOME_ISREFRESH";

@@ -28,6 +28,7 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
+import com.example.jc.personalaccount.Data.HomeEditOperType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +51,7 @@ public class FragmentHome extends Fragment {
     private TextView mNetAssetsPropertyTV;
     private TextView mNetAssetsDebtTV;
     private TextView mNetAssetsTV;
-    private CalculateBalanceSheetData mAdapterDate;
+    private CalculateBalanceSheetData mAdapterData;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,7 +109,7 @@ public class FragmentHome extends Fragment {
             public void onClick(View v) {
 
                 Intent intent = new Intent(getActivity(), EditNetAssetsActivity.class);
-                intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, 0);
+                intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDPROPERTY.value());
                 startActivity(intent);
             }
         });
@@ -119,16 +120,35 @@ public class FragmentHome extends Fragment {
             public void onClick(View v) {
 
                 Intent intent = new Intent(getActivity(), EditNetAssetsActivity.class);
-                intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, 1);
+                intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDDEBT.value());
                 startActivity(intent);
             }
         });
 
         // step 1. create a MenuCreator
         SwipeMenuCreator creator = this.buildSwipeMenuCreator(getActivity());
+        mListViewProperty.setMenuCreator(creator);
         mListViewDebt.setMenuCreator(creator);
 
         // step 2. listener item click event
+        mListViewProperty.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+
+                switch (index) {
+                    case 0:
+                        // open
+                        editClick(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITPROPERTY);
+                        break;
+                    case 1:
+                        // delete
+                        deleteClick(position);
+                        break;
+                }
+                return false;
+            }
+        });
+
         mListViewDebt.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
@@ -136,19 +156,11 @@ public class FragmentHome extends Fragment {
                 switch (index) {
                     case 0:
                         // open
-                        Toast toast = Toast.makeText(getActivity(),"Open click: " + position ,Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER,0,0);
-                        toast.show();
-
-                        editClick(position,2);
+                        editClick(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITDEBT);
                         break;
                     case 1:
                         // delete
-                        Toast toast1 = Toast.makeText(getActivity(),"Delete click: " + position,Toast.LENGTH_SHORT);
-                        toast1.setGravity(Gravity.CENTER,0,0);
-                        toast1.show();
-
-                        deleteClick(position,2);
+                        deleteClick(position);
                         break;
                 }
                 return false;
@@ -161,25 +173,40 @@ public class FragmentHome extends Fragment {
     }
 
     public void refresh() {
+        if (null != mAuthTask) {
+            return;
+        }
+
         mAuthTask = new RefreshTask();
         mAuthTask.execute((Void) null);
     }
 
-    private void editClick(int position, int type) {
-        Intent intent = new Intent(getActivity(),EditNetAssetsActivity.class);
-        intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE,type);
-        getActivity().startActivity(intent);
+    private void editClick(int position, HomeEditOperType type) {
+        int iListItemsLength = (type == HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITDEBT) ? this.mAdapterData.listDebtItems.size() : this.mAdapterData.listPropertyItems.size();
+        if (position < iListItemsLength) {
+            Intent intent = new Intent(getActivity(), EditNetAssetsActivity.class);
+            intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, type.value());
+            if (type == HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITDEBT) {
+                GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listDebtItems.toArray())[position]));
+            } else {
+                GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listPropertyItems.toArray())[position]));
+            }
+
+            getActivity().startActivity(intent);
+        }
     }
 
-    private void deleteClick(int position, int type) {
-        if (position < this.mAdapterDate.listDebtItems.size()) {
+    private void deleteClick(int position) {
+        if (position < this.mAdapterData.listDebtItems.size()) {
 
-            Map<String,Object> temp = (Map<String,Object>)((this.mAdapterDate.listDebtItems.toArray())[position]);
+            Map<String,Object> temp = (Map<String,Object>)((this.mAdapterData.listDebtItems.toArray())[position]);
             int id = -1;
             try {
                 id = Integer.parseInt(temp.get("id").toString());
                 if (id != -1) {
                     GlobalData.DataStoreHelper.deleteWorthItem(GlobalData.CurrentUser,id);
+
+                    this.refresh();
                 }
             } catch (Exception ex) {
                 return;
@@ -199,7 +226,7 @@ public class FragmentHome extends Fragment {
                 // set item width
                 openItem.setWidth(dp2px(90));
                 // set item title
-                openItem.setTitle("Open");
+                openItem.setTitle("Edit");
                 // set item title fontsize
                 openItem.setTitleSize(18);
                 // set item title font color
@@ -210,7 +237,7 @@ public class FragmentHome extends Fragment {
                 // create "delete" item
                 SwipeMenuItem deleteItem = new SwipeMenuItem(context);//getApplicationContext()
                 // set item background
-                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9, 0x3F, 0x25)));
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0x80, 0x80, 0x80)));
                 // set item width
                 deleteItem.setWidth(dp2px(90));
                 // set a icon
@@ -227,14 +254,16 @@ public class FragmentHome extends Fragment {
     }
 
     private void setData() {
-
-        this.mAdapterDate = getData();
+        mAdapterData = getData();
 
         SimpleAdapter adapterProperty = new SimpleAdapter(
                 getActivity(),
-                this.mAdapterDate.listPropertyItems,
+                this.mAdapterData.listPropertyItems,
                 R.layout.fragment_home_list_item,
-                new String[]{"img", "name", "worth", "description"},
+                new String[]{BalanceSheetItem.mDataColumnName[4],
+                        BalanceSheetItem.mDataColumnName[1],
+                        BalanceSheetItem.mDataColumnName[2],
+                        BalanceSheetItem.mDataColumnName[3]},
                 new int[]{R.id.fragment_home_list_item_img,
                         R.id.fragment_home_list_item_name,
                         R.id.fragment_home_list_item_worth,
@@ -243,20 +272,23 @@ public class FragmentHome extends Fragment {
 
         SimpleAdapter adapterDebt = new SimpleAdapter(
                 getActivity(),
-                this.mAdapterDate.listDebtItems,
+                this.mAdapterData.listDebtItems,
                 R.layout.fragment_home_list_item,
-                new String[]{"img", "name", "worth", "description"},
+                new String[]{BalanceSheetItem.mDataColumnName[4],
+                        BalanceSheetItem.mDataColumnName[1],
+                        BalanceSheetItem.mDataColumnName[2],
+                        BalanceSheetItem.mDataColumnName[3]},
                 new int[]{R.id.fragment_home_list_item_img,
                         R.id.fragment_home_list_item_name,
                         R.id.fragment_home_list_item_worth,
                         R.id.fragment_home_list_item_description});
         this.mListViewDebt.setAdapter(adapterDebt);
 
-        this.mPropertyTV.setText((this.mAdapterDate.dPropertyAll / 10000.0) + " 万");
-        this.mDebtTV.setText((this.mAdapterDate.dDebtAll / 10000.0) + " 万");
-        this.mNetAssetsPropertyTV.setText((this.mAdapterDate.dPropertyAll / 10000.0) + "");
-        this.mNetAssetsDebtTV.setText((this.mAdapterDate.dDebtAll / 10000.0) + "");
-        this.mNetAssetsTV.setText(((this.mAdapterDate.dPropertyAll - this.mAdapterDate.dDebtAll) / 10000.0) + " 万");
+        this.mPropertyTV.setText((this.mAdapterData.dPropertyAll / 10000.0) + " 万");
+        this.mDebtTV.setText((this.mAdapterData.dDebtAll / 10000.0) + " 万");
+        this.mNetAssetsPropertyTV.setText((this.mAdapterData.dPropertyAll / 10000.0) + "");
+        this.mNetAssetsDebtTV.setText((this.mAdapterData.dDebtAll / 10000.0) + "");
+        this.mNetAssetsTV.setText(((this.mAdapterData.dPropertyAll - this.mAdapterData.dDebtAll) / 10000.0) + " 万");
     }
 
     private CalculateBalanceSheetData getData() {
@@ -265,30 +297,16 @@ public class FragmentHome extends Fragment {
         result.listDebtItems = new ArrayList<Map<String, Object>>();
         result.dDebtAll = result.dPropertyAll = 0.0;
 
-        Map<String, Object> map = new HashMap<String, Object>();
         BalanceSheetItem[] infos = GlobalData.DataStoreHelper.getAllBalanceSheetInfos(GlobalData.CurrentUser);
-
-        int[] images = new int[]{
-                R.drawable.home_camera,
-                R.drawable.home_garage_band,
-                R.drawable.home_itunes_radio,
-                R.drawable.home_watch};
 
         if (infos.length > 0) {
             for (int i = 0; i < infos.length; i++) {
-                map = new HashMap<String, Object>();
-                map.put("img", images[i % images.length]);
-                map.put("name",infos[i].name.toString().trim());
-                map.put("worth",Double.toString(infos[i].worth / 100.0));
-                map.put("description", infos[i].description.toString());
-                map.put("id",infos[i].id);
-                map.put("imgpath",infos[i].imagePath);
 
                 if (infos[i].worthType == BalanceSheetItem.WorthType.Property) {
-                    result.listPropertyItems.add(map);
+                    result.listPropertyItems.add(infos[i].mapValue());
                     result.dPropertyAll += infos[i].worth;
                 } else {
-                    result.listDebtItems.add(map);
+                    result.listDebtItems.add(infos[i].mapValue());
                     result.dDebtAll += infos[i].worth;
                 }
             }
@@ -315,6 +333,7 @@ public class FragmentHome extends Fragment {
 
             try {
                 //执行异步的代码，后台线程中执行，执行完调用onPostExecute
+                //mAdapterData = getData();
                 setData();
             } catch (Exception e) {
                 return false;
@@ -326,6 +345,8 @@ public class FragmentHome extends Fragment {
         @Override
         protected void onPostExecute(final Boolean success) {
             //UI线程中执行，不能执行耗时操作
+
+            //setData();
 
             if (!success) {
                 Toast toast = Toast.makeText(getActivity(),getString(R.string.common_load_failed),Toast.LENGTH_SHORT);
