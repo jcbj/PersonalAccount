@@ -38,10 +38,12 @@ public class EditNetAssetsActivity extends AppCompatActivity {
     private Button mSaveBtn;
     private Button mBackBtn;
     private Button mAddPictureBtn;
+    private Button mRemovePictureBtn;
     private BalanceSheetItem mCurrentInfo;
     private ImageView mImageView;
     private int mWindowHeight;
     private int mWindowWidth;
+    private boolean mImageIsChanged;
     private String mTempImagePath;
     private Bitmap mTempImageThumb;
 
@@ -80,18 +82,24 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                 mCurrentInfo.name = mETName.getText().toString();
                 mCurrentInfo.worth = (int)(Double.parseDouble(mETWorth.getText().toString()) * 100);
                 mCurrentInfo.description = mETDescription.getText().toString();
-                mCurrentInfo.imagePath = null;
-                mCurrentInfo.imageThumb = null;
 
                 String tempPath = mCurrentInfo.imagePath;
 
-                //保存图片，生成缩略图
-                String curAppPath = GlobalData.ImagePath + "/" + Long.toString(System.currentTimeMillis());
-                if (Utility.copyFile(mTempImagePath,curAppPath)) {
-                    mCurrentInfo.imagePath = curAppPath;
-                }
+                if (mImageIsChanged) {
 
-                mCurrentInfo.imageThumb = mTempImageThumb;
+                    mCurrentInfo.imagePath = null;
+                    mCurrentInfo.imageThumb = null;
+
+                    if ((null != mTempImagePath) && (!TextUtils.isEmpty(mTempImagePath))) {
+                        //复制图片，保存缩略图
+                        String curAppPath = GlobalData.ImagePath + "/" + Long.toString(System.currentTimeMillis());
+                        if (Utility.copyFile(mTempImagePath,curAppPath)) {
+                            mCurrentInfo.imagePath = curAppPath;
+                        }
+                    }
+
+                    mCurrentInfo.imageThumb = mTempImageThumb;
+                }
 
                 if (GlobalData.DataStoreHelper.editWorthItem(GlobalData.CurrentUser,mCurrentInfo,(-1 == mCurrentInfo.id))) {
                     mEditCount++;
@@ -104,10 +112,15 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                     mETWorth.setText("");
                     mETDescription.setText("");
                     mImageView.setImageBitmap(null);
+                    mRemovePictureBtn.setEnabled(false);
 
-                    //如果是编辑，则需要删除当前本地文件
-                    if (!TextUtils.isEmpty(tempPath)) {
-                        Utility.deleteFile(tempPath);
+                    if (-1 != mCurrentInfo.id) {
+                        if (mImageIsChanged) {
+                            //如果是编辑，则需要删除当前本地文件
+                            if ((null != tempPath) && (!TextUtils.isEmpty(tempPath))) {
+                                Utility.deleteFile(tempPath);
+                            }
+                        }
                     }
                 } else {
                     new AlertDialog.Builder(getApplicationContext()).setTitle(getString(R.string.common_str_information))
@@ -140,6 +153,19 @@ public class EditNetAssetsActivity extends AppCompatActivity {
             }
         });
 
+        this.mRemovePictureBtn = (Button)findViewById(R.id.fragment_home_edit_remove_image_button);
+        this.mRemovePictureBtn.setEnabled(false);
+        this.mRemovePictureBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mImageIsChanged = true;
+                mTempImagePath = null;
+                mTempImageThumb = null;
+                mImageView.setImageBitmap(null);
+                mRemovePictureBtn.setEnabled(false);
+            }
+        });
+
         this.mImageView = (ImageView)findViewById(R.id.fragment_home_edit_image_view);
         WindowManager manager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         Point outSize = new Point();
@@ -149,6 +175,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
 
         //初始化页面
         this.mCurrentInfo = new BalanceSheetItem();
+        this.mImageIsChanged = false;
 
         Intent intent = this.getIntent();
         this.mOperType = HomeEditOperType.valueOf(intent.getIntExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, 0));
@@ -201,9 +228,11 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                 Bitmap bitmap = Utility.extractMiniThumb(this.mCurrentInfo.imagePath,this.mWindowWidth,this.mWindowHeight,true);
                 if (null != bitmap) {
                     this.mImageView.setImageBitmap(bitmap);
+                    mRemovePictureBtn.setEnabled(true);
                 }
             } else if (null != this.mCurrentInfo.imageThumb) {
                 this.mImageView.setImageBitmap(this.mCurrentInfo.imageThumb);
+                mRemovePictureBtn.setEnabled(true);
             }
         }
     }
@@ -211,6 +240,9 @@ public class EditNetAssetsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (null != data) {
+            mImageIsChanged = true;
+            mRemovePictureBtn.setEnabled(true);
+
             Uri uri = data.getData();
             mTempImagePath = Utility.getPath(this,uri);
 
