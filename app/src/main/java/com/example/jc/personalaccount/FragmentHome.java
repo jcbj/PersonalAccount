@@ -54,11 +54,8 @@ public class FragmentHome extends Fragment {
     private Button mAddDebtBtn;
     private TextView mPropertyTV;
     private TextView mDebtTV;
-    private TextView mNetAssetsPropertyTV;
-    private TextView mNetAssetsDebtTV;
     private TextView mNetAssetsTV;
     private CalculateBalanceSheetData mAdapterData;
-    private LinearLayout mNetAssetsLinear;
 
     @Override
     public void onAttach(Context context) {
@@ -112,11 +109,7 @@ public class FragmentHome extends Fragment {
 
         mPropertyTV = (TextView)view.findViewById(R.id.fragment_home_property_value_text);
         mDebtTV = (TextView)view.findViewById(R.id.fragment_home_debt_value_text);
-        mNetAssetsPropertyTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_property_tv);
-        mNetAssetsDebtTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_debt_tv);
         mNetAssetsTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_tv);
-        mNetAssetsLinear = (LinearLayout)view.findViewById(R.id.fragment_home_net_assets_linear);
-        mNetAssetsLinear.setVisibility(View.INVISIBLE);
 
         mAddPropertyBtn = (Button) view.findViewById(R.id.fragment_home_property_add_button);
         mAddPropertyBtn.setOnClickListener(new View.OnClickListener() {
@@ -335,10 +328,7 @@ public class FragmentHome extends Fragment {
 
         this.mPropertyTV.setText((this.mAdapterData.dPropertyAll / 10000.0) + " 万");
         this.mDebtTV.setText((this.mAdapterData.dDebtAll / 10000.0) + " 万");
-        this.mNetAssetsPropertyTV.setText((this.mAdapterData.dPropertyAll / 10000.0) + "");
-        this.mNetAssetsDebtTV.setText((this.mAdapterData.dDebtAll / 10000.0) + "");
         this.mNetAssetsTV.setText(((this.mAdapterData.dPropertyAll - this.mAdapterData.dDebtAll) / 10000.0) + " 万");
-        this.mNetAssetsLinear.setVisibility(View.VISIBLE);
     }
 
     private CalculateBalanceSheetData getData() {

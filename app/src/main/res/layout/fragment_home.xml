@@ -27,7 +27,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/skyblue">
+                android:background="@color/lightgray192">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -69,7 +69,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/skyblue">
+                android:background="@color/lightgray192">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -127,59 +127,15 @@
             android:layout_gravity="center_vertical"
             />
 
-        <LinearLayout
-            android:id="@+id/fragment_home_net_assets_linear"
-            android:visibility="invisible"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/fragment_home_net_assets_tv"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="right"
-            android:layout_gravity="center_vertical"
             android:layout_marginRight="10dp"
-            >
-
-            <TextView
-                android:id="@+id/fragment_home_net_assets_property_tv"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"/>
-
-            <TextView
-                android:text=" - "
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"/>
-
-            <TextView
-                android:id="@+id/fragment_home_net_assets_debt_tv"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"/>
-
-            <TextView
-                android:text=" = "
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"/>
-
-            <TextView
-                android:id="@+id/fragment_home_net_assets_tv"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"/>
-
-        </LinearLayout>
+            android:layout_gravity="center_vertical"/>
 
     </LinearLayout>
 </LinearLayout>

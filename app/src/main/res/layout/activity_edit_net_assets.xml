@@ -39,7 +39,8 @@
             <EditText
                 android:id="@+id/fragment_home_edit_name_text"
 
-                />
+                android:singleLine="true"
+                android:maxLength="20"/>
 
         </TableRow>
 
@@ -57,7 +58,8 @@
                 android:inputType="numberDecimal"
                 android:ems="10"
                 android:id="@+id/fragment_home_edit_worth_text"
-                android:layout_column="1"/>
+                android:layout_column="1"
+                android:singleLine="true"/>
         </TableRow>
 
         <TableRow>
