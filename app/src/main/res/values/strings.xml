@@ -4,6 +4,7 @@
     <string name="activity_title_regist">注册</string>
     <string name="activity_title_home_edit">编辑</string>
     <string name="activity_title_home_edit_add">添加</string>
+    <string name="activity_title_home_edit_view">查看</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">邮箱</string>

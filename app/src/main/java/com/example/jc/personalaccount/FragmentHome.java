@@ -71,26 +71,17 @@ public class FragmentHome extends Fragment {
         mListViewProperty = (SwipeMenuListView) view.findViewById(R.id.fragment_home_listview_property);
         mListViewDebt = (SwipeMenuListView) view.findViewById(R.id.fragment_home_listview_debt);
 
-        mListViewDebt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast toast = Toast.makeText(mActivity,"点击 " + position,Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
-                toast.show();
-            }
-        });
-
-        mListViewDebt.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Toast toast = Toast.makeText(mActivity,"长按 " + position,Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
-                toast.show();
-
-                return false;
-            }
-        });
+//        mListViewDebt.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                Toast toast = Toast.makeText(mActivity,"长按 " + position,Toast.LENGTH_SHORT);
+//                toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
+//                toast.show();
+//
+//                return false;
+//            }
+//        });
 
         mListViewDebt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -179,6 +170,20 @@ public class FragmentHome extends Fragment {
             }
         });
 
+        mListViewProperty.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                editClick(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWPROPERTY);
+            }
+        });
+
+        mListViewDebt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                editClick(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWDEBT);
+            }
+        });
+
         refresh();
 
         return view;
@@ -194,14 +199,16 @@ public class FragmentHome extends Fragment {
     }
 
     private void editClick(int position, HomeEditOperType type) {
-        int iListItemsLength = (type == HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITDEBT) ? this.mAdapterData.listDebtItems.size() : this.mAdapterData.listPropertyItems.size();
+        boolean bIsProperty = ((type == HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITPROPERTY) || (type ==
+                HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWPROPERTY));
+        int iListItemsLength = (bIsProperty) ? this.mAdapterData.listPropertyItems.size() : this.mAdapterData.listDebtItems.size();
         if (position < iListItemsLength) {
             Intent intent = new Intent(mActivity, EditNetAssetsActivity.class);
             intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, type.value());
-            if (type == HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITDEBT) {
-                GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listDebtItems.toArray())[position]));
-            } else {
+            if (bIsProperty) {
                 GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listPropertyItems.toArray())[position]));
+            } else {
+                GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listDebtItems.toArray())[position]));
             }
 
             mActivity.startActivity(intent);

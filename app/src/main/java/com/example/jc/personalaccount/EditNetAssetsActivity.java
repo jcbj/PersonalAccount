@@ -182,30 +182,54 @@ public class EditNetAssetsActivity extends AppCompatActivity {
 
         int iTypeSpinnerSelectIndex = 0;
         boolean isEdit = false;
+        boolean isView = false;
 
         switch (this.mOperType) {
             case HOME_EDIT_OPER_TYPE_ADDPROPERTY: {
+                this.setTitle(R.string.activity_title_home_edit_add);
                 iTypeSpinnerSelectIndex = 0;
 
                 break;
             }
             case HOME_EDIT_OPER_TYPE_ADDDEBT: {
+                this.setTitle(R.string.activity_title_home_edit_add);
                 iTypeSpinnerSelectIndex = 1;
 
                 break;
             }
             case HOME_EDIT_OPER_TYPE_EDITPROPERTY: {
+                this.setTitle(R.string.activity_title_home_edit);
                 iTypeSpinnerSelectIndex = 0;
                 isEdit = true;
 
                 break;
             }
             case HOME_EDIT_OPER_TYPE_EDITDEBT: {
+                this.setTitle(R.string.activity_title_home_edit);
                 iTypeSpinnerSelectIndex = 1;
                 isEdit = true;
 
                 break;
             }
+            case HOME_EDIT_OPER_TYPE_VIEWPROPERTY:{
+                this.setTitle(R.string.activity_title_home_edit_view);
+                iTypeSpinnerSelectIndex = 0;
+                isView = true;
+
+                this.setUIViewStatus();
+
+                break;
+            }
+            case HOME_EDIT_OPER_TYPE_VIEWDEBT:{
+                this.setTitle(R.string.activity_title_home_edit_view);
+                iTypeSpinnerSelectIndex = 1;
+                isView = true;
+
+                this.setUIViewStatus();
+
+                break;
+            }
+
             default:{
 
                 break;
@@ -215,9 +239,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
         //直接设置选中项，并立即生效
         this.mTypeSpinner.setSelection(iTypeSpinnerSelectIndex,true);
 
-        this.setTitle(isEdit ? R.string.activity_title_home_edit : R.string.activity_title_home_edit_add);
-
-        if (isEdit) {
+        if (isEdit || isView) {
             this.mCurrentInfo = GlobalData.EXTRA_Home_Edit_BSI_Data;
 
             mETName.setText(this.mCurrentInfo.name);
@@ -228,13 +250,27 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                 Bitmap bitmap = Utility.extractMiniThumb(this.mCurrentInfo.imagePath,this.mWindowWidth,this.mWindowHeight,true);
                 if (null != bitmap) {
                     this.mImageView.setImageBitmap(bitmap);
-                    mRemovePictureBtn.setEnabled(true);
+                    if (isEdit) {
+                        mRemovePictureBtn.setEnabled(true);
+                    }
                 }
             } else if (null != this.mCurrentInfo.imageThumb) {
                 this.mImageView.setImageBitmap(this.mCurrentInfo.imageThumb);
-                mRemovePictureBtn.setEnabled(true);
+                if (isEdit) {
+                    mRemovePictureBtn.setEnabled(true);
+                }
             }
         }
+    }
+
+    private void setUIViewStatus() {
+        this.mTypeSpinner.setEnabled(false);
+        this.mETName.setEnabled(false);
+        this.mETWorth.setEnabled(false);
+        this.mETDescription.setEnabled(false);
+        this.mRemovePictureBtn.setEnabled(false);
+        this.mAddPictureBtn.setEnabled(false);
+        this.mSaveBtn.setEnabled(false);
     }
 
     @Override

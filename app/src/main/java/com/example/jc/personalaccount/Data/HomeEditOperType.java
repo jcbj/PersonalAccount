@@ -7,7 +7,9 @@ public enum HomeEditOperType {
     HOME_EDIT_OPER_TYPE_ADDPROPERTY(0),
     HOME_EDIT_OPER_TYPE_ADDDEBT(1),
     HOME_EDIT_OPER_TYPE_EDITPROPERTY(2),
-    HOME_EDIT_OPER_TYPE_EDITDEBT(3);
+    HOME_EDIT_OPER_TYPE_EDITDEBT(3),
+    HOME_EDIT_OPER_TYPE_VIEWPROPERTY(4),
+    HOME_EDIT_OPER_TYPE_VIEWDEBT(5);
 
     private final int mValue;
     //必须private,否则编译错误
@@ -26,6 +28,10 @@ public enum HomeEditOperType {
                 return HOME_EDIT_OPER_TYPE_EDITPROPERTY;
             case 3:
                 return HOME_EDIT_OPER_TYPE_EDITDEBT;
+            case 4:
+                return HOME_EDIT_OPER_TYPE_VIEWPROPERTY;
+            case 5:
+                return HOME_EDIT_OPER_TYPE_VIEWDEBT;
             default:
                 return HOME_EDIT_OPER_TYPE_ADDPROPERTY;
         }
