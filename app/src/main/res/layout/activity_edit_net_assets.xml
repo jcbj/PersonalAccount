@@ -1,122 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:stretchColumns="1"
-    tools:context="com.example.jc.personalaccount.EditNetAssetsActivity">
+    >
 
-    <TableRow>
-        <TextView
-            android:text="@string/fragment_home_edit_type"
-            android:layout_margin="10dp"
-            android:textSize="20sp"
-            />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1"
+        tools:context="com.example.jc.personalaccount.EditNetAssetsActivity">
 
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/fragment_home_edit_type_spinner"
-            android:layout_column="1"
-            android:layout_gravity="center_vertical"
-            android:spinnerMode="dropdown"/>
+        <TableRow>
+            <TextView
+                android:text="@string/fragment_home_edit_type"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
 
-    </TableRow>
-
-    <TableRow>
-        <TextView
-            android:text="@string/fragment_home_edit_name"
-            android:layout_margin="10dp"
-            android:textSize="20sp"
-            />
-
-        <EditText
-            android:id="@+id/fragment_home_edit_name_text"
-
-            />
-
-    </TableRow>
-
-
-    <TableRow>
-        <TextView
-            android:text="@string/fragment_home_edit_worth"
-            android:layout_margin="10dp"
-            android:textSize="20sp"
-            />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:ems="10"
-            android:id="@+id/fragment_home_edit_worth_text"
-            android:layout_column="1"/>
-    </TableRow>
-
-    <TableRow>
-        <TextView
-            android:text="@string/fragment_home_edit_description"
-            android:layout_margin="10dp"
-            android:textSize="20sp"
-            />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:ems="10"
-            android:id="@+id/fragment_home_edit_description_text"
-            android:layout_column="1"/>
-    </TableRow>
-
-    <TableRow>
-        <Button
-            android:id="@+id/fragment_home_edit_add_image_button"
-            android:text="@string/fragment_home_edit_add_image"
-            android:textSize="20sp"
-            android:layout_span="2"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"
-
-            />
-    </TableRow>
-
-    <TableRow>
-
-        <ImageView
-           android:id="@+id/fragment_home_edit_image_view"
-           android:layout_span="2"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-            />
-
-    </TableRow>
-
-    <TableRow>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_span="2"
-            >
-
-            <Button
-                android:id="@+id/fragment_home_edit_back_button"
-                android:text="@string/common_btn_back"
+            <Spinner
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"/>
+                android:id="@+id/fragment_home_edit_type_spinner"
+                android:layout_column="1"
+                android:layout_gravity="center_vertical"
+                android:spinnerMode="dropdown"/>
 
-            <Button
-                android:id="@+id/fragment_home_edit_save_button"
-                android:text="@string/common_btn_save"
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="@string/fragment_home_edit_name"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
+
+            <EditText
+                android:id="@+id/fragment_home_edit_name_text"
+
+                />
+
+        </TableRow>
+
+
+        <TableRow>
+            <TextView
+                android:text="@string/fragment_home_edit_worth"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
+
+            <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="2"/>
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:id="@+id/fragment_home_edit_worth_text"
+                android:layout_column="1"/>
+        </TableRow>
 
-        </LinearLayout>
-    </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/fragment_home_edit_description"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
 
-</TableLayout>
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/fragment_home_edit_description_text"
+                android:layout_column="1"/>
+        </TableRow>
+
+        <TableRow>
+            <Button
+                android:id="@+id/fragment_home_edit_add_image_button"
+                android:text="@string/fragment_home_edit_add_image"
+                android:textSize="20sp"
+                android:layout_span="2"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+
+                />
+        </TableRow>
+
+        <TableRow>
+
+            <ImageView
+                android:id="@+id/fragment_home_edit_image_view"
+                android:layout_span="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+        </TableRow>
+
+        <TableRow>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_span="2"
+                >
+
+                <Button
+                    android:id="@+id/fragment_home_edit_back_button"
+                    android:text="@string/common_btn_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/fragment_home_edit_save_button"
+                    android:text="@string/common_btn_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="2"/>
+
+            </LinearLayout>
+        </TableRow>
+
+    </TableLayout>
+</ScrollView>

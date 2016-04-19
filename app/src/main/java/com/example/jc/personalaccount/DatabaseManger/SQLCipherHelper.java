@@ -192,26 +192,32 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
         Cursor cursor = this.querySQL(sql,null);
         if (null != cursor) {
-            cursor.moveToFirst();
-            BalanceSheetItem infos;
-            while (!cursor.isAfterLast()) {
-                infos = new BalanceSheetItem();
-                infos.id = cursor.getInt(0);
-                infos.worthType = ((0 == cursor.getInt(1)) ? BalanceSheetItem.WorthType.Property : BalanceSheetItem.WorthType.Debt);
-                infos.name = cursor.getString(2);
-                infos.worth = cursor.getInt(3);
-                infos.imagePath = cursor.getString(4);
-                byte[] imageByte = cursor.getBlob(5);
-                if (null != imageByte) {
-                    infos.imageThumb = BitmapFactory.decodeByteArray(imageByte,0,imageByte.length);
-                } else {
-                    infos.imageThumb = null;
+            try {
+                cursor.moveToFirst();
+                BalanceSheetItem infos;
+                while (!cursor.isAfterLast()) {
+                    infos = new BalanceSheetItem();
+                    infos.id = cursor.getInt(0);
+                    infos.worthType = ((0 == cursor.getInt(1)) ? BalanceSheetItem.WorthType.Property : BalanceSheetItem.WorthType.Debt);
+                    infos.name = cursor.getString(2);
+                    infos.worth = cursor.getInt(3);
+                    infos.imagePath = cursor.getString(4);
+                    byte[] imageByte = cursor.getBlob(5);
+                    if (null != imageByte) {
+                        infos.imageThumb = BitmapFactory.decodeByteArray(imageByte,0,imageByte.length);
+                    } else {
+                        infos.imageThumb = null;
+                    }
+                    infos.description = cursor.getString(6);
+
+                    list.add(infos);
+
+                    cursor.moveToNext();
                 }
-                infos.description = cursor.getString(6);
-
-                list.add(infos);
-
-                cursor.moveToNext();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                cursor.close();
             }
         }
 

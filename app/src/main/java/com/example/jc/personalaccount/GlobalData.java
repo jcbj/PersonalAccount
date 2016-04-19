@@ -36,6 +36,7 @@ public class GlobalData {
     //当前登录用户名
     public static String CurrentUser = "Admin";
     public static Boolean IsInitDatabase = false;
+    public static String ImagePath;
 
     //Log
     public static enum LogType {

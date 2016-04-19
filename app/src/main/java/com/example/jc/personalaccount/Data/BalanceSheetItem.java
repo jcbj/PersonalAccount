@@ -40,6 +40,7 @@ public class BalanceSheetItem {
         map.put(mDataColumnName[5],this.imagePath);
         map.put(mDataColumnName[6],this.worthType);
 
+
         return map;
     }
 

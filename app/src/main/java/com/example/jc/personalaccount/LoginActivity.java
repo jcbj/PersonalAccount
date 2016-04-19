@@ -69,6 +69,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        this.setTitle(R.string.activity_title_login);
+
         // Set up the login form.
         Button mRegisterButton = (Button) findViewById(R.id.login_regist_button);
         mRegisterButton.setOnClickListener(new OnClickListener() {

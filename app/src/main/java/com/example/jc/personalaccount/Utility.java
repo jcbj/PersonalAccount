@@ -1,18 +1,30 @@
 package com.example.jc.personalaccount;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.ParcelUuid;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.test.suitebuilder.TestMethod;
+import android.text.TextUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by jc on 16/4/12.
@@ -120,6 +132,57 @@ public class Utility {
         return b2;
     }
 
+    public static Bitmap extractMiniThumb(String path, int width, int height, boolean isScale) {
+
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+
+            if (isScale) {
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(path,options);
+                int imageWidth = options.outWidth;
+                int imageHeight = options.outHeight;
+
+                int scaleX = imageWidth / width;
+                int scaleY = imageHeight / height;
+                int scale = 1;
+                if ((scaleX >= scaleY) && (scaleX >= 1)) {
+                    scale = scaleX;
+                } else if ((scaleY >= scaleX) && (scaleY >= 1)) {
+                    scale = scaleY;
+                }
+                options.inJustDecodeBounds = false;
+                options.inSampleSize = scale;
+            } else {
+                options.inJustDecodeBounds = false;
+                options.outWidth = width;
+                options.outHeight = height;
+            }
+
+            return BitmapFactory.decodeFile(path,options);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
+    //**********************
+
+    //从图库获取图片选中信息转为Bitmap
+    public Bitmap getInsertedImage(Context context, Uri uri) {
+        ContentResolver cr = context.getContentResolver();
+        InputStream imgIS = null;
+        try {
+            imgIS = cr.openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return BitmapFactory.decodeStream(imgIS);
+    }
+
+    //从图库获取图片选中信息转换为图片真实路径
     public static String getPath(final Context context, final Uri uri) {
 
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
@@ -197,7 +260,7 @@ public class Utility {
      * @param selectionArgs (Optional) Selection arguments used in the query.
      * @return The value of the _data column, which is typically a file path.
      */
-    public static String getDataColumn(Context context, Uri uri, String selection,
+    private static String getDataColumn(Context context, Uri uri, String selection,
                                        String[] selectionArgs) {
 
         Cursor cursor = null;
@@ -220,12 +283,11 @@ public class Utility {
         return null;
     }
 
-
     /**
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
      */
-    public static boolean isExternalStorageDocument(Uri uri) {
+    private static boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 
@@ -233,7 +295,7 @@ public class Utility {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is DownloadsProvider.
      */
-    public static boolean isDownloadsDocument(Uri uri) {
+    private static boolean isDownloadsDocument(Uri uri) {
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 
@@ -241,7 +303,7 @@ public class Utility {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is MediaProvider.
      */
-    public static boolean isMediaDocument(Uri uri) {
+    private static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
@@ -249,26 +311,99 @@ public class Utility {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is Google Photos.
      */
-    public static boolean isGooglePhotosUri(Uri uri) {
+    private static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-    public static String selectImage(Context context,Intent data){
-        Uri selectedImage = data.getData();
-        //      Log.e(TAG, selectedImage.toString());
-        if(selectedImage!=null){
-            String uriStr=selectedImage.toString();
-            String path=uriStr.substring(10,uriStr.length());
-            if(path.startsWith("com.sec.android.gallery3d")){
-                return null;
+    //**********************
+
+    //保存图片到指定路径
+    public static boolean saveBitmapToFile(String path, Bitmap bitmap) {
+
+        if (TextUtils.isEmpty(path)) {
+            return false;
+        }
+
+        try {
+            File file = new File(path);
+            if (file.exists()) {
+                file.delete();
+            }
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.flush();
+            out.close();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     *
+     * @param oldPath String 原文件路径
+     * @param newPath String 复制后路径
+     * @return boolean
+     */
+    public static boolean copyFile(String oldPath, String newPath) {
+        try {
+            int bytesum = 0;
+            int byteread = 0;
+            File oldfile = new File(oldPath);
+            if (oldfile.exists()) { //文件存在时
+                InputStream inStream = new FileInputStream(oldPath); //读入原文件
+
+                FileOutputStream fs = new FileOutputStream(newPath);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ( (byteread = inStream.read(buffer)) != -1) {
+                    bytesum += byteread; //字节数 文件大小
+                    System.out.println(bytesum);
+                    fs.write(buffer, 0, byteread);
+                }
+                inStream.close();
+
+                return true;
             }
         }
-        String[] filePathColumn = { MediaStore.Images.Media.DATA };
-        Cursor cursor = context.getContentResolver().query(selectedImage,filePathColumn, null, null, null);
-        cursor.moveToFirst();
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String picturePath = cursor.getString(columnIndex);
-        cursor.close();
-        return picturePath;
+        catch (Exception e) {
+            System.out.println("复制单个文件操作出错");
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
+     * 删除文件，如果是文件夹，遍历删除所有文件
+     *
+     */
+    public static void deleteFile(String path) {
+        if (TextUtils.isEmpty(path)) {
+            return;
+        }
+
+        deleteFile(new File(path));
+    }
+
+    public static void deleteFile(File file) {
+        if (file.exists()) { // 判断文件是否存在
+            if (file.isFile()) { // 判断是否是文件
+                file.delete(); // delete()方法 你应该知道 是删除的意思;
+            } else if (file.isDirectory()) { // 否则如果它是一个目录
+                File files[] = file.listFiles(); // 声明目录下所有的文件 files[];
+                for (int i = 0; i < files.length; i++) { // 遍历目录下所有的文件
+                    deleteFile(files[i]); // 把每个文件 用这个方法进行迭代
+                }
+            }
+            file.delete();
+        }
     }
 }

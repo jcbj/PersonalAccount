@@ -8,29 +8,54 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.Window;
+
+import java.io.File;
 
 public class MainActivity extends FragmentActivity {
 
+    private static String CURFRAGMENTINDEX = "CURFRAGMENTINDEX";
     public static Fragment[] mFragments;
+    private static int mCurFragmentIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //隐藏标题栏
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-        setFragmentIndicator(0);
-
-        Intent intent = getIntent();
-        String tagName = intent.getStringExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME);
-        if (TextUtils.isEmpty(tagName)) {
-            return;
-        }
-        if (tagName.equals(GlobalData.STRING_ACTIVITY_EDIT_NETASSETS)) {
-            int isRefresh = intent.getIntExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,0);
-            if (0 != isRefresh) {
-                ((FragmentHome)mFragments[0]).refresh();
+        if (null == savedInstanceState) {
+            GlobalData.ImagePath = getApplicationContext().getFilesDir().getAbsolutePath() + "/ImageData/" + GlobalData.CurrentUser;
+            File file = new File(GlobalData.ImagePath);
+            if (!file.exists()) {
+                file.mkdirs();
             }
+
+            mCurFragmentIndex = 0;
+            setFragmentIndicator(mCurFragmentIndex);
+        } else {
+            mCurFragmentIndex = savedInstanceState.getInt(CURFRAGMENTINDEX);
+            showWhichFragment(mCurFragmentIndex);
+
+//            Intent intent = getIntent();
+//            String tagName = intent.getStringExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME);
+//            if (TextUtils.isEmpty(tagName)) {
+//                return;
+//            }
+//            if (tagName.equals(GlobalData.STRING_ACTIVITY_EDIT_NETASSETS)) {
+//                int isRefresh = intent.getIntExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,0);
+//                if (0 != isRefresh) {
+//                    ((FragmentHome)mFragments[0]).refresh();
+//                }
+//            }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(CURFRAGMENTINDEX,mCurFragmentIndex);
+        super.onSaveInstanceState(outState);
     }
 
     private void setFragmentIndicator(int whichIsDefault) {
@@ -64,5 +89,7 @@ public class MainActivity extends FragmentActivity {
             fragmentManager.beginTransaction().hide(mFragments[i]).commit();
         }
         fragmentManager.beginTransaction().show(mFragments[which]).commit();
+
+        mCurFragmentIndex = which;
     }
 }

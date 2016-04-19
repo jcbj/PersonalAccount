@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
 import com.example.jc.personalaccount.Data.HomeEditOperType;
 
+import java.io.File;
 import java.util.Map;
 
 public class EditNetAssetsActivity extends AppCompatActivity {
@@ -41,6 +42,8 @@ public class EditNetAssetsActivity extends AppCompatActivity {
     private ImageView mImageView;
     private int mWindowHeight;
     private int mWindowWidth;
+    private String mTempImagePath;
+    private Bitmap mTempImageThumb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +80,18 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                 mCurrentInfo.name = mETName.getText().toString();
                 mCurrentInfo.worth = (int)(Double.parseDouble(mETWorth.getText().toString()) * 100);
                 mCurrentInfo.description = mETDescription.getText().toString();
-                mCurrentInfo.imageThumb = null;
                 mCurrentInfo.imagePath = null;
+                mCurrentInfo.imageThumb = null;
+
+                String tempPath = mCurrentInfo.imagePath;
+
+                //保存图片，生成缩略图
+                String curAppPath = GlobalData.ImagePath + "/" + Long.toString(System.currentTimeMillis());
+                if (Utility.copyFile(mTempImagePath,curAppPath)) {
+                    mCurrentInfo.imagePath = curAppPath;
+                }
+
+                mCurrentInfo.imageThumb = mTempImageThumb;
 
                 if (GlobalData.DataStoreHelper.editWorthItem(GlobalData.CurrentUser,mCurrentInfo,(-1 == mCurrentInfo.id))) {
                     mEditCount++;
@@ -90,6 +103,12 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                     mETName.setText("");
                     mETWorth.setText("");
                     mETDescription.setText("");
+                    mImageView.setImageBitmap(null);
+
+                    //如果是编辑，则需要删除当前本地文件
+                    if (!TextUtils.isEmpty(tempPath)) {
+                        Utility.deleteFile(tempPath);
+                    }
                 } else {
                     new AlertDialog.Builder(getApplicationContext()).setTitle(getString(R.string.common_str_information))
                             .setMessage(getString(R.string.common_save_failed))
@@ -169,12 +188,23 @@ public class EditNetAssetsActivity extends AppCompatActivity {
         //直接设置选中项，并立即生效
         this.mTypeSpinner.setSelection(iTypeSpinnerSelectIndex,true);
 
+        this.setTitle(isEdit ? R.string.activity_title_home_edit : R.string.activity_title_home_edit_add);
+
         if (isEdit) {
             this.mCurrentInfo = GlobalData.EXTRA_Home_Edit_BSI_Data;
 
             mETName.setText(this.mCurrentInfo.name);
             mETWorth.setText(Double.toString(this.mCurrentInfo.worth / 100.0));
             mETDescription.setText(this.mCurrentInfo.description);
+
+            if ((!TextUtils.isEmpty(this.mCurrentInfo.imagePath)) && ((new File(this.mCurrentInfo.imagePath)).exists())) {
+                Bitmap bitmap = Utility.extractMiniThumb(this.mCurrentInfo.imagePath,this.mWindowWidth,this.mWindowHeight,true);
+                if (null != bitmap) {
+                    this.mImageView.setImageBitmap(bitmap);
+                }
+            } else if (null != this.mCurrentInfo.imageThumb) {
+                this.mImageView.setImageBitmap(this.mCurrentInfo.imageThumb);
+            }
         }
     }
 
@@ -182,26 +212,13 @@ public class EditNetAssetsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (null != data) {
             Uri uri = data.getData();
-            String imagePath = Utility.getPath(this,uri);
+            mTempImagePath = Utility.getPath(this,uri);
 
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(imagePath,options);
-            int imageWidth = options.outWidth;
-            int imageHeight = options.outHeight;
-
-            int scaleX = imageWidth / this.mWindowWidth;
-            int scaleY = imageHeight / this.mWindowHeight;
-            int scale = 1;
-            if ((scaleX >= scaleY) && (scaleX >= 1)) {
-                scale = scaleX;
-            } else if ((scaleY >= scaleX) && (scaleY >= 1)) {
-                scale = scaleY;
+            Bitmap bitmap = Utility.extractMiniThumb(mTempImagePath,this.mWindowWidth,this.mWindowHeight,true);
+            if (null != bitmap) {
+                mTempImageThumb = Utility.extractMiniThumb(bitmap,40,40,false);
+                this.mImageView.setImageBitmap(bitmap);
             }
-            options.inJustDecodeBounds = false;
-            options.inSampleSize = scale;
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath,options);
-            this.mImageView.setImageBitmap(bitmap);
         }
 
         super.onActivityResult(requestCode, resultCode, data);

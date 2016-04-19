@@ -1,8 +1,10 @@
 package com.example.jc.personalaccount;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -17,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -30,6 +34,7 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
 import com.example.jc.personalaccount.Data.HomeEditOperType;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,6 +46,7 @@ import java.util.Random;
 
 public class FragmentHome extends Fragment {
 
+    protected Activity mActivity;
     private RefreshTask mAuthTask;
     private SwipeMenuListView mListViewProperty;
     private SwipeMenuListView mListViewDebt;
@@ -52,6 +58,13 @@ public class FragmentHome extends Fragment {
     private TextView mNetAssetsDebtTV;
     private TextView mNetAssetsTV;
     private CalculateBalanceSheetData mAdapterData;
+    private LinearLayout mNetAssetsLinear;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.mActivity = (Activity)context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,7 +77,7 @@ public class FragmentHome extends Fragment {
         mListViewDebt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast toast = Toast.makeText(getActivity(),"点击 " + position,Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(mActivity,"点击 " + position,Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
                 toast.show();
             }
@@ -74,7 +87,7 @@ public class FragmentHome extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Toast toast = Toast.makeText(getActivity(),"长按 " + position,Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(mActivity,"长按 " + position,Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
                 toast.show();
 
@@ -86,7 +99,7 @@ public class FragmentHome extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                Toast toast = Toast.makeText(getActivity(),"选中 " + position,Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(mActivity,"选中 " + position,Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
                 toast.show();
             }
@@ -102,13 +115,15 @@ public class FragmentHome extends Fragment {
         mNetAssetsPropertyTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_property_tv);
         mNetAssetsDebtTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_debt_tv);
         mNetAssetsTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_tv);
+        mNetAssetsLinear = (LinearLayout)view.findViewById(R.id.fragment_home_net_assets_linear);
+        mNetAssetsLinear.setVisibility(View.INVISIBLE);
 
         mAddPropertyBtn = (Button) view.findViewById(R.id.fragment_home_property_add_button);
         mAddPropertyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getActivity(), EditNetAssetsActivity.class);
+                Intent intent = new Intent(mActivity, EditNetAssetsActivity.class);
                 intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDPROPERTY.value());
                 startActivity(intent);
             }
@@ -119,14 +134,14 @@ public class FragmentHome extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getActivity(), EditNetAssetsActivity.class);
+                Intent intent = new Intent(mActivity, EditNetAssetsActivity.class);
                 intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDDEBT.value());
                 startActivity(intent);
             }
         });
 
         // step 1. create a MenuCreator
-        SwipeMenuCreator creator = this.buildSwipeMenuCreator(getActivity());
+        SwipeMenuCreator creator = this.buildSwipeMenuCreator(mActivity);
         mListViewProperty.setMenuCreator(creator);
         mListViewDebt.setMenuCreator(creator);
 
@@ -142,7 +157,9 @@ public class FragmentHome extends Fragment {
                         break;
                     case 1:
                         // delete
-                        deleteClick(position);
+                        if (position < mAdapterData.listPropertyItems.size()) {
+                            deleteClick((Map<String,Object>)((mAdapterData.listPropertyItems.toArray())[position]));
+                        }
                         break;
                 }
                 return false;
@@ -160,7 +177,9 @@ public class FragmentHome extends Fragment {
                         break;
                     case 1:
                         // delete
-                        deleteClick(position);
+                        if (position < mAdapterData.listDebtItems.size()) {
+                            deleteClick((Map<String,Object>)((mAdapterData.listDebtItems.toArray())[position]));
+                        }
                         break;
                 }
                 return false;
@@ -184,7 +203,7 @@ public class FragmentHome extends Fragment {
     private void editClick(int position, HomeEditOperType type) {
         int iListItemsLength = (type == HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITDEBT) ? this.mAdapterData.listDebtItems.size() : this.mAdapterData.listPropertyItems.size();
         if (position < iListItemsLength) {
-            Intent intent = new Intent(getActivity(), EditNetAssetsActivity.class);
+            Intent intent = new Intent(mActivity, EditNetAssetsActivity.class);
             intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, type.value());
             if (type == HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITDEBT) {
                 GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listDebtItems.toArray())[position]));
@@ -192,25 +211,27 @@ public class FragmentHome extends Fragment {
                 GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listPropertyItems.toArray())[position]));
             }
 
-            getActivity().startActivity(intent);
+            mActivity.startActivity(intent);
         }
     }
 
-    private void deleteClick(int position) {
-        if (position < this.mAdapterData.listDebtItems.size()) {
+    private void deleteClick(Map<String,Object> map) {
 
-            Map<String,Object> temp = (Map<String,Object>)((this.mAdapterData.listDebtItems.toArray())[position]);
-            int id = -1;
-            try {
-                id = Integer.parseInt(temp.get("id").toString());
-                if (id != -1) {
-                    GlobalData.DataStoreHelper.deleteWorthItem(GlobalData.CurrentUser,id);
+        int id = -1;
+        try {
+            id = Integer.parseInt(map.get(BalanceSheetItem.mDataColumnName[0]).toString());
+            if (id != -1) {
+                if (GlobalData.DataStoreHelper.deleteWorthItem(GlobalData.CurrentUser,id)) {
 
                     this.refresh();
+                    Object path = map.get(BalanceSheetItem.mDataColumnName[5]);
+                    if (null != path) {
+                        Utility.deleteFile(path.toString());
+                    }
                 }
-            } catch (Exception ex) {
-                return;
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -254,10 +275,9 @@ public class FragmentHome extends Fragment {
     }
 
     private void setData() {
-        mAdapterData = getData();
 
         SimpleAdapter adapterProperty = new SimpleAdapter(
-                getActivity(),
+                mActivity,
                 this.mAdapterData.listPropertyItems,
                 R.layout.fragment_home_list_item,
                 new String[]{BalanceSheetItem.mDataColumnName[4],
@@ -268,10 +288,27 @@ public class FragmentHome extends Fragment {
                         R.id.fragment_home_list_item_name,
                         R.id.fragment_home_list_item_worth,
                         R.id.fragment_home_list_item_description});
+        adapterProperty.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                if ((view instanceof ImageView) && (data instanceof Bitmap)) {
+                    try {
+                        ImageView imageView = (ImageView)view;
+                        imageView.setImageBitmap((Bitmap)data);
+
+                        return true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return false;
+            }
+        });
         this.mListViewProperty.setAdapter(adapterProperty);
 
         SimpleAdapter adapterDebt = new SimpleAdapter(
-                getActivity(),
+                mActivity,
                 this.mAdapterData.listDebtItems,
                 R.layout.fragment_home_list_item,
                 new String[]{BalanceSheetItem.mDataColumnName[4],
@@ -282,6 +319,18 @@ public class FragmentHome extends Fragment {
                         R.id.fragment_home_list_item_name,
                         R.id.fragment_home_list_item_worth,
                         R.id.fragment_home_list_item_description});
+        adapterDebt.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                if ((view instanceof ImageView) && (data instanceof Bitmap)) {
+                    ImageView imageView = (ImageView)view;
+                    imageView.setImageBitmap((Bitmap)data);
+                    return true;
+                }
+
+                return false;
+            }
+        });
         this.mListViewDebt.setAdapter(adapterDebt);
 
         this.mPropertyTV.setText((this.mAdapterData.dPropertyAll / 10000.0) + " 万");
@@ -289,6 +338,7 @@ public class FragmentHome extends Fragment {
         this.mNetAssetsPropertyTV.setText((this.mAdapterData.dPropertyAll / 10000.0) + "");
         this.mNetAssetsDebtTV.setText((this.mAdapterData.dDebtAll / 10000.0) + "");
         this.mNetAssetsTV.setText(((this.mAdapterData.dPropertyAll - this.mAdapterData.dDebtAll) / 10000.0) + " 万");
+        this.mNetAssetsLinear.setVisibility(View.VISIBLE);
     }
 
     private CalculateBalanceSheetData getData() {
@@ -333,8 +383,8 @@ public class FragmentHome extends Fragment {
 
             try {
                 //执行异步的代码，后台线程中执行，执行完调用onPostExecute
-                //mAdapterData = getData();
-                setData();
+                mAdapterData = getData();
+
             } catch (Exception e) {
                 return false;
             }
@@ -346,13 +396,15 @@ public class FragmentHome extends Fragment {
         protected void onPostExecute(final Boolean success) {
             //UI线程中执行，不能执行耗时操作
 
-            //setData();
-
-            if (!success) {
-                Toast toast = Toast.makeText(getActivity(),getString(R.string.common_load_failed),Toast.LENGTH_SHORT);
+            if (success) {
+                setData();
+            } else {
+                Toast toast = Toast.makeText(mActivity,getString(R.string.common_load_failed),Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER,0,0);
                 toast.show();
             }
+
+            mAuthTask = null;
         }
 
         @Override
