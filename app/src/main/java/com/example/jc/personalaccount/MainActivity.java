@@ -1,22 +1,27 @@
 package com.example.jc.personalaccount;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
 import java.io.File;
 
 public class MainActivity extends FragmentActivity {
 
+
     private static String CURFRAGMENTINDEX = "CURFRAGMENTINDEX";
     public static Fragment[] mFragments;
     private static int mCurFragmentIndex;
+    private boolean mIsExit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,18 +42,6 @@ public class MainActivity extends FragmentActivity {
         } else {
             mCurFragmentIndex = savedInstanceState.getInt(CURFRAGMENTINDEX);
             showWhichFragment(mCurFragmentIndex);
-
-//            Intent intent = getIntent();
-//            String tagName = intent.getStringExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME);
-//            if (TextUtils.isEmpty(tagName)) {
-//                return;
-//            }
-//            if (tagName.equals(GlobalData.STRING_ACTIVITY_EDIT_NETASSETS)) {
-//                int isRefresh = intent.getIntExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,0);
-//                if (0 != isRefresh) {
-//                    ((FragmentHome)mFragments[0]).refresh();
-//                }
-//            }
         }
     }
 
@@ -56,6 +49,46 @@ public class MainActivity extends FragmentActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(CURFRAGMENTINDEX,mCurFragmentIndex);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch(keyCode){
+            case KeyEvent.KEYCODE_HOME:return true;
+            case KeyEvent.KEYCODE_BACK:{
+
+                if (!mIsExit) {
+                    mIsExit = true;
+                    Toast.makeText(getApplicationContext(),R.string.common_repeat_back_key_exit,Toast.LENGTH_SHORT).show();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mIsExit = false;
+                        }
+                    },2000);
+                } else {
+                    //连续两次点击，则退出
+                    exit();
+                }
+
+                return true;
+            }
+//            case KeyEvent.KEYCODE_CALL:return true;
+//            case KeyEvent.KEYCODE_SYM: return true;
+//            case KeyEvent.KEYCODE_VOLUME_DOWN: return true;
+//            case KeyEvent.KEYCODE_VOLUME_UP: return true;
+//            case KeyEvent.KEYCODE_STAR: return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void exit() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
+        System.exit(0);
     }
 
     private void setFragmentIndicator(int whichIsDefault) {
