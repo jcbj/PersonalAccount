@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.BoringLayout;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -135,10 +136,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
         this.mBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(EditNetAssetsActivity.this,MainActivity.class);
-                intent1.putExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME,GlobalData.STRING_ACTIVITY_EDIT_NETASSETS);
-                intent1.putExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,mEditCount);
-                startActivity(intent1);
+                backClick();
             }
         });
 
@@ -263,7 +261,30 @@ public class EditNetAssetsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            backClick();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode,keyEvent);
+    }
+
+    private void backClick() {
+        Intent intent = new Intent(EditNetAssetsActivity.this,MainActivity.class);
+        intent.putExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME,GlobalData.STRING_ACTIVITY_EDIT_NETASSETS);
+        intent.putExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,mEditCount);
+        startActivity(intent);
+    }
+
     private void setUIViewStatus() {
+        //隐藏软键盘
+        this.mRemovePictureBtn.setFocusable(true);
+        this.mRemovePictureBtn.setFocusableInTouchMode(true);
+        this.mRemovePictureBtn.requestFocus();
+        this.mRemovePictureBtn.requestFocusFromTouch();
+
         this.mTypeSpinner.setEnabled(false);
         this.mETName.setEnabled(false);
         this.mETWorth.setEnabled(false);

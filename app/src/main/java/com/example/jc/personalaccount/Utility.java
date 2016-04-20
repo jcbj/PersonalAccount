@@ -18,6 +18,8 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.test.suitebuilder.TestMethod;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -346,6 +348,7 @@ public class Utility {
         return true;
     }
 
+    //**********************
     /**
      *
      * @param oldPath String 原文件路径
@@ -381,6 +384,7 @@ public class Utility {
         return false;
     }
 
+    //**********************
     /**
      * 删除文件，如果是文件夹，遍历删除所有文件
      *
@@ -405,5 +409,25 @@ public class Utility {
             }
             file.delete();
         }
+    }
+
+    //**********************
+    /**
+     * 切换软键盘的状态
+     * 如当前为收起变为弹出,若当前为弹出变为收起
+     */
+    public static void toggleInput(Context context){
+        InputMethodManager inputMethodManager =
+                (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    /**
+     * 强制隐藏输入法键盘
+     */
+    public static void hideInput(Context context,View view){
+        InputMethodManager inputMethodManager =
+                (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

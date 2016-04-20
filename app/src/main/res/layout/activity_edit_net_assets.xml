@@ -123,6 +123,8 @@
                 <Button
                     android:id="@+id/fragment_home_edit_back_button"
                     android:text="@string/common_btn_back"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"

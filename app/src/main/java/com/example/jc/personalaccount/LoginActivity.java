@@ -142,6 +142,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         GlobalData.DataStoreHelper.closeDataStore();
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            System.exit(0);
+            return true;
+        }
+
+        return super.onKeyDown(keyCode,keyEvent);
+    }
+
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
