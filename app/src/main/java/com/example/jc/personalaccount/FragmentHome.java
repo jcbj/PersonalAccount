@@ -74,11 +74,11 @@ public class FragmentHome extends Fragment {
         this.mPropertyTV = (TextView)view.findViewById(R.id.fragment_home_property_value_text);
         this.mDebtTV = (TextView)view.findViewById(R.id.fragment_home_debt_value_text);
         this.mNetAssetsTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_tv);
-        mAddPropertyBtn = (Button) view.findViewById(R.id.fragment_home_property_add_button);
-        mAddDebtBtn = (Button) view.findViewById(R.id.fragment_home_debt_add_button);
+        this.mAddPropertyBtn = (Button) view.findViewById(R.id.fragment_home_property_add_button);
+        this.mAddDebtBtn = (Button) view.findViewById(R.id.fragment_home_debt_add_button);
 
         // step 1. create a MenuCreator,设置每一项滑动后的菜单
-        SwipeMenuCreator creator = this.buildSwipeMenuCreator(mActivity);
+        SwipeMenuCreator creator = GlobalData.buildSwipeMenuCreator(mActivity);
         mListViewProperty.setMenuCreator(creator);
         mListViewDebt.setMenuCreator(creator);
 
@@ -224,50 +224,6 @@ public class FragmentHome extends Fragment {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    /**
-     * 构建滑动以后的菜单项
-     * @param context
-     * @return
-     */
-    private SwipeMenuCreator buildSwipeMenuCreator(final Context context) {
-        return new SwipeMenuCreator() {
-
-            @Override
-            public void create(SwipeMenu menu) {
-                // create "open" item
-                SwipeMenuItem openItem = new SwipeMenuItem(context); //getApplicationContext()
-                // set item background
-                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9, 0xCE)));
-                // set item width
-                openItem.setWidth(dp2px(90));
-                // set item title
-                openItem.setTitle("Edit");
-                // set item title fontsize
-                openItem.setTitleSize(18);
-                // set item title font color
-                openItem.setTitleColor(Color.WHITE);
-                // add to menu
-                menu.addMenuItem(openItem);
-
-                // create "delete" item
-                SwipeMenuItem deleteItem = new SwipeMenuItem(context);//getApplicationContext()
-                // set item background
-                deleteItem.setBackground(new ColorDrawable(Color.rgb(0x80, 0x80, 0x80)));
-                // set item width
-                deleteItem.setWidth(dp2px(90));
-                // set a icon
-                deleteItem.setIcon(R.drawable.ic_delete);
-                // add to menu
-                menu.addMenuItem(deleteItem);
-            }
-        };
-    }
-
-    private int dp2px(int dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-                getResources().getDisplayMetrics());
     }
 
     private void setData() {

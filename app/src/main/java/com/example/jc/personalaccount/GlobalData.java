@@ -1,7 +1,14 @@
 package com.example.jc.personalaccount;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
+import android.util.TypedValue;
 
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
 import com.example.jc.personalaccount.DatabaseManger.DataStoreFactory;
 import com.example.jc.personalaccount.DatabaseManger.IDataStoreHelper;
@@ -91,4 +98,50 @@ public class GlobalData {
                 Log.v(tag,log);
         }
     }
+
+
+    /**
+     * 构建滑动以后的菜单项
+     * @param context
+     * @return
+     */
+    public static SwipeMenuCreator buildSwipeMenuCreator(final Context context) {
+        return new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+                // create "open" item
+                SwipeMenuItem openItem = new SwipeMenuItem(context);
+                // set item background
+                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9, 0xCE)));
+                // set item width
+                openItem.setWidth(dp2px(90,context));
+                // set item title
+                openItem.setTitle("Edit");
+                // set item title fontsize
+                openItem.setTitleSize(18);
+                // set item title font color
+                openItem.setTitleColor(Color.WHITE);
+                // add to menu
+                menu.addMenuItem(openItem);
+
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(context);//getApplicationContext()
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0x80, 0x80, 0x80)));
+                // set item width
+                deleteItem.setWidth(dp2px(90,context));
+                // set a icon
+                deleteItem.setIcon(R.drawable.ic_delete);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
+    }
+
+    private static int dp2px(int dp, final Context context) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                context.getResources().getDisplayMetrics());
+    }
+
 }
