@@ -30,6 +30,7 @@ import java.util.Map;
 
 public class EditNetAssetsActivity extends AppCompatActivity {
 
+    private String[] mTypeSpinnerItems;
     private int mEditCount = 0;
     private HomeEditOperType mOperType = HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDPROPERTY;
     private EditText mETName;
@@ -53,86 +54,40 @@ public class EditNetAssetsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_net_assets);
 
-        //获取页面控件id
-        final String[] spinnerItems = new String[]{getString(R.string.fragment_home_property_title),getString(R.string.fragment_home_debt_title)};
-        final ArrayAdapter<String> typeSpinnerItems = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinnerItems);
         this.mTypeSpinner = (Spinner) findViewById(R.id.fragment_home_edit_type_spinner);
-        this.mTypeSpinner.setAdapter(typeSpinnerItems);
-
-        mETName = (EditText)findViewById(R.id.fragment_home_edit_name_text);
-        mETWorth = (EditText)findViewById(R.id.fragment_home_edit_worth_text);
-        mETDescription = (EditText)findViewById(R.id.fragment_home_edit_description_text);
-
+        this.mETName = (EditText)findViewById(R.id.fragment_home_edit_name_text);
+        this.mETWorth = (EditText)findViewById(R.id.fragment_home_edit_worth_text);
+        this.mETDescription = (EditText)findViewById(R.id.fragment_home_edit_description_text);
         this.mSaveBtn = (Button) findViewById(R.id.fragment_home_edit_save_button);
+        this.mBackBtn = (Button) findViewById(R.id.fragment_home_edit_back_button);
+        this.mAddPictureBtn = (Button)findViewById(R.id.fragment_home_edit_add_image_button);
+        this.mRemovePictureBtn = (Button)findViewById(R.id.fragment_home_edit_remove_image_button);
+        this.mImageView = (ImageView)findViewById(R.id.fragment_home_edit_image_view);
+
+        this.bindingUIEvent();
+
+        this.initUI();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            backClick();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode,keyEvent);
+    }
+
+    private void bindingUIEvent() {
+
         this.mSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if ((TextUtils.isEmpty(mETName.getText().toString()))
-                        || (TextUtils.isEmpty(mETWorth.getText().toString()))
-                        || (TextUtils.isEmpty(mETDescription.getText().toString()))) {
-
-                    Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.fragment_home_edit_check_message),Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER,0,0);
-                    toast.show();
-
-                    return;
-                }
-
-                mCurrentInfo.worthType = (mTypeSpinner.getSelectedItem().toString() == spinnerItems[0]) ? BalanceSheetItem.WorthType.Property : BalanceSheetItem.WorthType.Debt;
-                mCurrentInfo.name = mETName.getText().toString();
-                mCurrentInfo.worth = (int)(Double.parseDouble(mETWorth.getText().toString()) * 100);
-                mCurrentInfo.description = mETDescription.getText().toString();
-
-                String tempPath = mCurrentInfo.imagePath;
-
-                if (mImageIsChanged) {
-
-                    mCurrentInfo.imagePath = null;
-                    mCurrentInfo.imageThumb = null;
-
-                    if ((null != mTempImagePath) && (!TextUtils.isEmpty(mTempImagePath))) {
-                        //复制图片，保存缩略图
-                        String curAppPath = GlobalData.ImagePath + "/" + Long.toString(System.currentTimeMillis());
-                        if (Utility.copyFile(mTempImagePath,curAppPath)) {
-                            mCurrentInfo.imagePath = curAppPath;
-                        }
-                    }
-
-                    mCurrentInfo.imageThumb = mTempImageThumb;
-                }
-
-                if (GlobalData.DataStoreHelper.editWorthItem(GlobalData.CurrentUser,mCurrentInfo,(-1 == mCurrentInfo.id))) {
-                    mEditCount++;
-
-                    Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
-                    toast.show();
-
-                    mETName.setText("");
-                    mETWorth.setText("");
-                    mETDescription.setText("");
-                    mImageView.setImageBitmap(null);
-                    mRemovePictureBtn.setEnabled(false);
-
-                    if (-1 != mCurrentInfo.id) {
-                        if (mImageIsChanged) {
-                            //如果是编辑，则需要删除当前本地文件
-                            if ((null != tempPath) && (!TextUtils.isEmpty(tempPath))) {
-                                Utility.deleteFile(tempPath);
-                            }
-                        }
-                    }
-                } else {
-                    new AlertDialog.Builder(getApplicationContext()).setTitle(getString(R.string.common_str_information))
-                            .setMessage(getString(R.string.common_save_failed))
-                            .setPositiveButton(getString(R.string.common_btn_ok),null)
-                            .show();
-                }
+                saveClick();
             }
         });
 
-        this.mBackBtn = (Button) findViewById(R.id.fragment_home_edit_back_button);
         this.mBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,7 +95,6 @@ public class EditNetAssetsActivity extends AppCompatActivity {
             }
         });
 
-        this.mAddPictureBtn = (Button)findViewById(R.id.fragment_home_edit_add_image_button);
         this.mAddPictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,8 +105,6 @@ public class EditNetAssetsActivity extends AppCompatActivity {
             }
         });
 
-        this.mRemovePictureBtn = (Button)findViewById(R.id.fragment_home_edit_remove_image_button);
-        this.mRemovePictureBtn.setEnabled(false);
         this.mRemovePictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,8 +115,11 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                 mRemovePictureBtn.setEnabled(false);
             }
         });
+    }
 
-        this.mImageView = (ImageView)findViewById(R.id.fragment_home_edit_image_view);
+    private void initUI() {
+
+        //获取屏幕大小，设置缩略图时使用
         WindowManager manager = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
         Point outSize = new Point();
         manager.getDefaultDisplay().getSize(outSize);
@@ -172,6 +127,12 @@ public class EditNetAssetsActivity extends AppCompatActivity {
         this.mWindowWidth = outSize.x;
 
         //初始化页面
+        this.mTypeSpinnerItems = new String[]{getString(R.string.fragment_home_property_title),getString(R.string.fragment_home_debt_title)};
+        ArrayAdapter<String> mTypeSpinnerAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, this.mTypeSpinnerItems);
+        this.mTypeSpinner.setAdapter(mTypeSpinnerAdapter);
+
+        this.mRemovePictureBtn.setEnabled(false);
+
         this.mCurrentInfo = new BalanceSheetItem();
         this.mImageIsChanged = false;
 
@@ -227,7 +188,6 @@ public class EditNetAssetsActivity extends AppCompatActivity {
 
                 break;
             }
-
             default:{
 
                 break;
@@ -261,14 +221,69 @@ public class EditNetAssetsActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            backClick();
-            return true;
+    private void saveClick() {
+
+        if ((TextUtils.isEmpty(mETName.getText().toString()))
+                || (TextUtils.isEmpty(mETWorth.getText().toString()))
+                || (TextUtils.isEmpty(mETDescription.getText().toString()))) {
+
+            Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.fragment_home_edit_check_message),Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER,0,0);
+            toast.show();
+
+            return;
         }
 
-        return super.onKeyDown(keyCode,keyEvent);
+        mCurrentInfo.worthType = (mTypeSpinner.getSelectedItem().toString() == mTypeSpinnerItems[0]) ? BalanceSheetItem.WorthType.Property : BalanceSheetItem.WorthType.Debt;
+        mCurrentInfo.name = mETName.getText().toString();
+        mCurrentInfo.worth = (int)(Double.parseDouble(mETWorth.getText().toString()) * 100);
+        mCurrentInfo.description = mETDescription.getText().toString();
+
+        String tempPath = mCurrentInfo.imagePath;
+
+        if (mImageIsChanged) {
+
+            mCurrentInfo.imagePath = null;
+            mCurrentInfo.imageThumb = null;
+
+            if ((null != mTempImagePath) && (!TextUtils.isEmpty(mTempImagePath))) {
+                //复制图片，保存缩略图
+                String curAppPath = GlobalData.ImagePath + "/" + Long.toString(System.currentTimeMillis());
+                if (Utility.copyFile(mTempImagePath,curAppPath)) {
+                    mCurrentInfo.imagePath = curAppPath;
+                }
+            }
+
+            mCurrentInfo.imageThumb = mTempImageThumb;
+        }
+
+        if (GlobalData.DataStoreHelper.editWorthItem(GlobalData.CurrentUser,mCurrentInfo,(-1 == mCurrentInfo.id))) {
+            mEditCount++;
+
+            Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
+            toast.show();
+
+            mETName.setText("");
+            mETWorth.setText("");
+            mETDescription.setText("");
+            mImageView.setImageBitmap(null);
+            mRemovePictureBtn.setEnabled(false);
+
+            if (-1 != mCurrentInfo.id) {
+                if (mImageIsChanged) {
+                    //如果是编辑，则需要删除当前本地文件
+                    if ((null != tempPath) && (!TextUtils.isEmpty(tempPath))) {
+                        Utility.deleteFile(tempPath);
+                    }
+                }
+            }
+        } else {
+            new AlertDialog.Builder(getApplicationContext()).setTitle(getString(R.string.common_str_information))
+                    .setMessage(getString(R.string.common_save_failed))
+                    .setPositiveButton(getString(R.string.common_btn_ok),null)
+                    .show();
+        }
     }
 
     private void backClick() {

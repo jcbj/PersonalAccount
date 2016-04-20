@@ -68,8 +68,28 @@ public class FragmentHome extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        mListViewProperty = (SwipeMenuListView) view.findViewById(R.id.fragment_home_listview_property);
-        mListViewDebt = (SwipeMenuListView) view.findViewById(R.id.fragment_home_listview_debt);
+
+        this.mListViewProperty = (SwipeMenuListView) view.findViewById(R.id.fragment_home_listview_property);
+        this.mListViewDebt = (SwipeMenuListView) view.findViewById(R.id.fragment_home_listview_debt);
+        this.mPropertyTV = (TextView)view.findViewById(R.id.fragment_home_property_value_text);
+        this.mDebtTV = (TextView)view.findViewById(R.id.fragment_home_debt_value_text);
+        this.mNetAssetsTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_tv);
+        mAddPropertyBtn = (Button) view.findViewById(R.id.fragment_home_property_add_button);
+        mAddDebtBtn = (Button) view.findViewById(R.id.fragment_home_debt_add_button);
+
+        // step 1. create a MenuCreator,设置每一项滑动后的菜单
+        SwipeMenuCreator creator = this.buildSwipeMenuCreator(mActivity);
+        mListViewProperty.setMenuCreator(creator);
+        mListViewDebt.setMenuCreator(creator);
+
+        this.bindingUIEvent();
+
+        this.refreshUIData();
+
+        return view;
+    }
+
+    private void bindingUIEvent() {
 
         mListViewDebt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -86,36 +106,19 @@ public class FragmentHome extends Fragment {
             }
         });
 
-        mPropertyTV = (TextView)view.findViewById(R.id.fragment_home_property_value_text);
-        mDebtTV = (TextView)view.findViewById(R.id.fragment_home_debt_value_text);
-        mNetAssetsTV = (TextView)view.findViewById(R.id.fragment_home_net_assets_tv);
-
-        mAddPropertyBtn = (Button) view.findViewById(R.id.fragment_home_property_add_button);
         mAddPropertyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(mActivity, EditNetAssetsActivity.class);
-                intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDPROPERTY.value());
-                startActivity(intent);
+                showEditNetAssetsActivity(-1,HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDPROPERTY);
             }
         });
 
-        mAddDebtBtn = (Button) view.findViewById(R.id.fragment_home_debt_add_button);
         mAddDebtBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(mActivity, EditNetAssetsActivity.class);
-                intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDDEBT.value());
-                startActivity(intent);
+                showEditNetAssetsActivity(-1,HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDDEBT);
             }
         });
-
-        // step 1. create a MenuCreator
-        SwipeMenuCreator creator = this.buildSwipeMenuCreator(mActivity);
-        mListViewProperty.setMenuCreator(creator);
-        mListViewDebt.setMenuCreator(creator);
 
         // step 2. listener item click event
         mListViewProperty.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
@@ -125,7 +128,7 @@ public class FragmentHome extends Fragment {
                 switch (index) {
                     case 0:
                         // open
-                        editClick(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITPROPERTY);
+                        showEditNetAssetsActivity(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITPROPERTY);
                         break;
                     case 1:
                         // delete
@@ -145,7 +148,7 @@ public class FragmentHome extends Fragment {
                 switch (index) {
                     case 0:
                         // open
-                        editClick(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITDEBT);
+                        showEditNetAssetsActivity(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITDEBT);
                         break;
                     case 1:
                         // delete
@@ -161,23 +164,19 @@ public class FragmentHome extends Fragment {
         mListViewProperty.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                editClick(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWPROPERTY);
+                showEditNetAssetsActivity(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWPROPERTY);
             }
         });
 
         mListViewDebt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                editClick(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWDEBT);
+                showEditNetAssetsActivity(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWDEBT);
             }
         });
-
-        refresh();
-
-        return view;
     }
 
-    public void refresh() {
+    private void refreshUIData() {
         if (null != mAuthTask) {
             return;
         }
@@ -186,21 +185,25 @@ public class FragmentHome extends Fragment {
         mAuthTask.execute((Void) null);
     }
 
-    private void editClick(int position, HomeEditOperType type) {
-        boolean bIsProperty = ((type == HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITPROPERTY) || (type ==
-                HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWPROPERTY));
-        int iListItemsLength = (bIsProperty) ? this.mAdapterData.listPropertyItems.size() : this.mAdapterData.listDebtItems.size();
-        if (position < iListItemsLength) {
-            Intent intent = new Intent(mActivity, EditNetAssetsActivity.class);
-            intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, type.value());
-            if (bIsProperty) {
-                GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listPropertyItems.toArray())[position]));
-            } else {
-                GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listDebtItems.toArray())[position]));
-            }
+    private void showEditNetAssetsActivity(int position, HomeEditOperType type) {
 
-            mActivity.startActivity(intent);
+        Intent intent = new Intent(mActivity, EditNetAssetsActivity.class);
+        intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, type.value());
+
+        if ((HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDDEBT != type) && (HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDPROPERTY != type)) {
+            boolean bIsProperty = ((type == HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITPROPERTY)
+                    || (type == HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWPROPERTY));
+            int iListItemsLength = (bIsProperty) ? this.mAdapterData.listPropertyItems.size() : this.mAdapterData.listDebtItems.size();
+            if (position < iListItemsLength) {
+                if (bIsProperty) {
+                    GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listPropertyItems.toArray())[position]));
+                } else {
+                    GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listDebtItems.toArray())[position]));
+                }
+            }
         }
+
+        mActivity.startActivity(intent);
     }
 
     private void deleteClick(Map<String,Object> map) {
@@ -211,7 +214,7 @@ public class FragmentHome extends Fragment {
             if (id != -1) {
                 if (GlobalData.DataStoreHelper.deleteWorthItem(GlobalData.CurrentUser,id)) {
 
-                    this.refresh();
+                    this.refreshUIData();
                     Object path = map.get(BalanceSheetItem.mDataColumnName[5]);
                     if (null != path) {
                         Utility.deleteFile(path.toString());
@@ -223,6 +226,11 @@ public class FragmentHome extends Fragment {
         }
     }
 
+    /**
+     * 构建滑动以后的菜单项
+     * @param context
+     * @return
+     */
     private SwipeMenuCreator buildSwipeMenuCreator(final Context context) {
         return new SwipeMenuCreator() {
 
@@ -277,6 +285,7 @@ public class FragmentHome extends Fragment {
                         R.id.fragment_home_list_item_worth,
                         R.id.fragment_home_list_item_description});
         adapterProperty.setViewBinder(new SimpleAdapter.ViewBinder() {
+            //界面显示时，将Bitmap类型数据赋值给ImageView,如果是R.drawable中的资源ID，则不需要处理
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {
                 if (view instanceof ImageView) {
