@@ -71,18 +71,6 @@ public class FragmentHome extends Fragment {
         mListViewProperty = (SwipeMenuListView) view.findViewById(R.id.fragment_home_listview_property);
         mListViewDebt = (SwipeMenuListView) view.findViewById(R.id.fragment_home_listview_debt);
 
-//        mListViewDebt.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                Toast toast = Toast.makeText(mActivity,"长按 " + position,Toast.LENGTH_SHORT);
-//                toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,10);
-//                toast.show();
-//
-//                return false;
-//            }
-//        });
-
         mListViewDebt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -291,10 +279,15 @@ public class FragmentHome extends Fragment {
         adapterProperty.setViewBinder(new SimpleAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {
-                if ((view instanceof ImageView) && (data instanceof Bitmap)) {
+                if (view instanceof ImageView) {
                     try {
                         ImageView imageView = (ImageView)view;
-                        imageView.setImageBitmap((Bitmap)data);
+                        if (data instanceof Bitmap) {
+                            imageView.setImageBitmap((Bitmap)data);
+                        }
+                        else {
+                            imageView.setImageBitmap(null);
+                        }
 
                         return true;
                     } catch (Exception e) {
@@ -322,10 +315,20 @@ public class FragmentHome extends Fragment {
         adapterDebt.setViewBinder(new SimpleAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {
-                if ((view instanceof ImageView) && (data instanceof Bitmap)) {
-                    ImageView imageView = (ImageView)view;
-                    imageView.setImageBitmap((Bitmap)data);
-                    return true;
+                if (view instanceof ImageView) {
+                    try {
+                        ImageView imageView = (ImageView)view;
+                        if (data instanceof Bitmap) {
+                            imageView.setImageBitmap((Bitmap)data);
+                        }
+                        else {
+                            imageView.setImageBitmap(null);
+                        }
+
+                        return true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 return false;
