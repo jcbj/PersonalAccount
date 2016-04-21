@@ -18,7 +18,6 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.jc.personalaccount.Data.AccountItem;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +84,7 @@ public class FragmentAccount extends Fragment {
         SimpleAdapter adapterAll = new SimpleAdapter(
                 mActivity,
                 this.mData,
-                R.layout.fragment_summary_account_list_item,
+                R.layout.fragment_account_list_item,
                 new String[]{
                         AccountItem.mDataColumnName[1],
                         AccountItem.mDataColumnName[2],
@@ -95,24 +94,24 @@ public class FragmentAccount extends Fragment {
                         AccountItem.mDataColumnName[6],
                         AccountItem.mDataColumnName[7] },
                 new int[]{
-                        R.id.fragment_summary_list_item_week,
-                        R.id.fragment_summary_list_item_date,
-                        R.id.fragment_summary_list_item_rmb,
-                        R.id.fragment_summary_list_item_from,
-                        R.id.fragment_summary_list_item_from_image_to,
-                        R.id.fragment_summary_list_item_to,
-                        R.id.fragment_summary_list_item_description});
+                        R.id.fragment_account_list_item_week,
+                        R.id.fragment_account_list_item_date,
+                        R.id.fragment_account_list_item_value,
+                        R.id.fragment_account_list_item_from,
+                        R.id.fragment_account_list_item_type_image,
+                        R.id.fragment_account_list_item_to,
+                        R.id.fragment_account_list_item_description});
 
         adapterAll.setViewBinder(new SimpleAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {
 
-                if (view.getId() == R.id.fragment_summary_list_item_rmb) {
+                if (view.getId() == R.id.fragment_account_list_item_value) {
                     if (null != data) {
                         String text = data.toString();
                         if (text.contains("-")) {
                             ((TextView)view).setText(text);
-                            ((TextView)view).setTextColor(R.color.red);
+                            ((TextView)view).setTextColor(getResources().getColor(R.color.red));
 
                             return true;
                         }

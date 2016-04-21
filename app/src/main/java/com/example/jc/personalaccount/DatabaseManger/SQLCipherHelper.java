@@ -384,18 +384,18 @@ public class SQLCipherHelper implements IDataStoreHelper {
         if (null != cursor) {
             try {
                 cursor.moveToFirst();
-                AccountItem infos;
+                AccountItem info;
                 while (!cursor.isAfterLast()) {
-                    infos = new AccountItem();
-                    infos.id = cursor.getInt(0);
-                    infos.date = cursor.getString(1);
-                    infos.rmb = cursor.getInt(2);
-                    infos.from = cursor.getString(3);
-                    infos.type = cursor.getInt(4);
-                    infos.to = cursor.getString(5);
-                    infos.description = cursor.getString(6);
+                    info = new AccountItem();
+                    info.id = cursor.getInt(0);
+                    info.date = cursor.getString(1);
+                    info.value = cursor.getInt(2);
+                    info.from = cursor.getString(3);
+                    info.type = cursor.getInt(4);
+                    info.to = cursor.getString(5);
+                    info.description = cursor.getString(6);
 
-                    list.add(infos);
+                    list.add(info);
 
                     cursor.moveToNext();
                 }
@@ -424,7 +424,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
         ContentValues values = new ContentValues();
         values.put(ACCOUNTITEMTABLECOLUMNNAME[1],info.date);
-        values.put(ACCOUNTITEMTABLECOLUMNNAME[2],info.rmb);
+        values.put(ACCOUNTITEMTABLECOLUMNNAME[2],info.value);
         values.put(ACCOUNTITEMTABLECOLUMNNAME[3],info.from);
         values.put(ACCOUNTITEMTABLECOLUMNNAME[4],info.type);
         values.put(ACCOUNTITEMTABLECOLUMNNAME[5],info.to);

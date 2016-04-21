@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
 
+    <!-- date -->
     <LinearLayout
         android:layout_marginLeft="10dp"
         android:background="@color/lightgray240"
@@ -33,14 +34,27 @@
 
     </LinearLayout>
 
+    <!-- alias -->
+    <TextView
+        android:text="交行卡"
+        android:id="@+id/fragment_summary_list_item_alias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:textSize="18sp"/>
+
     <LinearLayout
-        android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:orientation="vertical"
         android:layout_gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- value - name -->
         <LinearLayout
             android:orientation="horizontal"
             android:gravity="center_vertical"
@@ -49,48 +63,26 @@
 
             <TextView
                 android:text="1234.56"
-                android:id="@+id/fragment_summary_list_item_rmb"
-                android:layout_width="match_parent"
+                android:id="@+id/fragment_summary_list_item_value"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="22sp"/>
 
-            <LinearLayout
-                android:layout_gravity="center_vertical"
-                android:orientation="horizontal"
+            <TextView
+                android:text="余额宝"
+                android:id="@+id/fragment_summary_list_item_name"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="余额宝"
-                    android:id="@+id/fragment_summary_list_item_from"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="15sp"/>
-
-                <ImageView
-                    android:id="@+id/fragment_summary_list_item_from_image_to"
-                    android:scaleType="fitXY"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp" />
-
-                <TextView
-                    android:text="交行卡"
-                    android:id="@+id/fragment_summary_list_item_to"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="15sp"/>
-            </LinearLayout>
-
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:layout_weight="1"
+                android:textSize="12sp"/>
 
         </LinearLayout>
 
+        <!-- description -->
         <TextView
-            android:text="简单说明此笔交易的基本情况，最好能单行显示"
+            android:text="交通银行信用卡"
             android:id="@+id/fragment_summary_list_item_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
