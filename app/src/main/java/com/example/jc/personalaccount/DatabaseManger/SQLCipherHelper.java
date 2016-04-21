@@ -7,7 +7,9 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.jc.personalaccount.Data.AccountItem;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
+import com.example.jc.personalaccount.Data.SummaryItem;
 import com.example.jc.personalaccount.GlobalData;
 
 import net.sqlcipher.Cursor;
@@ -45,8 +47,32 @@ public class SQLCipherHelper implements IDataStoreHelper {
     private static final String SQLITE_MASTER = "sqlite_master";
     private static final String USERIDTABLENAME = "UserIDTable";
     private static final String BALANCESHEETTABLENAME = "BalanceSheetTable";
-    private static final String[] BALANCESHEETTABLECOLUMNNAME = new String[]{"id","worthtype","name","worth",
-            "imagepath","imagethumb","description"};
+    private static final String[] BALANCESHEETTABLECOLUMNNAME = new String[]{
+            "id",
+            "worthtype",
+            "name",
+            "worth",
+            "imagepath",
+            "imagethumb",
+            "description"};
+    private static final String SUMMARYITEMTABLENAME = "SummaryItemTable";
+    private static final String[] SUMMARYITEMTABLECOLUMNNAME = new String[]{
+            "id",
+            "date",
+            "value",
+            "name",
+            "alias",
+            "description"};
+    private static final String ACCOUNTITEMTABLENAME = "AccountItemTable";
+    private static final String[] ACCOUNTITEMTABLECOLUMNNAME = new String[]{
+            "id",
+            "date",
+            "value",
+            "from",
+            "type",
+            "to",
+            "description"};
+
 
     private SQLiteDatabase database = null;
 
@@ -179,7 +205,6 @@ public class SQLCipherHelper implements IDataStoreHelper {
     }
 
     //Worth
-
     /**
      * 获取资产负债表中所有记录
      * @param user:当前登录用户名
@@ -264,6 +289,162 @@ public class SQLCipherHelper implements IDataStoreHelper {
         }
 
         String sql = "DELETE FROM " + user + "_" + BALANCESHEETTABLENAME + " WHERE id='" + id + "'";
+        return this.execSQL(sql);
+    }
+
+    //Summary
+    /**
+     * 获取帐户概要列表中所有记录
+     * @param user:当前登录用户名
+     * @return
+     */
+    public SummaryItem[] getAllSummaryItemInfos(String user) {
+        String tableName = user + "_" + SUMMARYITEMTABLENAME;
+        String sql = "SELECT * FROM " + tableName;
+        ArrayList<SummaryItem> list = new ArrayList<>();
+
+        Cursor cursor = this.querySQL(sql,null);
+        if (null != cursor) {
+            try {
+                cursor.moveToFirst();
+                SummaryItem info;
+                while (!cursor.isAfterLast()) {
+                    info = new SummaryItem();
+                    info.id = cursor.getInt(0);
+                    info.date = cursor.getString(1);
+                    info.value = cursor.getInt(2);
+                    info.name = cursor.getString(3);
+                    info.alias = cursor.getString(4);
+                    info.description = cursor.getString(5);
+
+                    list.add(info);
+
+                    cursor.moveToNext();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                cursor.close();
+            }
+        }
+
+        return list.toArray(new SummaryItem[list.size()]);
+    }
+
+    /**
+     * 添加或编辑帐户概要列表中记录
+     * @param user： 当前登录用户名
+     * @param info： 待保存的数据
+     * @param isAdd：是新添加，还是编辑
+     * @return： 是否成功
+     */
+    public Boolean editSummaryItem(String user, SummaryItem info, Boolean isAdd) {
+
+        if ((TextUtils.isEmpty(user)) || (null == info)) {
+            return false;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(SUMMARYITEMTABLECOLUMNNAME[1],info.date);
+        values.put(SUMMARYITEMTABLECOLUMNNAME[2],info.value);
+        values.put(SUMMARYITEMTABLECOLUMNNAME[3],info.name);
+        values.put(SUMMARYITEMTABLECOLUMNNAME[4],info.alias);
+        values.put(SUMMARYITEMTABLECOLUMNNAME[5],info.description);
+
+        String tableName = user + "_" + SUMMARYITEMTABLENAME;
+        if (isAdd) {
+            return this.insertSQL(tableName,SUMMARYITEMTABLECOLUMNNAME[2],values);
+        } else {
+            return this.updateSQL(tableName, values, SUMMARYITEMTABLECOLUMNNAME[0] + "=?", new String[]{String.valueOf
+                    (info.id)});
+        }
+    }
+
+    public Boolean deleteSummaryItem(String user, int id) {
+        if (TextUtils.isEmpty(user)) {
+            return false;
+        }
+
+        String sql = "DELETE FROM " + user + "_" + SUMMARYITEMTABLENAME + " WHERE id='" + id + "'";
+        return this.execSQL(sql);
+    }
+
+    //Account
+    /**
+     * 获取总帐中所有记录
+     * @param user:当前登录用户名
+     * @return
+     */
+    public AccountItem[] getAllAccountItemInfos(String user) {
+        String tableName = user + "_" + ACCOUNTITEMTABLENAME;
+        String sql = "SELECT * FROM " + tableName;
+        ArrayList<AccountItem> list = new ArrayList<>();
+
+        Cursor cursor = this.querySQL(sql,null);
+        if (null != cursor) {
+            try {
+                cursor.moveToFirst();
+                AccountItem infos;
+                while (!cursor.isAfterLast()) {
+                    infos = new AccountItem();
+                    infos.id = cursor.getInt(0);
+                    infos.date = cursor.getString(1);
+                    infos.rmb = cursor.getInt(2);
+                    infos.from = cursor.getString(3);
+                    infos.type = cursor.getInt(4);
+                    infos.to = cursor.getString(5);
+                    infos.description = cursor.getString(6);
+
+                    list.add(infos);
+
+                    cursor.moveToNext();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                cursor.close();
+            }
+        }
+
+        return list.toArray(new AccountItem[list.size()]);
+    }
+
+    /**
+     * 添加或编辑总帐表中记录
+     * @param user： 当前登录用户名
+     * @param info： 待保存的数据
+     * @param isAdd：是新添加，还是编辑
+     * @return： 是否成功
+     */
+    public Boolean editAccountItem(String user, AccountItem info, Boolean isAdd) {
+
+        if ((TextUtils.isEmpty(user)) || (null == info)) {
+            return false;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(ACCOUNTITEMTABLECOLUMNNAME[1],info.date);
+        values.put(ACCOUNTITEMTABLECOLUMNNAME[2],info.rmb);
+        values.put(ACCOUNTITEMTABLECOLUMNNAME[3],info.from);
+        values.put(ACCOUNTITEMTABLECOLUMNNAME[4],info.type);
+        values.put(ACCOUNTITEMTABLECOLUMNNAME[5],info.to);
+        values.put(ACCOUNTITEMTABLECOLUMNNAME[6],info.description);
+
+        String tableName = user + "_" + ACCOUNTITEMTABLENAME;
+        if (isAdd) {
+            return this.insertSQL(tableName,ACCOUNTITEMTABLECOLUMNNAME[2],values);
+        } else {
+            return this.updateSQL(tableName, values, ACCOUNTITEMTABLECOLUMNNAME[0] + "=?", new String[]{String.valueOf
+                    (info.id)});
+        }
+    }
+
+    public Boolean deleteAccountItem(String user, int id) {
+        if (TextUtils.isEmpty(user)) {
+            return false;
+        }
+
+        String sql = "DELETE FROM " + user + "_" + ACCOUNTITEMTABLENAME + " WHERE id='" + id + "'";
         return this.execSQL(sql);
     }
 

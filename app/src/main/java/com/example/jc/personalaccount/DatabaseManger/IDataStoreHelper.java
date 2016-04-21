@@ -3,7 +3,9 @@ package com.example.jc.personalaccount.DatabaseManger;
 import android.content.Context;
 import android.text.BoringLayout;
 
+import com.example.jc.personalaccount.Data.AccountItem;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
+import com.example.jc.personalaccount.Data.SummaryItem;
 
 /**
  * Created by jc on 16/3/28.
@@ -33,4 +35,18 @@ public interface IDataStoreHelper {
     Boolean editWorthItem(String user, BalanceSheetItem info, Boolean isAdd);
 
     Boolean deleteWorthItem(String user, int id);
+
+    //Summary
+    SummaryItem[] getAllSummaryItemInfos(String user);
+
+    Boolean editSummaryItem(String user, SummaryItem info, Boolean isAdd);
+
+    Boolean deleteSummaryItem(String user, int id);
+
+    //Account
+    AccountItem[] getAllAccountItemInfos(String user);
+
+    Boolean editAccountItem(String user, AccountItem info, Boolean isAdd);
+
+    Boolean deleteAccountItem(String user, int id);
 }

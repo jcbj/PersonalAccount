@@ -12,10 +12,12 @@ public class AccountItem {
     public static final String[] mDataColumnName = new String[]{"id","week","date","rmb","from","image","to","description"};
 
     public int id;
-    public Date date;
+    //2016-04-21
+    public String date;
     public int rmb;
     public String from;
-    public int imageid;
+    //0-实际支出，1-转账支出，2-实际收入，3-转账收入
+    public int type;
     public String to;
     public String description;
 }
