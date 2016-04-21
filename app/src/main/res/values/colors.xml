@@ -153,4 +153,6 @@
     <color name="lightgray64">#404040</color>
     <color name="lightgray128">#808080</color>
     <color name="lightgray192">#C0C0C0</color>
+    <color name="lightgray224">#E0E0E0</color>
+    <color name="lightgray240">#F0F0F0</color>
 </resources>

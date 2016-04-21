@@ -176,15 +176,6 @@ public class FragmentHome extends Fragment {
         });
     }
 
-    private void refreshUIData() {
-        if (null != mAuthTask) {
-            return;
-        }
-
-        mAuthTask = new RefreshTask();
-        mAuthTask.execute((Void) null);
-    }
-
     private void showEditNetAssetsActivity(int position, HomeEditOperType type) {
 
         Intent intent = new Intent(mActivity, EditNetAssetsActivity.class);
@@ -331,6 +322,15 @@ public class FragmentHome extends Fragment {
         result.dDebtAll = ((int)(result.dDebtAll / 100)) * 1.0;
 
         return result;
+    }
+
+    private void refreshUIData() {
+        if (null != mAuthTask) {
+            return;
+        }
+
+        mAuthTask = new RefreshTask();
+        mAuthTask.execute((Void) null);
     }
 
     /**

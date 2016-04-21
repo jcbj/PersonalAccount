@@ -4,10 +4,11 @@
     android:layout_height="match_parent"
     tools:context="com.example.jc.personalaccount.FragmentAccount">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.baoyz.swipemenulistview.SwipeMenuListView
+        android:id="@+id/fragment_account_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/bottom_tab_account" />
+        android:layout_height="match_parent">
+
+    </com.baoyz.swipemenulistview.SwipeMenuListView>
 
 </FrameLayout>
