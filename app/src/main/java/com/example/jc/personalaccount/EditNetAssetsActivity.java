@@ -4,12 +4,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.BoringLayout;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -26,7 +24,6 @@ import com.example.jc.personalaccount.Data.BalanceSheetItem;
 import com.example.jc.personalaccount.Data.HomeEditOperType;
 
 import java.io.File;
-import java.util.Map;
 
 public class EditNetAssetsActivity extends AppCompatActivity {
 
@@ -56,7 +53,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
 
         this.mTypeSpinner = (Spinner) findViewById(R.id.fragment_home_edit_type_spinner);
         this.mETName = (EditText)findViewById(R.id.fragment_home_edit_name_text);
-        this.mETWorth = (EditText)findViewById(R.id.fragment_home_edit_worth_text);
+        this.mETWorth = (EditText)findViewById(R.id.fragment_home_edit_value_text);
         this.mETDescription = (EditText)findViewById(R.id.fragment_home_edit_description_text);
         this.mSaveBtn = (Button) findViewById(R.id.fragment_home_edit_save_button);
         this.mBackBtn = (Button) findViewById(R.id.fragment_home_edit_back_button);
@@ -201,7 +198,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
             this.mCurrentInfo = GlobalData.EXTRA_Home_Edit_BSI_Data;
 
             mETName.setText(this.mCurrentInfo.name);
-            mETWorth.setText(Double.toString(this.mCurrentInfo.worth / 100.0));
+            mETWorth.setText(Double.toString(this.mCurrentInfo.value / 100.0));
             mETDescription.setText(this.mCurrentInfo.description);
 
             if ((!TextUtils.isEmpty(this.mCurrentInfo.imagePath)) && ((new File(this.mCurrentInfo.imagePath)).exists())) {
@@ -236,7 +233,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
 
         mCurrentInfo.worthType = (mTypeSpinner.getSelectedItem().toString() == mTypeSpinnerItems[0]) ? BalanceSheetItem.WorthType.Property : BalanceSheetItem.WorthType.Debt;
         mCurrentInfo.name = mETName.getText().toString();
-        mCurrentInfo.worth = (int)(Double.parseDouble(mETWorth.getText().toString()) * 100);
+        mCurrentInfo.value = (int)(Double.parseDouble(mETWorth.getText().toString()) * 100);
         mCurrentInfo.description = mETDescription.getText().toString();
 
         String tempPath = mCurrentInfo.imagePath;

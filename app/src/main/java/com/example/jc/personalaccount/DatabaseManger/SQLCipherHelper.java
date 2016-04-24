@@ -225,7 +225,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
                     infos.id = cursor.getInt(0);
                     infos.worthType = ((0 == cursor.getInt(1)) ? BalanceSheetItem.WorthType.Property : BalanceSheetItem.WorthType.Debt);
                     infos.name = cursor.getString(2);
-                    infos.worth = cursor.getInt(3);
+                    infos.value = cursor.getInt(3);
                     infos.imagePath = cursor.getString(4);
                     byte[] imageByte = cursor.getBlob(5);
                     if (null != imageByte) {
@@ -265,7 +265,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
         ContentValues values = new ContentValues();
         values.put(BALANCESHEETTABLECOLUMNNAME[1],(info.worthType == BalanceSheetItem.WorthType.Property) ? 0 : 1);
         values.put(BALANCESHEETTABLECOLUMNNAME[2],info.name);
-        values.put(BALANCESHEETTABLECOLUMNNAME[3],info.worth);
+        values.put(BALANCESHEETTABLECOLUMNNAME[3],info.value);
         values.put(BALANCESHEETTABLECOLUMNNAME[4],info.imagePath);
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
         if (null != info.imageThumb) {

@@ -1,12 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.jc.personalaccount.EditSummaryItemActivity">
+            android:layout_height="match_parent"
+    >
 
-</RelativeLayout>
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow android:visibility="gone">
+            <TextView
+                android:text="@string/fragment_summary_edit_date"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
+
+            <DatePicker
+                android:id="@+id/fragment_summary_edit_date"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                />
+
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="@string/fragment_summary_account_name"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
+
+            <EditText
+                android:id="@+id/fragment_summary_edit_account_name_text"
+
+                android:singleLine="true"
+                android:maxLength="20"/>
+
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="@string/fragment_summary_account_name_alias"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
+
+            <EditText
+                android:id="@+id/fragment_summary_edit_account_name_alias_text"
+
+                android:singleLine="true"
+                android:maxLength="20"/>
+
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="@string/fragment_home_edit_value"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:id="@+id/fragment_summary_edit_value_text"
+                android:layout_column="1"
+                android:singleLine="true"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="@string/fragment_home_edit_description"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/fragment_summary_edit_description_text"
+                android:layout_column="1"/>
+        </TableRow>
+
+        <TableRow>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_span="2"
+                >
+
+                <Button
+                    android:id="@+id/fragment_summary_edit_back_button"
+                    android:text="@string/common_btn_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/fragment_summary_edit_save_button"
+                    android:text="@string/common_btn_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="2"/>
+
+            </LinearLayout>
+        </TableRow>
+
+    </TableLayout>
+</ScrollView>

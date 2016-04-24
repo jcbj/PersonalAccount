@@ -10,6 +10,7 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
+import com.example.jc.personalaccount.Data.SummaryItem;
 import com.example.jc.personalaccount.DatabaseManger.DataStoreFactory;
 import com.example.jc.personalaccount.DatabaseManger.IDataStoreHelper;
 
@@ -36,6 +37,10 @@ public class GlobalData {
     //标记是从那个页面返回到main
     public static String EXTRA_WHO_HOME_TAGNAME = "WHO_HOME_TAGNAME";
     public static String STRING_ACTIVITY_EDIT_NETASSETS = "EDIT_NETASSETS";
+    public static String EXTRA_SUMMARY_EDIT_TYPE = "SUMMARY_EDIT_TYPE";
+    public static SummaryItem EXTRA_Summary_Edit_SI_Data;
+
+
 
 
     //*****************

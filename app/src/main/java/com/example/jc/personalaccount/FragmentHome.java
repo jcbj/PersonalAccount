@@ -310,10 +310,10 @@ public class FragmentHome extends Fragment {
 
                 if (infos[i].worthType == BalanceSheetItem.WorthType.Property) {
                     result.listPropertyItems.add(infos[i].mapValue());
-                    result.dPropertyAll += infos[i].worth;
+                    result.dPropertyAll += infos[i].value;
                 } else {
                     result.listDebtItems.add(infos[i].mapValue());
-                    result.dDebtAll += infos[i].worth;
+                    result.dDebtAll += infos[i].value;
                 }
             }
         }

@@ -53,11 +53,17 @@
 
     <string name="fragment_home_edit_type">类型</string>
     <string name="fragment_home_edit_name">名称</string>
-    <string name="fragment_home_edit_worth">价值</string>
+    <string name="fragment_home_edit_value">金额</string>
     <string name="fragment_home_edit_description">简介</string>
     <string name="fragment_home_edit_add_image">添加图像</string>
     <string name="fragment_home_edit_remove_image">清除图像</string>
     <string name="fragment_home_edit_check_message">名称，价值和简介都不为空</string>
+
+    <!-- fragment summary -->
+    <string name="fragment_summary_title">账户概要</string>
+    <string name="fragment_summary_edit_date">日期</string>
+    <string name="fragment_summary_account_name">账户</string>
+    <string name="fragment_summary_account_name_alias">别名</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

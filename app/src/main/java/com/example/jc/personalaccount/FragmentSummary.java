@@ -2,6 +2,7 @@ package com.example.jc.personalaccount;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +22,8 @@ import android.widget.Toast;
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.jc.personalaccount.Data.AccountItem;
+import com.example.jc.personalaccount.Data.BalanceSheetItem;
+import com.example.jc.personalaccount.Data.HomeEditOperType;
 import com.example.jc.personalaccount.Data.SummaryItem;
 
 import java.util.ArrayList;
@@ -31,6 +37,7 @@ public class FragmentSummary extends Fragment {
     private RefreshTask mAuthTask;
     private SwipeMenuListView mListView;
     private List<Map<String, Object>> mData;
+    private Button mAddBtn;
 
     @Override
     public void onAttach(Context context) {
@@ -45,6 +52,7 @@ public class FragmentSummary extends Fragment {
         View view = inflater.inflate(R.layout.fragment_summary, container, false);
 
         this.mListView = (SwipeMenuListView)view.findViewById(R.id.fragment_summary_list_view);
+        this.mAddBtn = (Button)view.findViewById(R.id.fragment_summary_add_button);
 
         //设置没项滑动后的菜单
         this.mListView.setMenuCreator(GlobalData.buildSwipeMenuCreator(mActivity));
@@ -57,6 +65,13 @@ public class FragmentSummary extends Fragment {
     }
 
     private void bindingUIEvent() {
+
+        this.mAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showEditNetAssetsActivity(-1);
+            }
+        });
 
         this.mListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
@@ -79,6 +94,21 @@ public class FragmentSummary extends Fragment {
 
             }
         });
+    }
+
+    private void showEditNetAssetsActivity(int position) {
+
+        Intent intent = new Intent(mActivity, EditSummaryItemActivity.class);
+        intent.putExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE, position);
+
+        if (-1 != position) {
+            int iListItemsLength = this.mData.size();
+            if (position < iListItemsLength) {
+                GlobalData.EXTRA_Summary_Edit_SI_Data = new SummaryItem((Map<String, Object>) ((this.mData.toArray())[position]));
+            }
+        }
+
+        mActivity.startActivity(intent);
     }
 
     private void setData() {
