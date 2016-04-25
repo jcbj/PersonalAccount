@@ -142,33 +142,33 @@ public class EditNetAssetsActivity extends AppCompatActivity {
 
         switch (this.mOperType) {
             case HOME_EDIT_OPER_TYPE_ADDPROPERTY: {
-                this.setTitle(R.string.activity_title_home_edit_add);
+                this.setTitle(R.string.activity_title_add);
                 iTypeSpinnerSelectIndex = 0;
 
                 break;
             }
             case HOME_EDIT_OPER_TYPE_ADDDEBT: {
-                this.setTitle(R.string.activity_title_home_edit_add);
+                this.setTitle(R.string.activity_title_add);
                 iTypeSpinnerSelectIndex = 1;
 
                 break;
             }
             case HOME_EDIT_OPER_TYPE_EDITPROPERTY: {
-                this.setTitle(R.string.activity_title_home_edit);
+                this.setTitle(R.string.activity_title_edit);
                 iTypeSpinnerSelectIndex = 0;
                 isEdit = true;
 
                 break;
             }
             case HOME_EDIT_OPER_TYPE_EDITDEBT: {
-                this.setTitle(R.string.activity_title_home_edit);
+                this.setTitle(R.string.activity_title_edit);
                 iTypeSpinnerSelectIndex = 1;
                 isEdit = true;
 
                 break;
             }
             case HOME_EDIT_OPER_TYPE_VIEWPROPERTY:{
-                this.setTitle(R.string.activity_title_home_edit_view);
+                this.setTitle(R.string.activity_title_view);
                 iTypeSpinnerSelectIndex = 0;
                 isView = true;
 
@@ -177,7 +177,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
                 break;
             }
             case HOME_EDIT_OPER_TYPE_VIEWDEBT:{
-                this.setTitle(R.string.activity_title_home_edit_view);
+                this.setTitle(R.string.activity_title_view);
                 iTypeSpinnerSelectIndex = 1;
                 isView = true;
 
@@ -284,7 +284,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
     }
 
     private void backClick() {
-        Intent intent = new Intent(EditNetAssetsActivity.this,MainActivity.class);
+        Intent intent = new Intent(this,MainActivity.class);
         intent.putExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME,GlobalData.STRING_ACTIVITY_EDIT_NETASSETS);
         intent.putExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,mEditCount);
         startActivity(intent);

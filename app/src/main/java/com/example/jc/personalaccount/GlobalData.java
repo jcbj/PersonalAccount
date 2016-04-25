@@ -37,6 +37,7 @@ public class GlobalData {
     //标记是从那个页面返回到main
     public static String EXTRA_WHO_HOME_TAGNAME = "WHO_HOME_TAGNAME";
     public static String STRING_ACTIVITY_EDIT_NETASSETS = "EDIT_NETASSETS";
+    public static String STRING_ACTIVITY_EDIT_SUMMARY = "EDIT_SUMMARY";
     public static String EXTRA_SUMMARY_EDIT_TYPE = "SUMMARY_EDIT_TYPE";
     public static SummaryItem EXTRA_Summary_Edit_SI_Data;
 

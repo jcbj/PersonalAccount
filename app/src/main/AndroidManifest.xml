@@ -28,7 +28,7 @@
         <activity android:name=".MainActivity" />
         <activity
             android:name=".EditNetAssetsActivity"
-            android:label="@string/activity_title_home_edit_add" />
+            android:label="@string/activity_title_add" />
         <activity android:name=".EditSummaryItemActivity" />
         <activity android:name=".EditAccountItemActivity"></activity>
     </application>

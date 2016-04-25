@@ -305,7 +305,7 @@ public class FragmentHome extends Fragment {
 
         BalanceSheetItem[] infos = GlobalData.DataStoreHelper.getAllBalanceSheetInfos(GlobalData.CurrentUser);
 
-        if (infos.length > 0) {
+        if (null != infos) {
             for (int i = 0; i < infos.length; i++) {
 
                 if (infos[i].worthType == BalanceSheetItem.WorthType.Property) {

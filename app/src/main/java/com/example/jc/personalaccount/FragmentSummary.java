@@ -24,6 +24,7 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.jc.personalaccount.Data.AccountItem;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
 import com.example.jc.personalaccount.Data.HomeEditOperType;
+import com.example.jc.personalaccount.Data.SummaryEditOperType;
 import com.example.jc.personalaccount.Data.SummaryItem;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class FragmentSummary extends Fragment {
         this.mAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEditNetAssetsActivity(-1);
+                showEditNetAssetsActivity(-1, SummaryEditOperType.SUMMARY_EDIT_OPER_TYPE_ADD);
             }
         });
 
@@ -78,10 +79,14 @@ public class FragmentSummary extends Fragment {
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 switch (index) {
                     case 0:
-                        //open
+                        // open
+                        showEditNetAssetsActivity(position,SummaryEditOperType.SUMMARY_EDIT_OPER_TYPE_EDIT);
                         break;
                     case 1:
-                        //delete
+                        // delete
+                        if (position < mData.size()) {
+                            deleteClick((Map<String,Object>)((mData.toArray())[position]));
+                        }
                         break;
                 }
                 return false;
@@ -92,14 +97,15 @@ public class FragmentSummary extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                showEditNetAssetsActivity(position,SummaryEditOperType.SUMMARY_EDIT_OPER_TYPE_VIEW);
             }
         });
     }
 
-    private void showEditNetAssetsActivity(int position) {
+    private void showEditNetAssetsActivity(int position, SummaryEditOperType operType) {
 
         Intent intent = new Intent(mActivity, EditSummaryItemActivity.class);
-        intent.putExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE, position);
+        intent.putExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE, operType);
 
         if (-1 != position) {
             int iListItemsLength = this.mData.size();
@@ -109,6 +115,26 @@ public class FragmentSummary extends Fragment {
         }
 
         mActivity.startActivity(intent);
+    }
+
+    private void deleteClick(Map<String,Object> map) {
+
+        int id = -1;
+        try {
+            id = Integer.parseInt(map.get(BalanceSheetItem.mDataColumnName[0]).toString());
+            if (id != -1) {
+                if (GlobalData.DataStoreHelper.deleteWorthItem(GlobalData.CurrentUser,id)) {
+
+                    this.refreshUIData();
+                    Object path = map.get(BalanceSheetItem.mDataColumnName[5]);
+                    if (null != path) {
+                        Utility.deleteFile(path.toString());
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void setData() {
@@ -130,7 +156,7 @@ public class FragmentSummary extends Fragment {
                         R.id.fragment_summary_list_item_value,
                         R.id.fragment_summary_list_item_name,
                         R.id.fragment_summary_list_item_alias,
-                        R.id.fragment_account_list_item_description});
+                        R.id.fragment_summary_list_item_description});
 
         this.mListView.setAdapter(adapterAll);
     }
@@ -138,6 +164,14 @@ public class FragmentSummary extends Fragment {
     private List<Map<String, Object>> getData() {
         List<Map<String, Object>> list = new ArrayList<>();
 
+        SummaryItem[] datas = GlobalData.DataStoreHelper.getAllSummaryItemInfos(GlobalData.CurrentUser);
+        if (null != datas) {
+            for (int i = 0; i < datas.length; i++) {
+                list.add(datas[i].mapValue());
+            }
+        }
+
+        /* Test
         Map<String, Object> map = new HashMap<String, Object>();
         map.put(SummaryItem.mDataColumnName[1],"周日");
         map.put(SummaryItem.mDataColumnName[2],"04-21");
@@ -173,6 +207,7 @@ public class FragmentSummary extends Fragment {
         map.put(SummaryItem.mDataColumnName[5],"中行信");
         map.put(SummaryItem.mDataColumnName[6],"信用额度八千元，绑定ETC,缴纳通行费");
         list.add(map);
+        */
 
         return list;
     }

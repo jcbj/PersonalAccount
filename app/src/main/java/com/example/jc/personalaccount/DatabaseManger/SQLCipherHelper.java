@@ -199,7 +199,21 @@ public class SQLCipherHelper implements IDataStoreHelper {
             Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
         }
 
-        //2,
+        //2,创建账户概要表
+        tableName = user + "_" + SUMMARYITEMTABLENAME;
+        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                " (" + SUMMARYITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                SUMMARYITEMTABLECOLUMNNAME[1] + " TEXT," +
+                SUMMARYITEMTABLECOLUMNNAME[2] + "  INT," +
+                SUMMARYITEMTABLECOLUMNNAME[3] + " TEXT," +
+                SUMMARYITEMTABLECOLUMNNAME[4] + " TEXT," +
+                SUMMARYITEMTABLECOLUMNNAME[5] + " TEXT)";
+        this.execSQL(sql);
+
+        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+        if (!this.checkIsExist(sql,null)) {
+            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+        }
 
         return false;
     }

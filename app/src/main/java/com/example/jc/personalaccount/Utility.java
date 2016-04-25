@@ -27,6 +27,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by jc on 16/4/12.
@@ -429,5 +433,51 @@ public class Utility {
         InputMethodManager inputMethodManager =
                 (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    /**
+     * 获取指定日期对应的星期
+     * @param format 传入指定日期的格式， eg: yyyy-mm-dd
+     * @param date 指定如期  eg: 2016-04-21
+     * @return
+     */
+    public static String getWeek(String format, String date) {
+        String Week = "周";
+        SimpleDateFormat sdFormat = new SimpleDateFormat(format);
+        Calendar c = Calendar.getInstance();
+        try {
+            c.setTime(sdFormat.parse(date));
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return "N/A";
+        }
+        switch(c.get(Calendar.DAY_OF_WEEK)){
+            case 1:
+                Week += "日";
+                break;
+            case 2:
+                Week += "一";
+                break;
+            case 3:
+                Week += "二";
+                break;
+            case 4:
+                Week += "三";
+                break;
+            case 5:
+                Week += "四";
+                break;
+            case 6:
+                Week += "五";
+                break;
+            case 7:
+                Week += "六";
+                break;
+            default:
+                Week = "N/A";
+                break;
+        }
+        return Week;
     }
 }
