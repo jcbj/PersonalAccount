@@ -324,7 +324,7 @@ public class FragmentHome extends Fragment {
         return result;
     }
 
-    private void refreshUIData() {
+    public void refreshUIData() {
         if (null != mAuthTask) {
             return;
         }

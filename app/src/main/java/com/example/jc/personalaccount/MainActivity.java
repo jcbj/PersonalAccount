@@ -30,6 +30,39 @@ public class MainActivity extends FragmentActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
+        Intent intent = this.getIntent();
+        String sourceName = intent.getStringExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME);
+        int editCount = intent.getIntExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,0);
+
+        if (null != sourceName) {
+
+            if (sourceName.equals(GlobalData.STRING_ACTIVITY_EDIT_NETASSETS)) {
+                mCurFragmentIndex = 0;
+                showWhichFragment(mCurFragmentIndex);
+                if (editCount > 0) {
+                    ((FragmentHome)mFragments[mCurFragmentIndex]).refreshUIData();
+                }
+            } else if (sourceName.equals(GlobalData.STRING_ACTIVITY_EDIT_SUMMARY)) {
+                mCurFragmentIndex = 1;
+                showWhichFragment(mCurFragmentIndex);
+                if (editCount > 0) {
+                    ((FragmentSummary) mFragments[mCurFragmentIndex]).refreshUIData();
+                }
+            }
+
+            return;
+        }
+
+        GlobalData.ImagePath = getApplicationContext().getFilesDir().getAbsolutePath() + "/ImageData/" + GlobalData.CurrentUser;
+        File file = new File(GlobalData.ImagePath);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        mCurFragmentIndex = 0;
+        setFragmentIndicator(mCurFragmentIndex);
+
+        /* 实际并没有触发onSaveInstanceState，每次都新建
         if (null == savedInstanceState) {
             GlobalData.ImagePath = getApplicationContext().getFilesDir().getAbsolutePath() + "/ImageData/" + GlobalData.CurrentUser;
             File file = new File(GlobalData.ImagePath);
@@ -43,6 +76,7 @@ public class MainActivity extends FragmentActivity {
             mCurFragmentIndex = savedInstanceState.getInt(CURFRAGMENTINDEX);
             showWhichFragment(mCurFragmentIndex);
         }
+        */
     }
 
     @Override

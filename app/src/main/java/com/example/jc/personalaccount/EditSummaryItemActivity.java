@@ -88,6 +88,8 @@ public class EditSummaryItemActivity extends AppCompatActivity {
         this.mCurrentInfo = new SummaryItem();
 
         Intent intent = this.getIntent();
+        int type = intent.getIntExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE,-1);
+        String str = intent.getStringExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE);
         this.mOperType = SummaryEditOperType.valueOf(intent.getIntExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE, SummaryEditOperType.SUMMARY_EDIT_OPER_TYPE_ADD.value()));
 
         boolean isEdit = false;

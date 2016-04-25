@@ -38,6 +38,7 @@ public class FragmentSummary extends Fragment {
     private RefreshTask mAuthTask;
     private SwipeMenuListView mListView;
     private List<Map<String, Object>> mData;
+    private SimpleAdapter mAdapter;
     private Button mAddBtn;
 
     @Override
@@ -105,7 +106,7 @@ public class FragmentSummary extends Fragment {
     private void showEditNetAssetsActivity(int position, SummaryEditOperType operType) {
 
         Intent intent = new Intent(mActivity, EditSummaryItemActivity.class);
-        intent.putExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE, operType);
+        intent.putExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE, operType.value());
 
         if (-1 != position) {
             int iListItemsLength = this.mData.size();
@@ -121,15 +122,13 @@ public class FragmentSummary extends Fragment {
 
         int id = -1;
         try {
-            id = Integer.parseInt(map.get(BalanceSheetItem.mDataColumnName[0]).toString());
+            id = Integer.parseInt(map.get(SummaryItem.mDataColumnName[0]).toString());
             if (id != -1) {
-                if (GlobalData.DataStoreHelper.deleteWorthItem(GlobalData.CurrentUser,id)) {
+                if (GlobalData.DataStoreHelper.deleteSummaryItem(GlobalData.CurrentUser,id)) {
 
-                    this.refreshUIData();
-                    Object path = map.get(BalanceSheetItem.mDataColumnName[5]);
-                    if (null != path) {
-                        Utility.deleteFile(path.toString());
-                    }
+                    mData.remove(map);
+
+                    mAdapter.notifyDataSetChanged();
                 }
             }
         } catch (Exception ex) {
@@ -139,7 +138,7 @@ public class FragmentSummary extends Fragment {
 
     private void setData() {
 
-        SimpleAdapter adapterAll = new SimpleAdapter(
+        mAdapter = new SimpleAdapter(
                 mActivity,
                 this.mData,
                 R.layout.fragment_summary_list_item,
@@ -158,7 +157,7 @@ public class FragmentSummary extends Fragment {
                         R.id.fragment_summary_list_item_alias,
                         R.id.fragment_summary_list_item_description});
 
-        this.mListView.setAdapter(adapterAll);
+        this.mListView.setAdapter(mAdapter);
     }
 
     private List<Map<String, Object>> getData() {
@@ -212,7 +211,7 @@ public class FragmentSummary extends Fragment {
         return list;
     }
 
-    private void refreshUIData() {
+    public void refreshUIData() {
         if (null != mAuthTask) {
             return;
         }
