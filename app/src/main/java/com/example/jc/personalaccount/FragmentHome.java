@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -61,11 +62,71 @@ public class FragmentHome extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.mActivity = (Activity)context;
+
+        Log.d("PA","FH:onAttach");
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Log.d("PA","FH:onCreate");
+    }
+
+    @Override
+    public void  onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d("PA","FH:onActivityCreated");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("PA","FH:onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("PA","FH:onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("PA","FH:onPause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("PA","FH:onStop");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("PA","FH:onDestroyView");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("PA","FH:onDestroy");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d("PA","FH:onDetach");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Log.d("PA","FH:onCreateView");
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -329,6 +390,8 @@ public class FragmentHome extends Fragment {
             return;
         }
 
+        Log.d("PA","FH:refreshUIData");
+
         mAuthTask = new RefreshTask();
         mAuthTask.execute((Void) null);
     }
@@ -338,9 +401,6 @@ public class FragmentHome extends Fragment {
      * the user.
      */
     public class RefreshTask extends AsyncTask<Void, Void, Boolean> {
-
-        RefreshTask() {
-        }
 
         @Override
         protected Boolean doInBackground(Void... params) {

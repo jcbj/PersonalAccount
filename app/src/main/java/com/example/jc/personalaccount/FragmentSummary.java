@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.os.AsyncTaskCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,11 +46,69 @@ public class FragmentSummary extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.mActivity = (Activity)context;
+        Log.d("PA","FS:onAttach");
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Log.d("PA","FS:onCreate");
+    }
+
+    @Override
+    public void  onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d("PA","FS:onActivityCreated");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("PA","FS:onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("PA","FS:onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("PA","FS:onPause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("PA","FS:onStop");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("PA","FS:onDestroyView");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("PA","FS:onDestroy");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d("PA","FS:onDetach");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Log.d("PA","FS:onCreateView");
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_summary, container, false);
 
@@ -215,6 +274,8 @@ public class FragmentSummary extends Fragment {
         if (null != mAuthTask) {
             return;
         }
+
+        Log.d("PA","FS:refreshUIData");
 
         mAuthTask = new RefreshTask();
         mAuthTask.execute((Void) null);

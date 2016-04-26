@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -24,12 +25,67 @@ public class MainActivity extends FragmentActivity {
     private boolean mIsExit;
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        Log.d("PA","MA:onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.d("PA","MA:onResume");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        Log.d("PA","MA:onStop");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Log.d("PA","MA:onPause");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.d("PA","MA:onDestroy");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        Log.d("PA","MA:onRestart");
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d("PA","MA:onCreate");
+
         //隐藏标题栏
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
+        //初始化
+        GlobalData.ImagePath = getApplicationContext().getFilesDir().getAbsolutePath() + "/ImageData/" + GlobalData.CurrentUser;
+        File file = new File(GlobalData.ImagePath);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        //默认显示第一项
+        mCurFragmentIndex = 0;
+        setFragmentIndicator(mCurFragmentIndex);
+        //根据从不同Activity返回的，设置当前显示的项。
         Intent intent = this.getIntent();
         String sourceName = intent.getStringExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME);
         int editCount = intent.getIntExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,0);
@@ -39,50 +95,21 @@ public class MainActivity extends FragmentActivity {
             if (sourceName.equals(GlobalData.STRING_ACTIVITY_EDIT_NETASSETS)) {
                 mCurFragmentIndex = 0;
                 showWhichFragment(mCurFragmentIndex);
-                if (editCount > 0) {
-                    ((FragmentHome)mFragments[mCurFragmentIndex]).refreshUIData();
-                }
+                ViewIndicator.setIndicator(mCurFragmentIndex);
             } else if (sourceName.equals(GlobalData.STRING_ACTIVITY_EDIT_SUMMARY)) {
                 mCurFragmentIndex = 1;
                 showWhichFragment(mCurFragmentIndex);
-                if (editCount > 0) {
-                    ((FragmentSummary) mFragments[mCurFragmentIndex]).refreshUIData();
-                }
+                ViewIndicator.setIndicator(mCurFragmentIndex);
             }
-
-            return;
         }
-
-        GlobalData.ImagePath = getApplicationContext().getFilesDir().getAbsolutePath() + "/ImageData/" + GlobalData.CurrentUser;
-        File file = new File(GlobalData.ImagePath);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
-        mCurFragmentIndex = 0;
-        setFragmentIndicator(mCurFragmentIndex);
-
-        /* 实际并没有触发onSaveInstanceState，每次都新建
-        if (null == savedInstanceState) {
-            GlobalData.ImagePath = getApplicationContext().getFilesDir().getAbsolutePath() + "/ImageData/" + GlobalData.CurrentUser;
-            File file = new File(GlobalData.ImagePath);
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-
-            mCurFragmentIndex = 0;
-            setFragmentIndicator(mCurFragmentIndex);
-        } else {
-            mCurFragmentIndex = savedInstanceState.getInt(CURFRAGMENTINDEX);
-            showWhichFragment(mCurFragmentIndex);
-        }
-        */
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(CURFRAGMENTINDEX,mCurFragmentIndex);
         super.onSaveInstanceState(outState);
+
+        Log.d("PA","MA:onSaveInstanceState");
     }
 
     @Override
