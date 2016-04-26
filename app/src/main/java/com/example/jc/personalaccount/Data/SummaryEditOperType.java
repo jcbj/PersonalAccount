@@ -5,9 +5,9 @@ package com.example.jc.personalaccount.Data;
  */
 public enum SummaryEditOperType {
 
-    SUMMARY_EDIT_OPER_TYPE_ADD(0),
-    SUMMARY_EDIT_OPER_TYPE_EDIT(1),
-    SUMMARY_EDIT_OPER_TYPE_VIEW(2);
+    ADD(0),
+    EDIT(1),
+    VIEW(2);
 
     private final int mValue;
 
@@ -18,13 +18,13 @@ public enum SummaryEditOperType {
     public static SummaryEditOperType valueOf(int value) {
         switch (value) {
             case 0:
-                return SUMMARY_EDIT_OPER_TYPE_ADD;
+                return ADD;
             case 1:
-                return SUMMARY_EDIT_OPER_TYPE_EDIT;
+                return EDIT;
             case 2:
-                return SUMMARY_EDIT_OPER_TYPE_VIEW;
+                return VIEW;
             default:
-                return SUMMARY_EDIT_OPER_TYPE_ADD;
+                return ADD;
         }
     }
 

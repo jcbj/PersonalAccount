@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
+import com.example.jc.personalaccount.Data.FragmentID;
 import com.example.jc.personalaccount.Data.SummaryEditOperType;
 import com.example.jc.personalaccount.Data.SummaryItem;
 
@@ -88,22 +89,20 @@ public class EditSummaryItemActivity extends AppCompatActivity {
         this.mCurrentInfo = new SummaryItem();
 
         Intent intent = this.getIntent();
-        int type = intent.getIntExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE,-1);
-        String str = intent.getStringExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE);
-        this.mOperType = SummaryEditOperType.valueOf(intent.getIntExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE, SummaryEditOperType.SUMMARY_EDIT_OPER_TYPE_ADD.value()));
+        this.mOperType = SummaryEditOperType.valueOf(intent.getIntExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE, SummaryEditOperType.ADD.value()));
 
         boolean isEdit = false;
         boolean isView = false;
 
         switch (this.mOperType) {
-            case SUMMARY_EDIT_OPER_TYPE_ADD:
+            case ADD:
                 this.setTitle(R.string.activity_title_add);
                 break;
-            case SUMMARY_EDIT_OPER_TYPE_EDIT:
+            case EDIT:
                 this.setTitle(R.string.activity_title_edit);
                 isEdit = true;
                 break;
-            case SUMMARY_EDIT_OPER_TYPE_VIEW:
+            case VIEW:
                 this.setTitle(R.string.activity_title_view);
                 isView = true;
                 this.setUIViewStatus();
@@ -172,7 +171,8 @@ public class EditSummaryItemActivity extends AppCompatActivity {
         Intent intent = new Intent(this,MainActivity.class);
         intent.putExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME,GlobalData.STRING_ACTIVITY_EDIT_SUMMARY);
         intent.putExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,mEditCount);
-        startActivity(intent);
+        setResult(FragmentID.SUMMARY.value(),intent);
+        finish();
     }
 
     private void setUIViewStatus() {

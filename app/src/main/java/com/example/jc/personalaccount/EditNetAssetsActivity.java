@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
+import com.example.jc.personalaccount.Data.FragmentID;
 import com.example.jc.personalaccount.Data.HomeEditOperType;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
 
     private String[] mTypeSpinnerItems;
     private int mEditCount = 0;
-    private HomeEditOperType mOperType = HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDPROPERTY;
+    private HomeEditOperType mOperType = HomeEditOperType.ADDPROPERTY;
     private EditText mETName;
     private EditText mETDescription;
     private EditText mETWorth;
@@ -141,33 +142,33 @@ public class EditNetAssetsActivity extends AppCompatActivity {
         boolean isView = false;
 
         switch (this.mOperType) {
-            case HOME_EDIT_OPER_TYPE_ADDPROPERTY: {
+            case ADDPROPERTY: {
                 this.setTitle(R.string.activity_title_add);
                 iTypeSpinnerSelectIndex = 0;
 
                 break;
             }
-            case HOME_EDIT_OPER_TYPE_ADDDEBT: {
+            case ADDDEBT: {
                 this.setTitle(R.string.activity_title_add);
                 iTypeSpinnerSelectIndex = 1;
 
                 break;
             }
-            case HOME_EDIT_OPER_TYPE_EDITPROPERTY: {
+            case EDITPROPERTY: {
                 this.setTitle(R.string.activity_title_edit);
                 iTypeSpinnerSelectIndex = 0;
                 isEdit = true;
 
                 break;
             }
-            case HOME_EDIT_OPER_TYPE_EDITDEBT: {
+            case EDITDEBT: {
                 this.setTitle(R.string.activity_title_edit);
                 iTypeSpinnerSelectIndex = 1;
                 isEdit = true;
 
                 break;
             }
-            case HOME_EDIT_OPER_TYPE_VIEWPROPERTY:{
+            case VIEWPROPERTY:{
                 this.setTitle(R.string.activity_title_view);
                 iTypeSpinnerSelectIndex = 0;
                 isView = true;
@@ -176,7 +177,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
 
                 break;
             }
-            case HOME_EDIT_OPER_TYPE_VIEWDEBT:{
+            case VIEWDEBT:{
                 this.setTitle(R.string.activity_title_view);
                 iTypeSpinnerSelectIndex = 1;
                 isView = true;
@@ -287,7 +288,8 @@ public class EditNetAssetsActivity extends AppCompatActivity {
         Intent intent = new Intent(this,MainActivity.class);
         intent.putExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME,GlobalData.STRING_ACTIVITY_EDIT_NETASSETS);
         intent.putExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,mEditCount);
-        startActivity(intent);
+        setResult(FragmentID.HOME.value(),intent);
+        finish();
     }
 
     private void setUIViewStatus() {

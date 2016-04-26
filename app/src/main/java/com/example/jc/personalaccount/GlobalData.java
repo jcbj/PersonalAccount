@@ -44,7 +44,6 @@ public class GlobalData {
 
 
 
-
     //*****************
 
     //当前登录用户名

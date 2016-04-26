@@ -33,6 +33,7 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
+import com.example.jc.personalaccount.Data.FragmentID;
 import com.example.jc.personalaccount.Data.HomeEditOperType;
 
 import java.io.File;
@@ -45,7 +46,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 
-public class FragmentHome extends Fragment {
+public class FragmentHome extends Fragment implements IFragmentUI {
 
     protected Activity mActivity;
     private RefreshTask mAuthTask;
@@ -170,14 +171,14 @@ public class FragmentHome extends Fragment {
         mAddPropertyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEditNetAssetsActivity(-1,HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDPROPERTY);
+                showEditNetAssetsActivity(-1,HomeEditOperType.ADDPROPERTY);
             }
         });
 
         mAddDebtBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEditNetAssetsActivity(-1,HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDDEBT);
+                showEditNetAssetsActivity(-1,HomeEditOperType.ADDDEBT);
             }
         });
 
@@ -189,7 +190,7 @@ public class FragmentHome extends Fragment {
                 switch (index) {
                     case 0:
                         // open
-                        showEditNetAssetsActivity(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITPROPERTY);
+                        showEditNetAssetsActivity(position,HomeEditOperType.EDITPROPERTY);
                         break;
                     case 1:
                         // delete
@@ -209,7 +210,7 @@ public class FragmentHome extends Fragment {
                 switch (index) {
                     case 0:
                         // open
-                        showEditNetAssetsActivity(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITDEBT);
+                        showEditNetAssetsActivity(position,HomeEditOperType.EDITDEBT);
                         break;
                     case 1:
                         // delete
@@ -225,14 +226,14 @@ public class FragmentHome extends Fragment {
         mListViewProperty.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showEditNetAssetsActivity(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWPROPERTY);
+                showEditNetAssetsActivity(position,HomeEditOperType.VIEWPROPERTY);
             }
         });
 
         mListViewDebt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showEditNetAssetsActivity(position,HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWDEBT);
+                showEditNetAssetsActivity(position,HomeEditOperType.VIEWDEBT);
             }
         });
     }
@@ -242,9 +243,9 @@ public class FragmentHome extends Fragment {
         Intent intent = new Intent(mActivity, EditNetAssetsActivity.class);
         intent.putExtra(GlobalData.EXTRA_HOME_EDIT_TYPE, type.value());
 
-        if ((HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDDEBT != type) && (HomeEditOperType.HOME_EDIT_OPER_TYPE_ADDPROPERTY != type)) {
-            boolean bIsProperty = ((type == HomeEditOperType.HOME_EDIT_OPER_TYPE_EDITPROPERTY)
-                    || (type == HomeEditOperType.HOME_EDIT_OPER_TYPE_VIEWPROPERTY));
+        if ((HomeEditOperType.ADDDEBT != type) && (HomeEditOperType.ADDPROPERTY != type)) {
+            boolean bIsProperty = ((type == HomeEditOperType.EDITPROPERTY)
+                    || (type == HomeEditOperType.VIEWPROPERTY));
             int iListItemsLength = (bIsProperty) ? this.mAdapterData.listPropertyItems.size() : this.mAdapterData.listDebtItems.size();
             if (position < iListItemsLength) {
                 if (bIsProperty) {
@@ -255,7 +256,7 @@ public class FragmentHome extends Fragment {
             }
         }
 
-        mActivity.startActivity(intent);
+        mActivity.startActivityForResult(intent, FragmentID.HOME.value());
     }
 
     private void deleteClick(Map<String,Object> map) {

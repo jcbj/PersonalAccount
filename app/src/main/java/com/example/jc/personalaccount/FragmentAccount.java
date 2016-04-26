@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FragmentAccount extends Fragment {
+public class FragmentAccount extends Fragment implements IFragmentUI {
 
     protected Activity mActivity;
     private RefreshTask mAuthTask;
@@ -171,7 +171,7 @@ public class FragmentAccount extends Fragment {
         return list;
     }
 
-    private void refreshUIData() {
+    public void refreshUIData() {
         if (null != mAuthTask) {
             return;
         }

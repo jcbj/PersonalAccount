@@ -24,6 +24,7 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.jc.personalaccount.Data.AccountItem;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
+import com.example.jc.personalaccount.Data.FragmentID;
 import com.example.jc.personalaccount.Data.HomeEditOperType;
 import com.example.jc.personalaccount.Data.SummaryEditOperType;
 import com.example.jc.personalaccount.Data.SummaryItem;
@@ -33,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FragmentSummary extends Fragment {
+public class FragmentSummary extends Fragment implements IFragmentUI {
 
     protected Activity mActivity;
     private RefreshTask mAuthTask;
@@ -130,7 +131,7 @@ public class FragmentSummary extends Fragment {
         this.mAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEditNetAssetsActivity(-1, SummaryEditOperType.SUMMARY_EDIT_OPER_TYPE_ADD);
+                showEditNetAssetsActivity(-1, SummaryEditOperType.ADD);
             }
         });
 
@@ -140,7 +141,7 @@ public class FragmentSummary extends Fragment {
                 switch (index) {
                     case 0:
                         // open
-                        showEditNetAssetsActivity(position,SummaryEditOperType.SUMMARY_EDIT_OPER_TYPE_EDIT);
+                        showEditNetAssetsActivity(position,SummaryEditOperType.EDIT);
                         break;
                     case 1:
                         // delete
@@ -157,7 +158,7 @@ public class FragmentSummary extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                showEditNetAssetsActivity(position,SummaryEditOperType.SUMMARY_EDIT_OPER_TYPE_VIEW);
+                showEditNetAssetsActivity(position,SummaryEditOperType.VIEW);
             }
         });
     }
@@ -174,7 +175,7 @@ public class FragmentSummary extends Fragment {
             }
         }
 
-        mActivity.startActivity(intent);
+        mActivity.startActivityForResult(intent, FragmentID.SUMMARY.value());
     }
 
     private void deleteClick(Map<String,Object> map) {

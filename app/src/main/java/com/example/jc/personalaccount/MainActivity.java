@@ -14,14 +14,17 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.example.jc.personalaccount.Data.FragmentID;
+
 import java.io.File;
 
 public class MainActivity extends FragmentActivity {
 
-
+    private static final int TABCOUNT = 5;
     private static String CURFRAGMENTINDEX = "CURFRAGMENTINDEX";
     public static Fragment[] mFragments;
     private static int mCurFragmentIndex;
+    private static boolean[] mIsRefreshFragment;
     private boolean mIsExit;
 
     @Override
@@ -85,23 +88,18 @@ public class MainActivity extends FragmentActivity {
         //默认显示第一项
         mCurFragmentIndex = 0;
         setFragmentIndicator(mCurFragmentIndex);
-        //根据从不同Activity返回的，设置当前显示的项。
-        Intent intent = this.getIntent();
-        String sourceName = intent.getStringExtra(GlobalData.EXTRA_WHO_HOME_TAGNAME);
-        int editCount = intent.getIntExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,0);
+    }
 
-        if (null != sourceName) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-            if (sourceName.equals(GlobalData.STRING_ACTIVITY_EDIT_NETASSETS)) {
-                mCurFragmentIndex = 0;
-                showWhichFragment(mCurFragmentIndex);
-                ViewIndicator.setIndicator(mCurFragmentIndex);
-            } else if (sourceName.equals(GlobalData.STRING_ACTIVITY_EDIT_SUMMARY)) {
-                mCurFragmentIndex = 1;
-                showWhichFragment(mCurFragmentIndex);
-                ViewIndicator.setIndicator(mCurFragmentIndex);
-            }
+        int editCount = data.getIntExtra(GlobalData.EXTRA_EDIT_HOME_ISREFRESH,0);
+
+        if (0 == editCount) {
+            return;
         }
+
+        ((IFragmentUI)mFragments[resultCode]).refreshUIData();
     }
 
     @Override
@@ -151,7 +149,8 @@ public class MainActivity extends FragmentActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        mFragments = new Fragment[5];
+        mIsRefreshFragment = new boolean[TABCOUNT];
+        mFragments = new Fragment[TABCOUNT];
         mFragments[0] = fragmentManager.findFragmentById(R.id.fragment_home);
         mFragments[1] = fragmentManager.findFragmentById(R.id.fragment_summary);
         mFragments[2] = fragmentManager.findFragmentById(R.id.fragment_account);
@@ -172,7 +171,16 @@ public class MainActivity extends FragmentActivity {
 
     private void showWhichFragment(int which) {
 
+        if (which < 0 || which >= TABCOUNT) {
+            return;
+        }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (!mIsRefreshFragment[which]) {
+            ((IFragmentUI)mFragments[which]).refreshUIData();
+            mIsRefreshFragment[which] = true;
+        }
 
         for (int i = 0; i < mFragments.length; i++) {
             fragmentManager.beginTransaction().hide(mFragments[i]).commit();
