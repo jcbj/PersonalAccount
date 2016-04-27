@@ -66,6 +66,24 @@
     <string name="fragment_summary_account_name_alias">别名</string>
     <string name="fragment_summary_account_edit_check_empty">有未填写项目</string>
 
+    <!-- fragment account -->
+    <string name="fragment_account_title">总账户</string>
+    <string name="fragment_account_edit_type">类型</string>
+    <string name="fragment_account_edit_from">从</string>
+    <string name="fragment_account_edit_to">到</string>
+    <string name="fragment_account_edit_type_fromto">实际支出</string>
+    <string name="fragment_account_edit_type_fromto_virtual">转账支出</string>
+    <string name="fragment_account_edit_type_tofrom">实际收入</string>
+    <string name="fragment_account_edit_type_tofrom_virtual">转账收入</string>
+    <string name="fragment_account_edit_check_empty">金额和简介不能为空</string>
+
+
+    <!-- fragment detail -->
+    <string name="fragment_detail_title">详细费用</string>
+
+    <!-- fragment car -->
+    <string name="fragment_car_title">汽车费用</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

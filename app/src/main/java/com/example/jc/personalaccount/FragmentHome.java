@@ -146,8 +146,6 @@ public class FragmentHome extends Fragment implements IFragmentUI {
 
         this.bindingUIEvent();
 
-        this.refreshUIData();
-
         return view;
     }
 

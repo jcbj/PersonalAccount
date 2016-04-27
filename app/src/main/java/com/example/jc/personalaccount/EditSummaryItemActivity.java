@@ -2,7 +2,6 @@ package com.example.jc.personalaccount;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,12 +13,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.jc.personalaccount.Data.BalanceSheetItem;
 import com.example.jc.personalaccount.Data.FragmentID;
-import com.example.jc.personalaccount.Data.SummaryEditOperType;
+import com.example.jc.personalaccount.Data.EditCommonOperType;
 import com.example.jc.personalaccount.Data.SummaryItem;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -27,7 +24,7 @@ public class EditSummaryItemActivity extends AppCompatActivity {
 
     private int mEditCount;
     private SummaryItem mCurrentInfo;
-    private SummaryEditOperType mOperType;
+    private EditCommonOperType mOperType;
     private DatePicker mDate;
     private EditText mETValue;
     private EditText mETName;
@@ -89,7 +86,7 @@ public class EditSummaryItemActivity extends AppCompatActivity {
         this.mCurrentInfo = new SummaryItem();
 
         Intent intent = this.getIntent();
-        this.mOperType = SummaryEditOperType.valueOf(intent.getIntExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE, SummaryEditOperType.ADD.value()));
+        this.mOperType = EditCommonOperType.valueOf(intent.getIntExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE, EditCommonOperType.ADD.value()));
 
         boolean isEdit = false;
         boolean isView = false;
@@ -135,7 +132,7 @@ public class EditSummaryItemActivity extends AppCompatActivity {
             return;
         }
 
-        mCurrentInfo.date = this.getCurrentDate();
+        mCurrentInfo.date = Utility.getCurrentDate("yyyy-MM-dd");
         mCurrentInfo.name = mETName.getText().toString();
         mCurrentInfo.alias = mETAlias.getText().toString();
         mCurrentInfo.value = (int)(Double.parseDouble(mETValue.getText().toString()) * 100);
@@ -158,13 +155,6 @@ public class EditSummaryItemActivity extends AppCompatActivity {
                     .setPositiveButton(getString(R.string.common_btn_ok),null)
                     .show();
         }
-    }
-
-    //示例：2016-04-25
-    private String getCurrentDate() {
-
-        SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd");
-        return formatter.format(new Date(System.currentTimeMillis()));
     }
 
     private void backClick() {

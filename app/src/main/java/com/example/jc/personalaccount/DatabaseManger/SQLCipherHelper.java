@@ -215,6 +215,23 @@ public class SQLCipherHelper implements IDataStoreHelper {
             Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
         }
 
+        //3,创建账户表
+        tableName = user + "_" + ACCOUNTITEMTABLENAME;
+        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                " (" + ACCOUNTITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ACCOUNTITEMTABLECOLUMNNAME[1] + " TEXT," +
+                ACCOUNTITEMTABLECOLUMNNAME[2] + "  INT," +
+                ACCOUNTITEMTABLECOLUMNNAME[3] + " TEXT," +
+                ACCOUNTITEMTABLECOLUMNNAME[4] + " INT," +
+                ACCOUNTITEMTABLECOLUMNNAME[5] + " TEXT," +
+                ACCOUNTITEMTABLECOLUMNNAME[6] + " TEXT)";
+        this.execSQL(sql);
+
+        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+        if (!this.checkIsExist(sql,null)) {
+            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+        }
+
         return false;
     }
 
@@ -383,6 +400,30 @@ public class SQLCipherHelper implements IDataStoreHelper {
         return this.execSQL(sql);
     }
 
+    public String[] getAllAccountAlias(String user) {
+        String tableName = user + "_" + SUMMARYITEMTABLENAME;
+        String sql = "SELECT * FROM " + tableName;
+        ArrayList<String> list = new ArrayList<>();
+
+        Cursor cursor = this.querySQL(sql,null);
+        if (null != cursor) {
+            try {
+                cursor.moveToFirst();
+                SummaryItem info;
+                while (!cursor.isAfterLast()) {
+                    list.add(cursor.getString(4));
+
+                    cursor.moveToNext();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                cursor.close();
+            }
+        }
+
+        return list.toArray(new String[list.size()]);
+    }
     //Account
     /**
      * 获取总帐中所有记录

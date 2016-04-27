@@ -9,6 +9,7 @@ import android.util.TypedValue;
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.example.jc.personalaccount.Data.AccountItem;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
 import com.example.jc.personalaccount.Data.SummaryItem;
 import com.example.jc.personalaccount.DatabaseManger.DataStoreFactory;
@@ -38,11 +39,13 @@ public class GlobalData {
     public static String EXTRA_WHO_HOME_TAGNAME = "WHO_HOME_TAGNAME";
     public static String STRING_ACTIVITY_EDIT_NETASSETS = "EDIT_NETASSETS";
     public static String STRING_ACTIVITY_EDIT_SUMMARY = "EDIT_SUMMARY";
+    public static String STRING_ACTIVITY_EDIT_ACCOUNT = "EDIT_ACCOUNT";
 
     public static String EXTRA_SUMMARY_EDIT_TYPE = "SUMMARY_EDIT_TYPE";
     public static SummaryItem EXTRA_Summary_Edit_SI_Data;
 
-
+    public static String EXTRA_ACCOUNT_EDIT_TYPE = "ACCOUNT_EDIT_TYPE";
+    public static AccountItem EXTRA_Account_Edit_AI_Data;
 
     //*****************
 

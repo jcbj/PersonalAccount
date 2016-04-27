@@ -480,4 +480,15 @@ public class Utility {
         }
         return Week;
     }
+
+    /**
+     * 返回指定格式的日期字符串
+     * @param format "yyyy-MM-dd"
+     * @return 2016-04-25
+     */
+    public static String getCurrentDate(String format) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat (format);
+        return formatter.format(new Date(System.currentTimeMillis()));
+    }
 }

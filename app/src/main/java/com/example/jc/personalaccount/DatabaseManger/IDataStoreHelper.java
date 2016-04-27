@@ -43,6 +43,8 @@ public interface IDataStoreHelper {
 
     Boolean deleteSummaryItem(String user, int id);
 
+    String[] getAllAccountAlias(String user);
+
     //Account
     AccountItem[] getAllAccountItemInfos(String user);
 

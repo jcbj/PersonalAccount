@@ -126,8 +126,9 @@ public class EditNetAssetsActivity extends AppCompatActivity {
 
         //初始化页面
         this.mTypeSpinnerItems = new String[]{getString(R.string.fragment_home_property_title),getString(R.string.fragment_home_debt_title)};
-        ArrayAdapter<String> mTypeSpinnerAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, this.mTypeSpinnerItems);
-        this.mTypeSpinner.setAdapter(mTypeSpinnerAdapter);
+        this.mTypeSpinner.setAdapter(
+                new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, this.mTypeSpinnerItems)
+        );
 
         this.mRemovePictureBtn.setEnabled(false);
 
@@ -232,7 +233,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
             return;
         }
 
-        mCurrentInfo.worthType = (mTypeSpinner.getSelectedItem().toString() == mTypeSpinnerItems[0]) ? BalanceSheetItem.WorthType.Property : BalanceSheetItem.WorthType.Debt;
+        mCurrentInfo.worthType = ((mTypeSpinner.getSelectedItem().toString()).equals(mTypeSpinnerItems[0])) ? BalanceSheetItem.WorthType.Property : BalanceSheetItem.WorthType.Debt;
         mCurrentInfo.name = mETName.getText().toString();
         mCurrentInfo.value = (int)(Double.parseDouble(mETWorth.getText().toString()) * 100);
         mCurrentInfo.description = mETDescription.getText().toString();

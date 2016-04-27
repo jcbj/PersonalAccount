@@ -3,7 +3,7 @@ package com.example.jc.personalaccount.Data;
 /**
  * Created by jc on 2016/4/25.
  */
-public enum SummaryEditOperType {
+public enum EditCommonOperType {
 
     ADD(0),
     EDIT(1),
@@ -11,11 +11,11 @@ public enum SummaryEditOperType {
 
     private final int mValue;
 
-    SummaryEditOperType(int value) {
+    EditCommonOperType(int value) {
         this.mValue = value;
     }
 
-    public static SummaryEditOperType valueOf(int value) {
+    public static EditCommonOperType valueOf(int value) {
         switch (value) {
             case 0:
                 return ADD;

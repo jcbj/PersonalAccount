@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.os.AsyncTaskCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,23 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
-import com.example.jc.personalaccount.Data.AccountItem;
-import com.example.jc.personalaccount.Data.BalanceSheetItem;
 import com.example.jc.personalaccount.Data.FragmentID;
-import com.example.jc.personalaccount.Data.HomeEditOperType;
-import com.example.jc.personalaccount.Data.SummaryEditOperType;
+import com.example.jc.personalaccount.Data.EditCommonOperType;
 import com.example.jc.personalaccount.Data.SummaryItem;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -121,8 +113,6 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
 
         this.bindingUIEvent();
 
-        this.refreshUIData();
-
         return view;
     }
 
@@ -131,7 +121,7 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
         this.mAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEditNetAssetsActivity(-1, SummaryEditOperType.ADD);
+                showEditSummaryActivity(-1, EditCommonOperType.ADD);
             }
         });
 
@@ -141,7 +131,7 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
                 switch (index) {
                     case 0:
                         // open
-                        showEditNetAssetsActivity(position,SummaryEditOperType.EDIT);
+                        showEditSummaryActivity(position, EditCommonOperType.EDIT);
                         break;
                     case 1:
                         // delete
@@ -158,12 +148,12 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                showEditNetAssetsActivity(position,SummaryEditOperType.VIEW);
+                showEditSummaryActivity(position, EditCommonOperType.VIEW);
             }
         });
     }
 
-    private void showEditNetAssetsActivity(int position, SummaryEditOperType operType) {
+    private void showEditSummaryActivity(int position, EditCommonOperType operType) {
 
         Intent intent = new Intent(mActivity, EditSummaryItemActivity.class);
         intent.putExtra(GlobalData.EXTRA_SUMMARY_EDIT_TYPE, operType.value());
