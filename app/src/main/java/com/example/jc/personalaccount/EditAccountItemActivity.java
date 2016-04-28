@@ -130,7 +130,12 @@ public class EditAccountItemActivity extends AppCompatActivity {
         }
 
         if (isEdit || isView) {
-            this.mCurrentItem = GlobalData.EXTRA_Account_Edit_AI_Data;
+            this.mCurrentItem = GlobalData.EXTRA_Account_Edit_Data;
+
+            String[] lines = this.mCurrentItem.date.split("-");
+            if ((null != lines) && (3 == lines.length)) {
+                mDate.init(Integer.parseInt(lines[0]),Integer.parseInt(lines[1]) - 1,Integer.parseInt(lines[2]),null);
+            }
 
             mETValue.setText(Double.toString(this.mCurrentItem.value / 100.0));
             mSpinnerFrom.setSelection(this.getFindArrayIndex(this.mSpinnerItemsFromAndTo,this.mCurrentItem.from),true);
@@ -204,6 +209,7 @@ public class EditAccountItemActivity extends AppCompatActivity {
         this.mBackBtn.requestFocus();
         this.mBackBtn.requestFocusFromTouch();
 
+        this.mDate.setEnabled(false);
         this.mSpinnerFrom.setEnabled(false);
         this.mSpinnerType.setEnabled(false);
         this.mSpinnerTo.setEnabled(false);

@@ -197,7 +197,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
         this.mTypeSpinner.setSelection(iTypeSpinnerSelectIndex,true);
 
         if (isEdit || isView) {
-            this.mCurrentInfo = GlobalData.EXTRA_Home_Edit_BSI_Data;
+            this.mCurrentInfo = GlobalData.EXTRA_Home_Edit_Data;
 
             mETName.setText(this.mCurrentInfo.name);
             mETWorth.setText(Double.toString(this.mCurrentInfo.value / 100.0));

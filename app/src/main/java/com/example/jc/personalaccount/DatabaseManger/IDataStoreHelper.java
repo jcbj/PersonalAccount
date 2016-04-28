@@ -1,10 +1,11 @@
 package com.example.jc.personalaccount.DatabaseManger;
 
 import android.content.Context;
-import android.text.BoringLayout;
 
 import com.example.jc.personalaccount.Data.AccountItem;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
+import com.example.jc.personalaccount.Data.CarItem;
+import com.example.jc.personalaccount.Data.DetailItem;
 import com.example.jc.personalaccount.Data.SummaryItem;
 
 /**
@@ -30,14 +31,14 @@ public interface IDataStoreHelper {
     Boolean createdUserIDDataStore(String user);
 
     //Home
-    BalanceSheetItem[] getAllBalanceSheetInfos(String user);
+    BalanceSheetItem[] getAllBalanceSheetItems(String user);
 
     Boolean editWorthItem(String user, BalanceSheetItem info, Boolean isAdd);
 
     Boolean deleteWorthItem(String user, int id);
 
     //Summary
-    SummaryItem[] getAllSummaryItemInfos(String user);
+    SummaryItem[] getAllSummaryItems(String user);
 
     Boolean editSummaryItem(String user, SummaryItem info, Boolean isAdd);
 
@@ -46,9 +47,23 @@ public interface IDataStoreHelper {
     String[] getAllAccountAlias(String user);
 
     //Account
-    AccountItem[] getAllAccountItemInfos(String user);
+    AccountItem[] getAllAccountItems(String user);
 
     Boolean editAccountItem(String user, AccountItem info, Boolean isAdd);
 
     Boolean deleteAccountItem(String user, int id);
+
+    //Detail
+    DetailItem[] getAllDetailItems(String user);
+
+    Boolean editDetailItem(String user, DetailItem info, Boolean isAdd);
+
+    Boolean deleteDetailItem(String user, int id);
+
+    //Car
+    CarItem[] getAllCarItems(String user);
+
+    Boolean editCarItem(String user, CarItem info, Boolean isAdd);
+
+    Boolean deleteCarItem(String user, int id);
 }

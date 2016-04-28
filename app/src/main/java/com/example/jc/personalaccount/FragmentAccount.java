@@ -104,7 +104,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
         if (-1 != position) {
             int iListItemsLength = this.mData.size();
             if (position < iListItemsLength) {
-                GlobalData.EXTRA_Account_Edit_AI_Data = new AccountItem((Map<String, Object>) ((this.mData.toArray())[position]));
+                GlobalData.EXTRA_Account_Edit_Data = new AccountItem((Map<String, Object>) ((this.mData.toArray())[position]));
             }
         }
 
@@ -178,54 +178,12 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
     private List<Map<String, Object>> getData() {
         List<Map<String, Object>> list = new ArrayList<>();
 
-        AccountItem[] datas = GlobalData.DataStoreHelper.getAllAccountItemInfos(GlobalData.CurrentUser);
+        AccountItem[] datas = GlobalData.DataStoreHelper.getAllAccountItems(GlobalData.CurrentUser);
         if (null != datas) {
             for (int i = 0; i < datas.length; i++) {
                 list.add(datas[i].mapValue());
             }
         }
-
-        /*
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put(AccountItem.mDataColumnName[1],"周日");
-        map.put(AccountItem.mDataColumnName[2],"04-21");
-        map.put(AccountItem.mDataColumnName[3],"-1234.56");
-        map.put(AccountItem.mDataColumnName[4],"余额宝");
-        map.put(AccountItem.mDataColumnName[5],R.drawable.fromto32);
-        map.put(AccountItem.mDataColumnName[6],"交行卡");
-        map.put(AccountItem.mDataColumnName[7],"从余额宝转出，转入交行卡中，还信用卡");
-        list.add(map);
-
-        map = new HashMap<String, Object>();
-        map.put(AccountItem.mDataColumnName[1],"周一");
-        map.put(AccountItem.mDataColumnName[2],"04-21");
-        map.put(AccountItem.mDataColumnName[3],"-124.56");
-        map.put(AccountItem.mDataColumnName[4],"交行卡");
-        map.put(AccountItem.mDataColumnName[5],R.drawable.fromtovirtual32);
-        map.put(AccountItem.mDataColumnName[6],"余额宝");
-        map.put(AccountItem.mDataColumnName[7],"从交行卡转入余额宝");
-        list.add(map);
-
-        map = new HashMap<String, Object>();
-        map.put(AccountItem.mDataColumnName[1],"周三");
-        map.put(AccountItem.mDataColumnName[2],"04-21");
-        map.put(AccountItem.mDataColumnName[3],"2354.56");
-        map.put(AccountItem.mDataColumnName[4],"余额宝");
-        map.put(AccountItem.mDataColumnName[5],R.drawable.tofrom32);
-        map.put(AccountItem.mDataColumnName[6],"交行卡");
-        map.put(AccountItem.mDataColumnName[7],"从余额宝转出，转入交行卡中，还信用卡");
-        list.add(map);
-
-        map = new HashMap<String, Object>();
-        map.put(AccountItem.mDataColumnName[1],"周五");
-        map.put(AccountItem.mDataColumnName[2],"04-21");
-        map.put(AccountItem.mDataColumnName[3],"4.56");
-        map.put(AccountItem.mDataColumnName[4],"余额宝");
-        map.put(AccountItem.mDataColumnName[5],R.drawable.tofromvirtual32);
-        map.put(AccountItem.mDataColumnName[6],"交行卡");
-        map.put(AccountItem.mDataColumnName[7],"从余额宝转出，转入交行卡中，还信用卡");
-        list.add(map);
-        */
 
         return list;
     }

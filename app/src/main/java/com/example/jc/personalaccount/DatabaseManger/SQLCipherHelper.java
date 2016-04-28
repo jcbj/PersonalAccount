@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.example.jc.personalaccount.Data.AccountItem;
 import com.example.jc.personalaccount.Data.BalanceSheetItem;
+import com.example.jc.personalaccount.Data.CarItem;
+import com.example.jc.personalaccount.Data.DetailItem;
 import com.example.jc.personalaccount.Data.SummaryItem;
 import com.example.jc.personalaccount.GlobalData;
 
@@ -72,7 +74,20 @@ public class SQLCipherHelper implements IDataStoreHelper {
             "type",
             "toname",
             "description"};
-
+    private static final String DETAILITEMTABLENAME = "DetailItemTable";
+    private static final String[] DETAILITEMTABLECOLUMNNAME = new String[]{
+            "id",
+            "date",
+            "value",
+            "fromname",
+            "description"};
+    private static final String CARITEMTABLENAME = "CarItemTable";
+    private static final String[] CARITEMTABLECOLUMNNAME = new String[]{
+            "id",
+            "date",
+            "value",
+            "type",
+            "description"};
 
     private SQLiteDatabase database = null;
 
@@ -232,6 +247,36 @@ public class SQLCipherHelper implements IDataStoreHelper {
             Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
         }
 
+        //4,创建详细消费表
+        tableName = user + "_" + DETAILITEMTABLENAME;
+        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                " (" + DETAILITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                DETAILITEMTABLECOLUMNNAME[1] + " TEXT," +
+                DETAILITEMTABLECOLUMNNAME[2] + "  INT," +
+                DETAILITEMTABLECOLUMNNAME[3] + " TEXT," +
+                DETAILITEMTABLECOLUMNNAME[4] + " TEXT)";
+        this.execSQL(sql);
+
+        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+        if (!this.checkIsExist(sql,null)) {
+            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+        }
+
+        //3,创建汽车费用表
+        tableName = user + "_" + CARITEMTABLENAME;
+        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                " (" + CARITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                CARITEMTABLECOLUMNNAME[1] + " TEXT," +
+                CARITEMTABLECOLUMNNAME[2] + "  INT," +
+                CARITEMTABLECOLUMNNAME[3] + " TEXT," +
+                CARITEMTABLECOLUMNNAME[4] + " TEXT)";
+        this.execSQL(sql);
+
+        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+        if (!this.checkIsExist(sql,null)) {
+            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+        }
+
         return false;
     }
 
@@ -241,7 +286,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
      * @param user:当前登录用户名
      * @return
      */
-    public BalanceSheetItem[] getAllBalanceSheetInfos(String user) {
+    public BalanceSheetItem[] getAllBalanceSheetItems(String user) {
         String tableName = user + "_" + BALANCESHEETTABLENAME;
         String sql = "SELECT * FROM " + tableName;
         ArrayList<BalanceSheetItem> list = new ArrayList<>();
@@ -329,7 +374,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
      * @param user:当前登录用户名
      * @return
      */
-    public SummaryItem[] getAllSummaryItemInfos(String user) {
+    public SummaryItem[] getAllSummaryItems(String user) {
         String tableName = user + "_" + SUMMARYITEMTABLENAME;
         String sql = "SELECT * FROM " + tableName;
         ArrayList<SummaryItem> list = new ArrayList<>();
@@ -424,13 +469,14 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
         return list.toArray(new String[list.size()]);
     }
+
     //Account
     /**
      * 获取总帐中所有记录
      * @param user:当前登录用户名
      * @return
      */
-    public AccountItem[] getAllAccountItemInfos(String user) {
+    public AccountItem[] getAllAccountItems(String user) {
         String tableName = user + "_" + ACCOUNTITEMTABLENAME;
         String sql = "SELECT * FROM " + tableName;
         ArrayList<AccountItem> list = new ArrayList<>();
@@ -503,6 +549,156 @@ public class SQLCipherHelper implements IDataStoreHelper {
         return this.execSQL(sql);
     }
 
+    //Detail
+    /**
+     * 获取详细消费中所有记录
+     * @param user:当前登录用户名
+     * @return
+     */
+    public DetailItem[] getAllDetailItems(String user) {
+        String tableName = user + "_" + DETAILITEMTABLENAME;
+        String sql = "SELECT * FROM " + tableName;
+        ArrayList<DetailItem> list = new ArrayList<>();
+
+        Cursor cursor = this.querySQL(sql,null);
+        if (null != cursor) {
+            try {
+                cursor.moveToFirst();
+                DetailItem info;
+                while (!cursor.isAfterLast()) {
+                    info = new DetailItem();
+                    info.id = cursor.getInt(0);
+                    info.date = cursor.getString(1);
+                    info.value = cursor.getInt(2);
+                    info.from = cursor.getString(3);
+                    info.description = cursor.getString(4);
+
+                    list.add(info);
+
+                    cursor.moveToNext();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                cursor.close();
+            }
+        }
+
+        return list.toArray(new DetailItem[list.size()]);
+    }
+
+    /**
+     * 添加或编辑详细消费表中记录
+     * @param user： 当前登录用户名
+     * @param info： 待保存的数据
+     * @param isAdd：是新添加，还是编辑
+     * @return： 是否成功
+     */
+    public Boolean editDetailItem(String user, DetailItem info, Boolean isAdd) {
+
+        if ((TextUtils.isEmpty(user)) || (null == info)) {
+            return false;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(DETAILITEMTABLECOLUMNNAME[1],info.date);
+        values.put(DETAILITEMTABLECOLUMNNAME[2],info.value);
+        values.put(DETAILITEMTABLECOLUMNNAME[3],info.from);
+        values.put(DETAILITEMTABLECOLUMNNAME[4],info.description);
+
+        String tableName = user + "_" + DETAILITEMTABLENAME;
+        if (isAdd) {
+            return this.insertSQL(tableName,DETAILITEMTABLECOLUMNNAME[2],values);
+        } else {
+            return this.updateSQL(tableName, values, DETAILITEMTABLECOLUMNNAME[0] + "=?", new String[]{String.valueOf
+                    (info.id)});
+        }
+    }
+
+    public Boolean deleteDetailItem(String user, int id) {
+        if (TextUtils.isEmpty(user)) {
+            return false;
+        }
+
+        String sql = "DELETE FROM " + user + "_" + DETAILITEMTABLENAME + " WHERE id='" + id + "'";
+        return this.execSQL(sql);
+    }
+
+    //Account
+    /**
+     * 获取汽车费用中所有记录
+     * @param user:当前登录用户名
+     * @return
+     */
+    public CarItem[] getAllCarItems(String user) {
+        String tableName = user + "_" + CARITEMTABLENAME;
+        String sql = "SELECT * FROM " + tableName;
+        ArrayList<CarItem> list = new ArrayList<>();
+
+        Cursor cursor = this.querySQL(sql,null);
+        if (null != cursor) {
+            try {
+                cursor.moveToFirst();
+                CarItem info;
+                while (!cursor.isAfterLast()) {
+                    info = new CarItem();
+                    info.id = cursor.getInt(0);
+                    info.date = cursor.getString(1);
+                    info.value = cursor.getInt(2);
+                    info.type = cursor.getString(3);
+                    info.description = cursor.getString(4);
+
+                    list.add(info);
+
+                    cursor.moveToNext();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                cursor.close();
+            }
+        }
+
+        return list.toArray(new CarItem[list.size()]);
+    }
+
+    /**
+     * 添加或编辑汽车费用表中记录
+     * @param user： 当前登录用户名
+     * @param info： 待保存的数据
+     * @param isAdd：是新添加，还是编辑
+     * @return： 是否成功
+     */
+    public Boolean editCarItem(String user, CarItem info, Boolean isAdd) {
+
+        if ((TextUtils.isEmpty(user)) || (null == info)) {
+            return false;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(CARITEMTABLECOLUMNNAME[1],info.date);
+        values.put(CARITEMTABLECOLUMNNAME[2],info.value);
+        values.put(CARITEMTABLECOLUMNNAME[3],info.type);
+        values.put(CARITEMTABLECOLUMNNAME[4],info.description);
+
+        String tableName = user + "_" + CARITEMTABLENAME;
+        if (isAdd) {
+            return this.insertSQL(tableName,CARITEMTABLECOLUMNNAME[2],values);
+        } else {
+            return this.updateSQL(tableName, values, CARITEMTABLECOLUMNNAME[0] + "=?", new String[]{String.valueOf
+                    (info.id)});
+        }
+    }
+
+    public Boolean deleteCarItem(String user, int id) {
+        if (TextUtils.isEmpty(user)) {
+            return false;
+        }
+
+        String sql = "DELETE FROM " + user + "_" + CARITEMTABLENAME + " WHERE id='" + id + "'";
+        return this.execSQL(sql);
+    }
+
     //Database
     private Boolean insertSQL(String table, String nullColumnHack, ContentValues values) {
         try {
@@ -537,30 +733,6 @@ public class SQLCipherHelper implements IDataStoreHelper {
             return false;
         }
     }
-
-    /*
-    private Boolean execSQL(String sql, Objects[] objs) {
-
-        if (null == objs) {
-            GlobalData.log(ID + ".execSQL1", GlobalData.LogType.eMessage,sql);
-        } else {
-            String[] selectionArgs = new String[objs.length];
-            for (int i = 0; i < objs.length; i++) {
-                selectionArgs[i] = objs[i].toString();
-            }
-
-            GlobalData.log(ID + ".execSQL1", GlobalData.LogType.eMessage,sql.replace("?","%s"),selectionArgs);
-        }
-
-        try {
-            this.database.execSQL(sql,objs);
-            return true;
-        } catch (Exception ex) {
-            GlobalData.log(ID + ".execSQL1",GlobalData.LogType.eException,ex.getMessage());
-            return false;
-        }
-    }
-    */
 
     //selectionArgs: 只针对SQL语句中WHERE部分占位符替换，其它部分无效
     private Cursor querySQL(String sql, String[] selectionArgs) {

@@ -161,7 +161,7 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
         if (-1 != position) {
             int iListItemsLength = this.mData.size();
             if (position < iListItemsLength) {
-                GlobalData.EXTRA_Summary_Edit_SI_Data = new SummaryItem((Map<String, Object>) ((this.mData.toArray())[position]));
+                GlobalData.EXTRA_Summary_Edit_Data = new SummaryItem((Map<String, Object>) ((this.mData.toArray())[position]));
             }
         }
 
@@ -213,50 +213,12 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
     private List<Map<String, Object>> getData() {
         List<Map<String, Object>> list = new ArrayList<>();
 
-        SummaryItem[] datas = GlobalData.DataStoreHelper.getAllSummaryItemInfos(GlobalData.CurrentUser);
+        SummaryItem[] datas = GlobalData.DataStoreHelper.getAllSummaryItems(GlobalData.CurrentUser);
         if (null != datas) {
             for (int i = 0; i < datas.length; i++) {
                 list.add(datas[i].mapValue());
             }
         }
-
-        /* Test
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put(SummaryItem.mDataColumnName[1],"周日");
-        map.put(SummaryItem.mDataColumnName[2],"04-21");
-        map.put(SummaryItem.mDataColumnName[3],"-1234.56");
-        map.put(SummaryItem.mDataColumnName[4],"交通银行信用卡6236");
-        map.put(SummaryItem.mDataColumnName[5],"交信卡");
-        map.put(SummaryItem.mDataColumnName[6],"信用额度五万元，有效期2015年10月20日");
-        list.add(map);
-
-        map = new HashMap<String, Object>();
-        map.put(SummaryItem.mDataColumnName[1],"周一");
-        map.put(SummaryItem.mDataColumnName[2],"04-21");
-        map.put(SummaryItem.mDataColumnName[3],"-124.56");
-        map.put(SummaryItem.mDataColumnName[4],"中信银行信用卡6236");
-        map.put(SummaryItem.mDataColumnName[5],"中信信");
-        map.put(SummaryItem.mDataColumnName[6],"信用额度三万元，有效期2015年10月20日");
-        list.add(map);
-
-        map = new HashMap<String, Object>();
-        map.put(SummaryItem.mDataColumnName[1],"周三");
-        map.put(SummaryItem.mDataColumnName[2],"04-21");
-        map.put(SummaryItem.mDataColumnName[3],"2354.56");
-        map.put(SummaryItem.mDataColumnName[4],"阿里巴巴支付宝");
-        map.put(SummaryItem.mDataColumnName[5],"余额宝");
-        map.put(SummaryItem.mDataColumnName[6],"阿里巴巴金融业务");
-        list.add(map);
-
-        map = new HashMap<String, Object>();
-        map.put(SummaryItem.mDataColumnName[1],"周五");
-        map.put(SummaryItem.mDataColumnName[2],"04-21");
-        map.put(SummaryItem.mDataColumnName[3],"4.56");
-        map.put(SummaryItem.mDataColumnName[4],"中国银行信用卡2626");
-        map.put(SummaryItem.mDataColumnName[5],"中行信");
-        map.put(SummaryItem.mDataColumnName[6],"信用额度八千元，绑定ETC,缴纳通行费");
-        list.add(map);
-        */
 
         return list;
     }

@@ -247,9 +247,9 @@ public class FragmentHome extends Fragment implements IFragmentUI {
             int iListItemsLength = (bIsProperty) ? this.mAdapterData.listPropertyItems.size() : this.mAdapterData.listDebtItems.size();
             if (position < iListItemsLength) {
                 if (bIsProperty) {
-                    GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listPropertyItems.toArray())[position]));
+                    GlobalData.EXTRA_Home_Edit_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listPropertyItems.toArray())[position]));
                 } else {
-                    GlobalData.EXTRA_Home_Edit_BSI_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listDebtItems.toArray())[position]));
+                    GlobalData.EXTRA_Home_Edit_Data = new BalanceSheetItem((Map<String, Object>) ((this.mAdapterData.listDebtItems.toArray())[position]));
                 }
             }
         }
@@ -363,7 +363,7 @@ public class FragmentHome extends Fragment implements IFragmentUI {
         result.listDebtItems = new ArrayList<Map<String, Object>>();
         result.dDebtAll = result.dPropertyAll = 0.0;
 
-        BalanceSheetItem[] infos = GlobalData.DataStoreHelper.getAllBalanceSheetInfos(GlobalData.CurrentUser);
+        BalanceSheetItem[] infos = GlobalData.DataStoreHelper.getAllBalanceSheetItems(GlobalData.CurrentUser);
 
         if (null != infos) {
             for (int i = 0; i < infos.length; i++) {

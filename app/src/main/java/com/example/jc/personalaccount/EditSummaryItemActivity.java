@@ -109,7 +109,7 @@ public class EditSummaryItemActivity extends AppCompatActivity {
         }
 
         if (isEdit || isView) {
-            this.mCurrentInfo = GlobalData.EXTRA_Summary_Edit_SI_Data;
+            this.mCurrentInfo = GlobalData.EXTRA_Summary_Edit_Data;
 
             mETName.setText(this.mCurrentInfo.name);
             mETAlias.setText(this.mCurrentInfo.alias);
