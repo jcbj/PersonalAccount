@@ -486,9 +486,13 @@ public class Utility {
      * @param format "yyyy-MM-dd"
      * @return 2016-04-25
      */
-    public static String getCurrentDate(String format) {
+    public static String getFormatDate(String format) {
+        return getFormatDate(format,new Date(System.currentTimeMillis()));
+    }
+
+    public static String getFormatDate(String format, Date date) {
 
         SimpleDateFormat formatter = new SimpleDateFormat (format);
-        return formatter.format(new Date(System.currentTimeMillis()));
+        return formatter.format(date);
     }
 }

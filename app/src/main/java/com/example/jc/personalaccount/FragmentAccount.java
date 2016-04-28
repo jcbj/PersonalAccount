@@ -98,7 +98,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
 
     private void showEditAccountActivity(int position, EditCommonOperType operType) {
 
-        Intent intent = new Intent(mActivity, EditSummaryItemActivity.class);
+        Intent intent = new Intent(mActivity, EditAccountItemActivity.class);
         intent.putExtra(GlobalData.EXTRA_ACCOUNT_EDIT_TYPE, operType.value());
 
         if (-1 != position) {

@@ -68,9 +68,9 @@ public class SQLCipherHelper implements IDataStoreHelper {
             "id",
             "date",
             "value",
-            "from",
+            "fromname",
             "type",
-            "to",
+            "toname",
             "description"};
 
 

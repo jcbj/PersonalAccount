@@ -20,6 +20,9 @@ import com.example.jc.personalaccount.Data.EditCommonOperType;
 import com.example.jc.personalaccount.Data.FragmentID;
 import com.example.jc.personalaccount.Data.SummaryItem;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 public class EditAccountItemActivity extends AppCompatActivity {
 
     private int mEditCount;
@@ -101,6 +104,8 @@ public class EditAccountItemActivity extends AppCompatActivity {
         this.mSpinnerFrom.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, this.mSpinnerItemsFromAndTo));
         this.mSpinnerTo.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, this.mSpinnerItemsFromAndTo));
 
+        this.mSaveBtn.setEnabled(this.mSpinnerItemsFromAndTo.length > 0);
+
         Intent intent = this.getIntent();
         this.mOperType = EditCommonOperType.valueOf(intent.getIntExtra(GlobalData.EXTRA_ACCOUNT_EDIT_TYPE, EditCommonOperType.ADD.value()));
 
@@ -157,7 +162,7 @@ public class EditAccountItemActivity extends AppCompatActivity {
             return;
         }
 
-        mCurrentItem.date = Utility.getCurrentDate("yyyy-MM-dd");
+        mCurrentItem.date = Utility.getFormatDate("yyyy-MM-dd", new Date(this.mDate.getYear() - 1900,this.mDate.getMonth(),this.mDate.getDayOfMonth()));
         mCurrentItem.value = (int)(Double.parseDouble(mETValue.getText().toString()) * 100);
         mCurrentItem.from = mSpinnerFrom.getSelectedItem().toString();
         mCurrentItem.type = mSpinnerType.getSelectedItemPosition();
