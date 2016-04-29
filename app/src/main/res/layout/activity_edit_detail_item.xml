@@ -1,79 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.jc.personalaccount.EditAccountItemActivity">
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
-    <LinearLayout
-        android:layout_marginLeft="10dp"
-        android:background="@color/lightgray240"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        >
-
-        <TextView
-            android:id="@+id/fragment_detail_list_item_week"
-            android:gravity="center_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:id="@+id/fragment_detail_list_item_date"
-            android:gravity="center_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical"
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+        <!-- date -->
+        <TableRow >
             <TextView
-                android:id="@+id/fragment_detail_list_item_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="22sp"/>
+                android:text="@string/fragment_edit_date_text"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
 
+            <DatePicker
+                android:id="@+id/fragment_detail_edit_date"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:calendarViewShown="false"
+                />
+
+        </TableRow>
+
+        <!-- value -->
+        <TableRow>
             <TextView
-                android:text="交行卡"
-                android:id="@+id/fragment_detail_list_item_from"
-                android:layout_width="match_parent"
+                android:text="@string/fragment_edit_value_text"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
-                android:layout_weight="1"
-                android:textSize="15sp"/>
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:id="@+id/fragment_detail_edit_value_text"
+                android:layout_column="1"
+                android:singleLine="true"/>
+        </TableRow>
 
-        </LinearLayout>
+        <!-- account -->
+        <TableRow>
+            <TextView
+                android:text="@string/fragment_edit_account_name_text"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
 
-        <TextView
-            android:id="@+id/fragment_detail_list_item_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:width="1000dp"
-            android:singleLine="true" />
+            <Spinner
+                android:id="@+id/fragment_detail_edit_account_spinner"
 
-    </LinearLayout>
+                />
 
-</LinearLayout>
+        </TableRow>
 
+        <!-- description -->
+        <TableRow>
+            <TextView
+                android:text="@string/fragment_edit_description_text"
+                android:layout_margin="10dp"
+                android:textSize="20sp"
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:ems="10"
+                android:id="@+id/fragment_detail_edit_description_text"
+                android:layout_column="1"/>
+        </TableRow>
+
+        <TableRow>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_span="2"
+                >
+
+                <Button
+                    android:id="@+id/fragment_detail_edit_back_button"
+                    android:text="@string/common_btn_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/fragment_detail_edit_save_button"
+                    android:text="@string/common_btn_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="2"/>
+
+            </LinearLayout>
+        </TableRow>
+
+    </TableLayout>
+
+</ScrollView>

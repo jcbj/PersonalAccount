@@ -98,7 +98,7 @@ public class FragmentCar extends Fragment implements IFragmentUI {
 
     private void showEditCarActivity(int position, EditCommonOperType operType) {
 
-        Intent intent = new Intent(mActivity, EditAccountItemActivity.class);
+        Intent intent = new Intent(mActivity, EditCarItemActivity.class);
         intent.putExtra(GlobalData.EXTRA_CAR_EDIT_TYPE, operType.value());
 
         if (-1 != position) {

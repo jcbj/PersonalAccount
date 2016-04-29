@@ -147,7 +147,7 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
                         R.id.fragment_detail_list_item_date,
                         R.id.fragment_detail_list_item_value,
                         R.id.fragment_detail_list_item_from,
-                        R.id.fragment_account_list_item_description});
+                        R.id.fragment_detail_list_item_description});
 
         this.mListView.setAdapter(mAdapter);
     }

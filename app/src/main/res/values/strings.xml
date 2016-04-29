@@ -53,22 +53,23 @@
 
     <string name="fragment_home_edit_type">类型</string>
     <string name="fragment_home_edit_name">名称</string>
-    <string name="fragment_home_edit_value">金额</string>
-    <string name="fragment_home_edit_description">简介</string>
     <string name="fragment_home_edit_add_image">添加图像</string>
     <string name="fragment_home_edit_remove_image">清除图像</string>
     <string name="fragment_home_edit_check_message">名称，价值和简介都不为空</string>
 
+    <string name="fragment_edit_date_text">日期</string>
+    <string name="fragment_edit_value_text">金额</string>
+    <string name="fragment_edit_account_name_text">账户</string>
+    <string name="fragment_edit_description_text">简介</string>
+    <string name="fragment_edit_type_text">类型</string>
+
     <!-- fragment summary -->
     <string name="fragment_summary_title">账户概要</string>
-    <string name="fragment_summary_edit_date">日期</string>
-    <string name="fragment_summary_account_name">账户</string>
     <string name="fragment_summary_account_name_alias">别名</string>
     <string name="fragment_summary_account_edit_check_empty">有未填写项目</string>
 
     <!-- fragment account -->
     <string name="fragment_account_title">总账户</string>
-    <string name="fragment_account_edit_type">类型</string>
     <string name="fragment_account_edit_from">从</string>
     <string name="fragment_account_edit_to">到</string>
     <string name="fragment_account_edit_type_fromto">实际支出</string>
@@ -77,12 +78,21 @@
     <string name="fragment_account_edit_type_tofrom_virtual">转账收入</string>
     <string name="fragment_account_edit_check_empty">金额和简介不能为空</string>
 
-
     <!-- fragment detail -->
     <string name="fragment_detail_title">详细费用</string>
-
     <!-- fragment car -->
     <string name="fragment_car_title">汽车费用</string>
+    <string name="fragment_car_edit_type_car">裸车款</string>
+    <string name="fragment_car_edit_type_device">周边设备</string>
+    <string name="fragment_car_edit_type_oil">油钱</string>
+    <string name="fragment_car_edit_type_toll">过路费</string>
+    <string name="fragment_car_edit_type_park">停车费</string>
+    <string name="fragment_car_edit_type_insurance">保险</string>
+    <string name="fragment_car_edit_type_tax">税费</string>
+    <string name="fragment_car_edit_type_care">保养</string>
+    <string name="fragment_car_edit_type_repair">修车</string>
+    <string name="fragment_car_edit_type_fine">罚款</string>
+    <string name="fragment_car_edit_type_indemnify">赔偿</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

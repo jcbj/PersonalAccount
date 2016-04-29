@@ -11,7 +11,7 @@
 
         <TableRow android:visibility="gone">
             <TextView
-                android:text="@string/fragment_summary_edit_date"
+                android:text="@string/fragment_edit_date_text"
                 android:layout_margin="10dp"
                 android:textSize="20sp"
                 />
@@ -26,7 +26,7 @@
 
         <TableRow>
             <TextView
-                android:text="@string/fragment_summary_account_name"
+                android:text="@string/fragment_edit_account_name_text"
                 android:layout_margin="10dp"
                 android:textSize="20sp"
                 />
@@ -56,7 +56,7 @@
 
         <TableRow>
             <TextView
-                android:text="@string/fragment_home_edit_value"
+                android:text="@string/fragment_edit_value_text"
                 android:layout_margin="10dp"
                 android:textSize="20sp"
                 />
@@ -73,7 +73,7 @@
 
         <TableRow>
             <TextView
-                android:text="@string/fragment_home_edit_description"
+                android:text="@string/fragment_edit_description_text"
                 android:layout_margin="10dp"
                 android:textSize="20sp"
                 />

@@ -42,6 +42,8 @@ public class GlobalData {
     public static String STRING_ACTIVITY_EDIT_NETASSETS = "EDIT_NETASSETS";
     public static String STRING_ACTIVITY_EDIT_SUMMARY = "EDIT_SUMMARY";
     public static String STRING_ACTIVITY_EDIT_ACCOUNT = "EDIT_ACCOUNT";
+    public static String STRING_ACTIVITY_EDIT_DETAIL = "EDIT_DETAIL";
+    public static String STRING_ACTIVITY_EDIT_CAR = "EDIT_CAR";
 
     public static String EXTRA_SUMMARY_EDIT_TYPE = "SUMMARY_EDIT_TYPE";
     public static SummaryItem EXTRA_Summary_Edit_Data; 

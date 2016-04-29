@@ -138,21 +138,19 @@ public class EditAccountItemActivity extends AppCompatActivity {
             }
 
             mETValue.setText(Double.toString(this.mCurrentItem.value / 100.0));
-            mSpinnerFrom.setSelection(this.getFindArrayIndex(this.mSpinnerItemsFromAndTo,this.mCurrentItem.from),true);
+            int index = Utility.getFindArrayIndex(this.mSpinnerItemsFromAndTo,this.mCurrentItem.from);
+            if (-1 == index) {
+                index = 0;
+            }
+            mSpinnerFrom.setSelection(index,true);
             mSpinnerType.setSelection(this.mCurrentItem.type,true);
-            mSpinnerTo.setSelection(this.getFindArrayIndex(this.mSpinnerItemsFromAndTo,this.mCurrentItem.from),true);
+            index = Utility.getFindArrayIndex(this.mSpinnerItemsFromAndTo,this.mCurrentItem.from);
+            if (-1 == index) {
+                index = 0;
+            }
+            mSpinnerTo.setSelection(index,true);
             mETDescription.setText(this.mCurrentItem.description);
         }
-    }
-
-    private int getFindArrayIndex(String[] datas, String text) {
-        for (int i = 0; i < datas.length; i++) {
-            if (datas[i].equals(text)) {
-                return i;
-            }
-        }
-
-        return 0;
     }
 
     private void saveClick() {

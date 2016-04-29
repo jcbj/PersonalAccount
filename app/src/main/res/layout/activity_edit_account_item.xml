@@ -13,7 +13,7 @@
         <!-- date -->
         <TableRow >
             <TextView
-                android:text="@string/fragment_summary_edit_date"
+                android:text="@string/fragment_edit_date_text"
                 android:layout_margin="10dp"
                 android:textSize="20sp"
                 />
@@ -30,7 +30,7 @@
         <!-- value -->
         <TableRow>
             <TextView
-                android:text="@string/fragment_home_edit_value"
+                android:text="@string/fragment_edit_value_text"
                 android:layout_margin="10dp"
                 android:textSize="20sp"
                 />
@@ -63,7 +63,7 @@
         <!-- type -->
         <TableRow>
             <TextView
-                android:text="@string/fragment_account_edit_type"
+                android:text="@string/fragment_edit_type_text"
                 android:layout_margin="10dp"
                 android:textSize="20sp"
                 />
@@ -93,7 +93,7 @@
         <!-- description -->
         <TableRow>
             <TextView
-                android:text="@string/fragment_home_edit_description"
+                android:text="@string/fragment_edit_description_text"
                 android:layout_margin="10dp"
                 android:textSize="20sp"
                 />

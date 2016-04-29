@@ -495,4 +495,20 @@ public class Utility {
         SimpleDateFormat formatter = new SimpleDateFormat (format);
         return formatter.format(date);
     }
+
+    /**
+     * 返回给定字符串在数组中的索引，没有返回-1
+     * @param datas
+     * @param text
+     * @return
+     */
+    public static int getFindArrayIndex(String[] datas, String text) {
+        for (int i = 0; i < datas.length; i++) {
+            if (datas[i].equals(text)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }
