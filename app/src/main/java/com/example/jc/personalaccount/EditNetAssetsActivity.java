@@ -268,6 +268,8 @@ public class EditNetAssetsActivity extends AppCompatActivity {
             mETDescription.setText("");
             mImageView.setImageBitmap(null);
             mRemovePictureBtn.setEnabled(false);
+            mTempImagePath = null;
+            mTempImageThumb = null;
 
             if (-1 != mCurrentInfo.id) {
                 if (mImageIsChanged) {
