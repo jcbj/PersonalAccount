@@ -26,17 +26,18 @@ public class ViewIndicator extends LinearLayout implements View.OnClickListener 
     private OnIndicateListener mOnIndicateListener; // 对应的监听器
     // 对应的图标Tag
     private static final String[] mTAG_ICON = new String[]{"icon_tag_0","icon_tag_1","icon_tag_2","icon_tag_3",
-            "icon_tag_4"};
+            "icon_tag_4","icon_tag_5"};
     // 对应的文字Tag
     private static final String[] mTAG_TEXT = new String[]{"text_tag_0","text_tag_1","text_tag_2","text_tag_3",
-            "text_tag_4"};
+            "text_tag_4","text_tag_4"};
 
     private static final int[] mAllIconResID_Normal = new int[]{
             R.drawable.main_tab_item_home_normal,
             R.drawable.main_tab_item_summary_normal,
             R.drawable.main_tab_item_account_normal,
             R.drawable.main_tab_item_detail_normal,
-            R.drawable.main_tab_item_car_normal
+            R.drawable.main_tab_item_car_normal,
+            R.drawable.main_tab_item_setting_normal
     };
 
     private static final int[] mAllIconResID_Focus = new int[]{
@@ -44,7 +45,8 @@ public class ViewIndicator extends LinearLayout implements View.OnClickListener 
             R.drawable.main_tab_item_summary_focus,
             R.drawable.main_tab_item_account_focus,
             R.drawable.main_tab_item_detail_focus,
-            R.drawable.main_tab_item_car_focus
+            R.drawable.main_tab_item_car_focus,
+            R.drawable.main_tab_item_setting_focus
     };
 
     private static final int[] mAllXmlResID = new int[]{
@@ -52,7 +54,8 @@ public class ViewIndicator extends LinearLayout implements View.OnClickListener 
             R.drawable.main_tab_item_summary,
             R.drawable.main_tab_item_account,
             R.drawable.main_tab_item_detail,
-            R.drawable.main_tab_item_car
+            R.drawable.main_tab_item_car,
+            R.drawable.main_tab_item_setting
     };
 
     private static final int[] mAllStringResID = new int[]{
@@ -60,7 +63,8 @@ public class ViewIndicator extends LinearLayout implements View.OnClickListener 
             R.string.bottom_tab_summary,
             R.string.bottom_tab_account,
             R.string.bottom_tab_detail,
-            R.string.bottom_tab_car
+            R.string.bottom_tab_car,
+            R.string.bottom_tab_setting
     };
 
     // 未选中状态

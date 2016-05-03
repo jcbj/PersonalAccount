@@ -45,6 +45,7 @@
     <string name="bottom_tab_summary">总帐</string>
     <string name="bottom_tab_detail">明细</string>
     <string name="bottom_tab_car">汽车</string>
+    <string name="bottom_tab_setting">设置</string>
 
     <!-- fragment home -->
     <string name="fragment_home_property_title">资产</string>

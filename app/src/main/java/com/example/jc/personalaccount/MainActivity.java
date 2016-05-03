@@ -20,7 +20,7 @@ import java.io.File;
 
 public class MainActivity extends FragmentActivity {
 
-    private static final int TABCOUNT = 5;
+    private static final int TABCOUNT = 6;
     private static String CURFRAGMENTINDEX = "CURFRAGMENTINDEX";
     public static Fragment[] mFragments;
     private static int mCurFragmentIndex;
@@ -156,6 +156,7 @@ public class MainActivity extends FragmentActivity {
         mFragments[2] = fragmentManager.findFragmentById(R.id.fragment_account);
         mFragments[3] = fragmentManager.findFragmentById(R.id.fragment_detail);
         mFragments[4] = fragmentManager.findFragmentById(R.id.fragment_car);
+        mFragments[5] = fragmentManager.findFragmentById(R.id.fragment_setting);
 
         showWhichFragment(whichIsDefault);
 
