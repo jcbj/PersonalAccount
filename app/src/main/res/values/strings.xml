@@ -98,4 +98,10 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="fragment_setting_btn_export_database">导出数据库</string>
+    <string name="fragment_setting_btn_export_database_CSV">导出为CSV</string>
+    <string name="fragment_setting_btn_export_database_XML">导出为XML</string>
+    <string name="fragment_setting_export_success">导出成功</string>
+    <string name="fragment_setting_export_failed">导出失败</string>
+
 </resources>

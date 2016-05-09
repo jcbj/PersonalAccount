@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -13,6 +14,7 @@ import com.example.jc.personalaccount.Data.CarItem;
 import com.example.jc.personalaccount.Data.DetailItem;
 import com.example.jc.personalaccount.Data.SummaryItem;
 import com.example.jc.personalaccount.GlobalData;
+import com.example.jc.personalaccount.Utility;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -20,6 +22,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -89,7 +92,14 @@ public class SQLCipherHelper implements IDataStoreHelper {
             "type",
             "description"};
 
+    //当前时间转换为文件名字符串
+    private static final String CURRENTDATETOFILENAME = "yyyy-MM-dd_HH-mm-ss";
+
+    private static final String LINEEND = "\r\n";
+
     private SQLiteDatabase database = null;
+    private String mDatabasePath = null;
+    private String mCurrentLoginUserID = null;
 
     //IDataStoreHelper
     public Boolean initDataStore(Context context) {
@@ -111,6 +121,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
         File file = null;
         try {
             file = context.getDatabasePath(DATABASENAME);
+            mDatabasePath = file.getPath();
 
             if (null == file) {
                 GlobalData.log(tag, GlobalData.LogType.eError, "Database get path is failed.");
@@ -140,6 +151,10 @@ public class SQLCipherHelper implements IDataStoreHelper {
             GlobalData.log(tag, GlobalData.LogType.eException,"openOrCreateDatabase: " + ex.getMessage());
         }
 
+        if (!bIsSuccess) {
+            mDatabasePath = null;
+        }
+
         return bIsSuccess;
     }
 
@@ -149,23 +164,6 @@ public class SQLCipherHelper implements IDataStoreHelper {
         } catch (Exception ex) {
             GlobalData.log(ID + ".closeDataStore", GlobalData.LogType.eException,ex.getMessage());
         }
-    }
-
-    public Boolean login(String name, String password) {
-        String sql = "SELECT * FROM " + USERIDTABLENAME + " WHERE name = ? AND password = ?";
-        Boolean bIsSuccess = this.checkIsExist(sql, new String[]{name, password});
-
-        GlobalData.log(ID + ".login", GlobalData.LogType.eMessage,name + " is login " + (bIsSuccess?"success.":"failed."));
-
-        if (bIsSuccess) {
-            GlobalData.CurrentUser = name;
-        }
-
-        return bIsSuccess;
-    }
-
-    public void unlogin() {
-        GlobalData.CurrentUser = null;
     }
 
     public Boolean register(String name, String password, String email) {
@@ -182,12 +180,15 @@ public class SQLCipherHelper implements IDataStoreHelper {
         this.execSQL(sql);
 
         if (this.checkIsExist(sqlCheckExist,new String[] {name})) {
-            GlobalData.log(ID + ".register", GlobalData.LogType.eMessage,name + " is register success");
-            return true;
-        }
 
-        if (this.login(name,password)) {
-            return true;
+            if (this.createdUserIDDataStore(name)) {
+
+                GlobalData.log(ID + ".register", GlobalData.LogType.eMessage,name + " is register success");
+                return true;
+            }
+
+            GlobalData.log(ID + ".register", GlobalData.LogType.eMessage,name + " is register failed, create table is failed.");
+            return false;
         }
 
         GlobalData.log(ID + ".register", GlobalData.LogType.eMessage,name + " is register failed");
@@ -195,89 +196,49 @@ public class SQLCipherHelper implements IDataStoreHelper {
         return false;
     }
 
-    //每个登录用户，都有自己单独的表来存储数据；以登录用户名来区别
-    public Boolean createdUserIDDataStore(String user) {
-        //1，创建资产负债表
-        String tableName = user + "_" + BALANCESHEETTABLENAME;
-        String sql = "CREATE TABLE IF NOT EXISTS " + tableName +
-                " (" + BALANCESHEETTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                BALANCESHEETTABLECOLUMNNAME[1] + " INT," +
-                BALANCESHEETTABLECOLUMNNAME[2] + "  TEXT," +
-                BALANCESHEETTABLECOLUMNNAME[3] + " INT," +
-                BALANCESHEETTABLECOLUMNNAME[4] + " TEXT," +
-                BALANCESHEETTABLECOLUMNNAME[5] + " BLOB," +
-                BALANCESHEETTABLECOLUMNNAME[6] + " TEXT)";
-        this.execSQL(sql);
+    public Boolean login(String name, String password) {
+        String sql = "SELECT * FROM " + USERIDTABLENAME + " WHERE name = ? AND password = ?";
+        Boolean bIsSuccess = this.checkIsExist(sql, new String[]{name, password});
 
-        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
-        if (!this.checkIsExist(sql,null)) {
-            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+        GlobalData.log(ID + ".login", GlobalData.LogType.eMessage,name + " is login " + (bIsSuccess?"success.":"failed."));
+
+        if (bIsSuccess) {
+            this.mCurrentLoginUserID = name;
+            GlobalData.CurrentUser = name;
         }
 
-        //2,创建账户概要表
-        tableName = user + "_" + SUMMARYITEMTABLENAME;
-        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
-                " (" + SUMMARYITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                SUMMARYITEMTABLECOLUMNNAME[1] + " TEXT," +
-                SUMMARYITEMTABLECOLUMNNAME[2] + "  INT," +
-                SUMMARYITEMTABLECOLUMNNAME[3] + " TEXT," +
-                SUMMARYITEMTABLECOLUMNNAME[4] + " TEXT," +
-                SUMMARYITEMTABLECOLUMNNAME[5] + " TEXT)";
-        this.execSQL(sql);
+        return bIsSuccess;
+    }
 
-        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
-        if (!this.checkIsExist(sql,null)) {
-            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+    public void unlogin() {
+        this.mCurrentLoginUserID = null;
+        GlobalData.CurrentUser = null;
+    }
+
+    //Export
+    public Boolean exportDataStore() {
+
+        String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + DATABASENAME;
+
+        return Utility.copyFile(this.mDatabasePath,destPath);
+    }
+
+    public Boolean exportCSV(String user, int type) {
+
+        switch (type) {
+            case 0:
+                return this.exportCSV_Home();
+            case 1:
+                return this.exportCSV_Summary();
+            case 2:
+                return this.exportCSV_Account();
+            case 3:
+                return this.exportCSV_Detail();
+            case 4:
+                return this.exportCSV_Car();
+            default:
+                return false;
         }
-
-        //3,创建账户表
-        tableName = user + "_" + ACCOUNTITEMTABLENAME;
-        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
-                " (" + ACCOUNTITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                ACCOUNTITEMTABLECOLUMNNAME[1] + " TEXT," +
-                ACCOUNTITEMTABLECOLUMNNAME[2] + "  INT," +
-                ACCOUNTITEMTABLECOLUMNNAME[3] + " TEXT," +
-                ACCOUNTITEMTABLECOLUMNNAME[4] + " INT," +
-                ACCOUNTITEMTABLECOLUMNNAME[5] + " TEXT," +
-                ACCOUNTITEMTABLECOLUMNNAME[6] + " TEXT)";
-        this.execSQL(sql);
-
-        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
-        if (!this.checkIsExist(sql,null)) {
-            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
-        }
-
-        //4,创建详细消费表
-        tableName = user + "_" + DETAILITEMTABLENAME;
-        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
-                " (" + DETAILITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                DETAILITEMTABLECOLUMNNAME[1] + " TEXT," +
-                DETAILITEMTABLECOLUMNNAME[2] + "  INT," +
-                DETAILITEMTABLECOLUMNNAME[3] + " TEXT," +
-                DETAILITEMTABLECOLUMNNAME[4] + " TEXT)";
-        this.execSQL(sql);
-
-        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
-        if (!this.checkIsExist(sql,null)) {
-            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
-        }
-
-        //3,创建汽车费用表
-        tableName = user + "_" + CARITEMTABLENAME;
-        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
-                " (" + CARITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                CARITEMTABLECOLUMNNAME[1] + " TEXT," +
-                CARITEMTABLECOLUMNNAME[2] + "  INT," +
-                CARITEMTABLECOLUMNNAME[3] + " TEXT," +
-                CARITEMTABLECOLUMNNAME[4] + " TEXT)";
-        this.execSQL(sql);
-
-        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
-        if (!this.checkIsExist(sql,null)) {
-            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
-        }
-
-        return false;
     }
 
     //Worth
@@ -700,6 +661,91 @@ public class SQLCipherHelper implements IDataStoreHelper {
     }
 
     //Database
+    //每个注册用户，都有自己单独的表来存储数据；以注册用户名来区别
+    private Boolean createdUserIDDataStore(String user) {
+        //1，创建资产负债表
+        String tableName = user + "_" + BALANCESHEETTABLENAME;
+        String sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                " (" + BALANCESHEETTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                BALANCESHEETTABLECOLUMNNAME[1] + " INT," +
+                BALANCESHEETTABLECOLUMNNAME[2] + "  TEXT," +
+                BALANCESHEETTABLECOLUMNNAME[3] + " INT," +
+                BALANCESHEETTABLECOLUMNNAME[4] + " TEXT," +
+                BALANCESHEETTABLECOLUMNNAME[5] + " BLOB," +
+                BALANCESHEETTABLECOLUMNNAME[6] + " TEXT)";
+        this.execSQL(sql);
+
+        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+        if (!this.checkIsExist(sql,null)) {
+            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+        }
+
+        //2,创建账户概要表
+        tableName = user + "_" + SUMMARYITEMTABLENAME;
+        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                " (" + SUMMARYITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                SUMMARYITEMTABLECOLUMNNAME[1] + " TEXT," +
+                SUMMARYITEMTABLECOLUMNNAME[2] + "  INT," +
+                SUMMARYITEMTABLECOLUMNNAME[3] + " TEXT," +
+                SUMMARYITEMTABLECOLUMNNAME[4] + " TEXT," +
+                SUMMARYITEMTABLECOLUMNNAME[5] + " TEXT)";
+        this.execSQL(sql);
+
+        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+        if (!this.checkIsExist(sql,null)) {
+            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+        }
+
+        //3,创建账户表
+        tableName = user + "_" + ACCOUNTITEMTABLENAME;
+        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                " (" + ACCOUNTITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ACCOUNTITEMTABLECOLUMNNAME[1] + " TEXT," +
+                ACCOUNTITEMTABLECOLUMNNAME[2] + "  INT," +
+                ACCOUNTITEMTABLECOLUMNNAME[3] + " TEXT," +
+                ACCOUNTITEMTABLECOLUMNNAME[4] + " INT," +
+                ACCOUNTITEMTABLECOLUMNNAME[5] + " TEXT," +
+                ACCOUNTITEMTABLECOLUMNNAME[6] + " TEXT)";
+        this.execSQL(sql);
+
+        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+        if (!this.checkIsExist(sql,null)) {
+            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+        }
+
+        //4,创建详细消费表
+        tableName = user + "_" + DETAILITEMTABLENAME;
+        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                " (" + DETAILITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                DETAILITEMTABLECOLUMNNAME[1] + " TEXT," +
+                DETAILITEMTABLECOLUMNNAME[2] + "  INT," +
+                DETAILITEMTABLECOLUMNNAME[3] + " TEXT," +
+                DETAILITEMTABLECOLUMNNAME[4] + " TEXT)";
+        this.execSQL(sql);
+
+        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+        if (!this.checkIsExist(sql,null)) {
+            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+        }
+
+        //3,创建汽车费用表
+        tableName = user + "_" + CARITEMTABLENAME;
+        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                " (" + CARITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                CARITEMTABLECOLUMNNAME[1] + " TEXT," +
+                CARITEMTABLECOLUMNNAME[2] + "  INT," +
+                CARITEMTABLECOLUMNNAME[3] + " TEXT," +
+                CARITEMTABLECOLUMNNAME[4] + " TEXT)";
+        this.execSQL(sql);
+
+        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+        if (!this.checkIsExist(sql,null)) {
+            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+        }
+
+        return false;
+    }
+
     private Boolean insertSQL(String table, String nullColumnHack, ContentValues values) {
         try {
             this.database.insert(table, nullColumnHack,values);
@@ -786,5 +832,172 @@ public class SQLCipherHelper implements IDataStoreHelper {
             GlobalData.log(ID + ".createUserIDTable", GlobalData.LogType.eMessage,"USERID TABLE is created failed.");
             return false;
         }
+    }
+
+    //./PersonalAccount/
+    private String getExportPath() {
+
+        String destPath = Environment.getExternalStorageDirectory().getPath();
+
+        destPath = destPath + "/PersonalAccount/";
+        File file = new File(destPath);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        return destPath;
+    }
+
+    private Boolean exportCSV_Home() {
+
+        BalanceSheetItem[] items = this.getAllBalanceSheetItems(this.mCurrentLoginUserID);
+
+        if (items.length > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("id,name,description,type,value" + LINEEND);
+            for (int i = 0; i < items.length; i++) {
+                sb.append(
+                    items[i].id + ",'" +
+                    items[i].name + "','" +
+                    items[i].description + "'," +
+                    ((BalanceSheetItem.WorthType.Property == items[i].worthType) ? 0 : 1) + "," +
+                    items[i].value + LINEEND
+                );
+            }
+
+            String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + BALANCESHEETTABLENAME + ".csv";
+            return Utility.writeStringToFile (destPath,sb.toString(),false);
+        }
+
+        return false;
+    }
+
+    private Boolean exportCSV_Summary() {
+
+        SummaryItem[] items = this.getAllSummaryItems(this.mCurrentLoginUserID);
+
+        if (items.length > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("id,date,name,alias,description,value" + LINEEND);
+            for (int i = 0; i < items.length; i++) {
+                sb.append(
+                        items[i].id + "," +
+                        items[i].date + ",'" +
+                        items[i].name + "','" +
+                        items[i].alias + "','" +
+                        items[i].description + "'," +
+                        items[i].value + LINEEND
+                );
+            }
+
+            String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + SUMMARYITEMTABLENAME + ".csv";
+            return Utility.writeStringToFile (destPath,sb.toString(),false);
+        }
+
+        return false;
+    }
+
+    private Boolean exportCSV_Account() {
+
+        AccountItem[] items = this.getAllAccountItems(this.mCurrentLoginUserID);
+
+        if (items.length > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("id,date,type,value,from,to,description" + LINEEND);
+
+            String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + ACCOUNTITEMTABLENAME + ".csv";
+
+            for (int i = 0; i < items.length; i++) {
+                sb.append(
+                        items[i].id + "," +
+                        items[i].date + "," +
+                        items[i].type + "," +
+                        items[i].value + ",'" +
+                        items[i].from + "','" +
+                        items[i].to + "','" +
+                        items[i].description + "'" + LINEEND
+                );
+
+                if (0 == i % 500) {
+                    if (Utility.writeStringToFile (destPath,sb.toString(),true)) {
+                        sb = new StringBuilder();
+                    } else {
+                        return false;
+                    }
+                }
+            }
+
+            return Utility.writeStringToFile (destPath,sb.toString(),true);
+        }
+
+        return false;
+    }
+
+    private Boolean exportCSV_Detail() {
+
+        DetailItem[] items = this.getAllDetailItems(this.mCurrentLoginUserID);
+
+        if (items.length > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("id,date,value,from,description" + LINEEND);
+
+            String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + DETAILITEMTABLENAME + ".csv";
+
+            for (int i = 0; i < items.length; i++) {
+                sb.append(
+                        items[i].id + "," +
+                                items[i].date + "," +
+                                items[i].value + ",'" +
+                                items[i].from + "','" +
+                                items[i].description + "'" + LINEEND
+                );
+
+                if (0 == i % 500) {
+                    if (Utility.writeStringToFile (destPath,sb.toString(),true)) {
+                        sb = new StringBuilder();
+                    } else {
+                        return false;
+                    }
+                }
+            }
+
+            return Utility.writeStringToFile (destPath,sb.toString(),true);
+        }
+
+        return false;
+    }
+
+    private Boolean exportCSV_Car() {
+
+        CarItem[] items = this.getAllCarItems(this.mCurrentLoginUserID);
+
+        if (items.length > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("id,date,value,type,description" + LINEEND);
+
+            String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + CARITEMTABLENAME + ".csv";
+
+            for (int i = 0; i < items.length; i++) {
+                sb.append(
+                        items[i].id + "," +
+                        items[i].date + "," +
+                        items[i].value + ",'" +
+                        items[i].type + "','" +
+                        items[i].description + "'" + LINEEND
+                );
+
+                if (0 == i % 500) {
+                    if (Utility.writeStringToFile (destPath,sb.toString(),true)) {
+                        sb = new StringBuilder();
+                    } else {
+                        return false;
+                    }
+                }
+            }
+
+            return Utility.writeStringToFile (destPath,sb.toString(),true);
+        }
+
+        return false;
     }
 }

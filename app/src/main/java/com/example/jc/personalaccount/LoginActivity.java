@@ -385,8 +385,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 GlobalData.CurrentUser = mUser;
 
-                GlobalData.DataStoreHelper.createdUserIDDataStore(GlobalData.CurrentUser);
-
                 Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                 startActivity(intent);
             } else {

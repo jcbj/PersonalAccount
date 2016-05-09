@@ -21,16 +21,20 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by jc on 16/4/12.
@@ -388,6 +392,18 @@ public class Utility {
         return false;
     }
 
+    public static Boolean writeStringToFile(String path, String content, Boolean append) {
+        try {
+            FileOutputStream fOutputStream = new FileOutputStream(path,append);
+            fOutputStream.write(content.getBytes());
+            fOutputStream.close();
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
     //**********************
     /**
      * 删除文件，如果是文件夹，遍历删除所有文件
@@ -510,5 +526,46 @@ public class Utility {
         }
 
         return -1;
+    }
+
+    /**
+     * 获取内置 SD卡路径
+     * @return
+     */
+    public static String getInnerSDCardPath () {
+        return Environment.getExternalStorageDirectory().getPath() ;
+    }
+
+    /**
+     * 获取外置 SD卡路径:2016-05-08,小米手机无效
+     * @return  应该就一条记录或空
+     */
+    public static List<String> getExtSDCardPath ()
+    {
+        List<String> lResult = new ArrayList<String>();
+        try {
+            Runtime rt = Runtime.getRuntime ();
+            Process proc = rt.exec( "mount");
+            InputStream is = proc.getInputStream() ;
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line ;
+            while ((line = br.readLine()) != null) {
+                if (line.contains("extSdCard"))
+                {
+                    String [] arr = line.split( " ");
+                    String path = arr[1 ];
+                    File file = new File(path);
+                    if (file.isDirectory())
+                    {
+                        lResult.add(path) ;
+                    }
+                }
+            }
+            isr.close();
+        } catch (Exception e) {
+            lResult.clear();
+        }
+        return lResult;
     }
 }

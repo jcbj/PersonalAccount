@@ -27,9 +27,6 @@ public interface IDataStoreHelper {
     //注册
     Boolean register(String name, String password, String email);
 
-    //根据登录用户建表，如果已经存在则不用
-    Boolean createdUserIDDataStore(String user);
-
     //Home
     BalanceSheetItem[] getAllBalanceSheetItems(String user);
 
@@ -66,4 +63,9 @@ public interface IDataStoreHelper {
     Boolean editCarItem(String user, CarItem info, Boolean isAdd);
 
     Boolean deleteCarItem(String user, int id);
+
+    //Export
+    Boolean exportDataStore();
+
+    Boolean exportCSV(String user, int type);
 }
