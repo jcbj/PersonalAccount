@@ -100,7 +100,7 @@ public class EditAccountItemActivity extends AppCompatActivity {
         };
         this.mSpinnerType.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, this.mSpinnerItemsType));
 
-        this.mSpinnerItemsFromAndTo = GlobalData.DataStoreHelper.getAllAccountAlias(GlobalData.CurrentUser);
+        this.mSpinnerItemsFromAndTo = GlobalData.DataStoreHelper.getAllAccountAlias();
         this.mSpinnerFrom.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, this.mSpinnerItemsFromAndTo));
         this.mSpinnerTo.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, this.mSpinnerItemsFromAndTo));
 
@@ -172,7 +172,7 @@ public class EditAccountItemActivity extends AppCompatActivity {
         mCurrentItem.to = mSpinnerTo.getSelectedItem().toString();
         mCurrentItem.description = mETDescription.getText().toString();
 
-        if (GlobalData.DataStoreHelper.editAccountItem(GlobalData.CurrentUser,mCurrentItem,(-1 == mCurrentItem.id))) {
+        if (GlobalData.DataStoreHelper.editAccountItem(mCurrentItem,(-1 == mCurrentItem.id))) {
             mEditCount++;
 
             Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);

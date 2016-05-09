@@ -117,7 +117,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
         try {
             id = Integer.parseInt(map.get(SummaryItem.mDataColumnName[0]).toString());
             if (id != -1) {
-                if (GlobalData.DataStoreHelper.deleteAccountItem(GlobalData.CurrentUser,id)) {
+                if (GlobalData.DataStoreHelper.deleteAccountItem(id)) {
 
                     mData.remove(map);
 
@@ -178,7 +178,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
     private List<Map<String, Object>> getData() {
         List<Map<String, Object>> list = new ArrayList<>();
 
-        AccountItem[] datas = GlobalData.DataStoreHelper.getAllAccountItems(GlobalData.CurrentUser);
+        AccountItem[] datas = GlobalData.DataStoreHelper.getAllAccountItems();
         if (null != datas) {
             for (int i = 0; i < datas.length; i++) {
                 list.add(datas[i].mapValue());

@@ -87,7 +87,7 @@ public class EditDetailItemActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
         this.mOperType = EditCommonOperType.valueOf(intent.getIntExtra(GlobalData.EXTRA_DETAIL_EDIT_TYPE, EditCommonOperType.ADD.value()));
 
-        this.mSpinnerItemsFromAndTo = GlobalData.DataStoreHelper.getAllAccountAlias(GlobalData.CurrentUser);
+        this.mSpinnerItemsFromAndTo = GlobalData.DataStoreHelper.getAllAccountAlias();
         this.mSpinnerAlias.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, this.mSpinnerItemsFromAndTo));
 
         boolean isEdit = false;
@@ -145,7 +145,7 @@ public class EditDetailItemActivity extends AppCompatActivity {
         mCurrentItem.value = (int)(Double.parseDouble(mETValue.getText().toString()) * 100);
         mCurrentItem.description = mETDescription.getText().toString();
 
-        if (GlobalData.DataStoreHelper.editDetailItem(GlobalData.CurrentUser,mCurrentItem,(-1 == mCurrentItem.id))) {
+        if (GlobalData.DataStoreHelper.editDetailItem(mCurrentItem,(-1 == mCurrentItem.id))) {
             mEditCount++;
 
             Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);

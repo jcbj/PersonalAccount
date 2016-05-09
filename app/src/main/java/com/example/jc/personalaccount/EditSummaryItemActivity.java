@@ -138,7 +138,7 @@ public class EditSummaryItemActivity extends AppCompatActivity {
         mCurrentInfo.value = (int)(Double.parseDouble(mETValue.getText().toString()) * 100);
         mCurrentInfo.description = mETDescription.getText().toString();
 
-        if (GlobalData.DataStoreHelper.editSummaryItem(GlobalData.CurrentUser,mCurrentInfo,(-1 == mCurrentInfo.id))) {
+        if (GlobalData.DataStoreHelper.editSummaryItem(mCurrentInfo, (-1 == mCurrentInfo.id))) {
             mEditCount++;
 
             Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);

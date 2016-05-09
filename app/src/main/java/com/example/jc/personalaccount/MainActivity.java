@@ -80,7 +80,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         //初始化
-        GlobalData.ImagePath = getApplicationContext().getFilesDir().getAbsolutePath() + "/ImageData/" + GlobalData.CurrentUser;
+        GlobalData.ImagePath = getApplicationContext().getFilesDir().getAbsolutePath() + "/ImageData/" + GlobalData.DataStoreHelper.getCurrentUserID();
         File file = new File(GlobalData.ImagePath);
         if (!file.exists()) {
             file.mkdirs();

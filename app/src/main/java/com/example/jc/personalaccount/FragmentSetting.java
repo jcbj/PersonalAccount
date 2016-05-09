@@ -77,7 +77,7 @@ public class FragmentSetting extends Fragment implements IFragmentUI {
             @Override
             public void onClick(View v) {
 
-                Boolean bIsSuccess = GlobalData.DataStoreHelper.exportCSV(GlobalData.CurrentUser,mSpinnerItem.getSelectedItemPosition());
+                Boolean bIsSuccess = GlobalData.DataStoreHelper.exportCSV(mSpinnerItem.getSelectedItemPosition());
 
                 Toast.makeText(mActivity, (bIsSuccess ? R.string.fragment_setting_export_success : R.string.fragment_setting_export_failed),Toast.LENGTH_SHORT).show() ;
             }

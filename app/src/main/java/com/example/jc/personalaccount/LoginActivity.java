@@ -383,7 +383,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                GlobalData.CurrentUser = mUser;
 
                 Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                 startActivity(intent);

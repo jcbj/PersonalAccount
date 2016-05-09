@@ -22,50 +22,52 @@ public interface IDataStoreHelper {
     //登录
     Boolean login(String name, String password);
 
+    String getCurrentUserID();
+
     void unlogin();
 
     //注册
     Boolean register(String name, String password, String email);
 
     //Home
-    BalanceSheetItem[] getAllBalanceSheetItems(String user);
+    BalanceSheetItem[] getAllBalanceSheetItems();
 
-    Boolean editWorthItem(String user, BalanceSheetItem info, Boolean isAdd);
+    Boolean editWorthItem(BalanceSheetItem info, Boolean isAdd);
 
-    Boolean deleteWorthItem(String user, int id);
+    Boolean deleteWorthItem(int id);
 
     //Summary
-    SummaryItem[] getAllSummaryItems(String user);
+    SummaryItem[] getAllSummaryItems();
 
-    Boolean editSummaryItem(String user, SummaryItem info, Boolean isAdd);
+    Boolean editSummaryItem(SummaryItem info, Boolean isAdd);
 
-    Boolean deleteSummaryItem(String user, int id);
+    Boolean deleteSummaryItem(int id);
 
-    String[] getAllAccountAlias(String user);
+    String[] getAllAccountAlias();
 
     //Account
-    AccountItem[] getAllAccountItems(String user);
+    AccountItem[] getAllAccountItems();
 
-    Boolean editAccountItem(String user, AccountItem info, Boolean isAdd);
+    Boolean editAccountItem(AccountItem info, Boolean isAdd);
 
-    Boolean deleteAccountItem(String user, int id);
+    Boolean deleteAccountItem(int id);
 
     //Detail
-    DetailItem[] getAllDetailItems(String user);
+    DetailItem[] getAllDetailItems();
 
-    Boolean editDetailItem(String user, DetailItem info, Boolean isAdd);
+    Boolean editDetailItem(DetailItem info, Boolean isAdd);
 
-    Boolean deleteDetailItem(String user, int id);
+    Boolean deleteDetailItem(int id);
 
     //Car
-    CarItem[] getAllCarItems(String user);
+    CarItem[] getAllCarItems();
 
-    Boolean editCarItem(String user, CarItem info, Boolean isAdd);
+    Boolean editCarItem(CarItem info, Boolean isAdd);
 
-    Boolean deleteCarItem(String user, int id);
+    Boolean deleteCarItem(int id);
 
     //Export
     Boolean exportDataStore();
 
-    Boolean exportCSV(String user, int type);
+    Boolean exportCSV(int type);
 }

@@ -158,7 +158,7 @@ public class EditCarItemActivity extends AppCompatActivity {
         mCurrentItem.value = (int)(Double.parseDouble(mETValue.getText().toString()) * 100);
         mCurrentItem.description = mETDescription.getText().toString();
 
-        if (GlobalData.DataStoreHelper.editCarItem(GlobalData.CurrentUser,mCurrentItem,(-1 == mCurrentItem.id))) {
+        if (GlobalData.DataStoreHelper.editCarItem(mCurrentItem,(-1 == mCurrentItem.id))) {
             mEditCount++;
 
             Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);

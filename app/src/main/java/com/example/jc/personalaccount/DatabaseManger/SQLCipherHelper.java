@@ -204,7 +204,6 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
         if (bIsSuccess) {
             this.mCurrentLoginUserID = name;
-            GlobalData.CurrentUser = name;
         }
 
         return bIsSuccess;
@@ -212,7 +211,10 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     public void unlogin() {
         this.mCurrentLoginUserID = null;
-        GlobalData.CurrentUser = null;
+    }
+
+    public String getCurrentUserID() {
+        return this.mCurrentLoginUserID;
     }
 
     //Export
@@ -223,7 +225,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
         return Utility.copyFile(this.mDatabasePath,destPath);
     }
 
-    public Boolean exportCSV(String user, int type) {
+    public Boolean exportCSV(int type) {
 
         switch (type) {
             case 0:
@@ -244,11 +246,10 @@ public class SQLCipherHelper implements IDataStoreHelper {
     //Worth
     /**
      * 获取资产负债表中所有记录
-     * @param user:当前登录用户名
      * @return
      */
-    public BalanceSheetItem[] getAllBalanceSheetItems(String user) {
-        String tableName = user + "_" + BALANCESHEETTABLENAME;
+    public BalanceSheetItem[] getAllBalanceSheetItems() {
+        String tableName = this.mCurrentLoginUserID + "_" + BALANCESHEETTABLENAME;
         String sql = "SELECT * FROM " + tableName;
         ArrayList<BalanceSheetItem> list = new ArrayList<>();
 
@@ -288,14 +289,13 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     /**
      * 添加或编辑资产负债表中记录
-     * @param user： 当前登录用户名
      * @param info： 待保存的数据
      * @param isAdd：是新添加，还是编辑
      * @return： 是否成功
      */
-    public Boolean editWorthItem(String user, BalanceSheetItem info, Boolean isAdd) {
+    public Boolean editWorthItem(BalanceSheetItem info, Boolean isAdd) {
 
-        if ((TextUtils.isEmpty(user)) || (null == info)) {
+        if ((TextUtils.isEmpty(this.mCurrentLoginUserID)) || (null == info)) {
             return false;
         }
 
@@ -311,7 +311,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
         values.put(BALANCESHEETTABLECOLUMNNAME[5],os.toByteArray());
         values.put(BALANCESHEETTABLECOLUMNNAME[6],info.description);
 
-        String tableName = user + "_" + BALANCESHEETTABLENAME;
+        String tableName = this.mCurrentLoginUserID + "_" + BALANCESHEETTABLENAME;
         if (isAdd) {
             return this.insertSQL(tableName,BALANCESHEETTABLECOLUMNNAME[2],values);
         } else {
@@ -320,23 +320,22 @@ public class SQLCipherHelper implements IDataStoreHelper {
         }
     }
 
-    public Boolean deleteWorthItem(String user, int id) {
-        if (TextUtils.isEmpty(user)) {
+    public Boolean deleteWorthItem(int id) {
+        if (TextUtils.isEmpty(this.mCurrentLoginUserID)) {
             return false;
         }
 
-        String sql = "DELETE FROM " + user + "_" + BALANCESHEETTABLENAME + " WHERE id='" + id + "'";
+        String sql = "DELETE FROM " + this.mCurrentLoginUserID + "_" + BALANCESHEETTABLENAME + " WHERE id='" + id + "'";
         return this.execSQL(sql);
     }
 
     //Summary
     /**
      * 获取帐户概要列表中所有记录
-     * @param user:当前登录用户名
      * @return
      */
-    public SummaryItem[] getAllSummaryItems(String user) {
-        String tableName = user + "_" + SUMMARYITEMTABLENAME;
+    public SummaryItem[] getAllSummaryItems() {
+        String tableName = this.mCurrentLoginUserID + "_" + SUMMARYITEMTABLENAME;
         String sql = "SELECT * FROM " + tableName;
         ArrayList<SummaryItem> list = new ArrayList<>();
 
@@ -370,14 +369,13 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     /**
      * 添加或编辑帐户概要列表中记录
-     * @param user： 当前登录用户名
      * @param info： 待保存的数据
      * @param isAdd：是新添加，还是编辑
      * @return： 是否成功
      */
-    public Boolean editSummaryItem(String user, SummaryItem info, Boolean isAdd) {
+    public Boolean editSummaryItem(SummaryItem info, Boolean isAdd) {
 
-        if ((TextUtils.isEmpty(user)) || (null == info)) {
+        if ((TextUtils.isEmpty(this.mCurrentLoginUserID)) || (null == info)) {
             return false;
         }
 
@@ -388,7 +386,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
         values.put(SUMMARYITEMTABLECOLUMNNAME[4],info.alias);
         values.put(SUMMARYITEMTABLECOLUMNNAME[5],info.description);
 
-        String tableName = user + "_" + SUMMARYITEMTABLENAME;
+        String tableName = this.mCurrentLoginUserID + "_" + SUMMARYITEMTABLENAME;
         if (isAdd) {
             return this.insertSQL(tableName,SUMMARYITEMTABLECOLUMNNAME[2],values);
         } else {
@@ -397,17 +395,17 @@ public class SQLCipherHelper implements IDataStoreHelper {
         }
     }
 
-    public Boolean deleteSummaryItem(String user, int id) {
-        if (TextUtils.isEmpty(user)) {
+    public Boolean deleteSummaryItem(int id) {
+        if (TextUtils.isEmpty(this.mCurrentLoginUserID)) {
             return false;
         }
 
-        String sql = "DELETE FROM " + user + "_" + SUMMARYITEMTABLENAME + " WHERE id='" + id + "'";
+        String sql = "DELETE FROM " + this.mCurrentLoginUserID + "_" + SUMMARYITEMTABLENAME + " WHERE id='" + id + "'";
         return this.execSQL(sql);
     }
 
-    public String[] getAllAccountAlias(String user) {
-        String tableName = user + "_" + SUMMARYITEMTABLENAME;
+    public String[] getAllAccountAlias() {
+        String tableName = this.mCurrentLoginUserID + "_" + SUMMARYITEMTABLENAME;
         String sql = "SELECT * FROM " + tableName;
         ArrayList<String> list = new ArrayList<>();
 
@@ -434,11 +432,10 @@ public class SQLCipherHelper implements IDataStoreHelper {
     //Account
     /**
      * 获取总帐中所有记录
-     * @param user:当前登录用户名
      * @return
      */
-    public AccountItem[] getAllAccountItems(String user) {
-        String tableName = user + "_" + ACCOUNTITEMTABLENAME;
+    public AccountItem[] getAllAccountItems() {
+        String tableName = this.mCurrentLoginUserID + "_" + ACCOUNTITEMTABLENAME;
         String sql = "SELECT * FROM " + tableName;
         ArrayList<AccountItem> list = new ArrayList<>();
 
@@ -473,14 +470,13 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     /**
      * 添加或编辑总帐表中记录
-     * @param user： 当前登录用户名
      * @param info： 待保存的数据
      * @param isAdd：是新添加，还是编辑
      * @return： 是否成功
      */
-    public Boolean editAccountItem(String user, AccountItem info, Boolean isAdd) {
+    public Boolean editAccountItem(AccountItem info, Boolean isAdd) {
 
-        if ((TextUtils.isEmpty(user)) || (null == info)) {
+        if ((TextUtils.isEmpty(this.mCurrentLoginUserID)) || (null == info)) {
             return false;
         }
 
@@ -492,7 +488,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
         values.put(ACCOUNTITEMTABLECOLUMNNAME[5],info.to);
         values.put(ACCOUNTITEMTABLECOLUMNNAME[6],info.description);
 
-        String tableName = user + "_" + ACCOUNTITEMTABLENAME;
+        String tableName = this.mCurrentLoginUserID + "_" + ACCOUNTITEMTABLENAME;
         if (isAdd) {
             return this.insertSQL(tableName,ACCOUNTITEMTABLECOLUMNNAME[2],values);
         } else {
@@ -501,23 +497,22 @@ public class SQLCipherHelper implements IDataStoreHelper {
         }
     }
 
-    public Boolean deleteAccountItem(String user, int id) {
-        if (TextUtils.isEmpty(user)) {
+    public Boolean deleteAccountItem(int id) {
+        if (TextUtils.isEmpty(this.mCurrentLoginUserID)) {
             return false;
         }
 
-        String sql = "DELETE FROM " + user + "_" + ACCOUNTITEMTABLENAME + " WHERE id='" + id + "'";
+        String sql = "DELETE FROM " + this.mCurrentLoginUserID + "_" + ACCOUNTITEMTABLENAME + " WHERE id='" + id + "'";
         return this.execSQL(sql);
     }
 
     //Detail
     /**
      * 获取详细消费中所有记录
-     * @param user:当前登录用户名
      * @return
      */
-    public DetailItem[] getAllDetailItems(String user) {
-        String tableName = user + "_" + DETAILITEMTABLENAME;
+    public DetailItem[] getAllDetailItems() {
+        String tableName = this.mCurrentLoginUserID + "_" + DETAILITEMTABLENAME;
         String sql = "SELECT * FROM " + tableName;
         ArrayList<DetailItem> list = new ArrayList<>();
 
@@ -550,14 +545,13 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     /**
      * 添加或编辑详细消费表中记录
-     * @param user： 当前登录用户名
      * @param info： 待保存的数据
      * @param isAdd：是新添加，还是编辑
      * @return： 是否成功
      */
-    public Boolean editDetailItem(String user, DetailItem info, Boolean isAdd) {
+    public Boolean editDetailItem(DetailItem info, Boolean isAdd) {
 
-        if ((TextUtils.isEmpty(user)) || (null == info)) {
+        if ((TextUtils.isEmpty(this.mCurrentLoginUserID)) || (null == info)) {
             return false;
         }
 
@@ -567,7 +561,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
         values.put(DETAILITEMTABLECOLUMNNAME[3],info.from);
         values.put(DETAILITEMTABLECOLUMNNAME[4],info.description);
 
-        String tableName = user + "_" + DETAILITEMTABLENAME;
+        String tableName = this.mCurrentLoginUserID + "_" + DETAILITEMTABLENAME;
         if (isAdd) {
             return this.insertSQL(tableName,DETAILITEMTABLECOLUMNNAME[2],values);
         } else {
@@ -576,23 +570,22 @@ public class SQLCipherHelper implements IDataStoreHelper {
         }
     }
 
-    public Boolean deleteDetailItem(String user, int id) {
-        if (TextUtils.isEmpty(user)) {
+    public Boolean deleteDetailItem(int id) {
+        if (TextUtils.isEmpty(this.mCurrentLoginUserID)) {
             return false;
         }
 
-        String sql = "DELETE FROM " + user + "_" + DETAILITEMTABLENAME + " WHERE id='" + id + "'";
+        String sql = "DELETE FROM " + this.mCurrentLoginUserID + "_" + DETAILITEMTABLENAME + " WHERE id='" + id + "'";
         return this.execSQL(sql);
     }
 
     //Account
     /**
      * 获取汽车费用中所有记录
-     * @param user:当前登录用户名
      * @return
      */
-    public CarItem[] getAllCarItems(String user) {
-        String tableName = user + "_" + CARITEMTABLENAME;
+    public CarItem[] getAllCarItems() {
+        String tableName = this.mCurrentLoginUserID + "_" + CARITEMTABLENAME;
         String sql = "SELECT * FROM " + tableName;
         ArrayList<CarItem> list = new ArrayList<>();
 
@@ -625,14 +618,13 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     /**
      * 添加或编辑汽车费用表中记录
-     * @param user： 当前登录用户名
      * @param info： 待保存的数据
      * @param isAdd：是新添加，还是编辑
      * @return： 是否成功
      */
-    public Boolean editCarItem(String user, CarItem info, Boolean isAdd) {
+    public Boolean editCarItem(CarItem info, Boolean isAdd) {
 
-        if ((TextUtils.isEmpty(user)) || (null == info)) {
+        if ((TextUtils.isEmpty(this.mCurrentLoginUserID)) || (null == info)) {
             return false;
         }
 
@@ -642,7 +634,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
         values.put(CARITEMTABLECOLUMNNAME[3],info.type);
         values.put(CARITEMTABLECOLUMNNAME[4],info.description);
 
-        String tableName = user + "_" + CARITEMTABLENAME;
+        String tableName = this.mCurrentLoginUserID + "_" + CARITEMTABLENAME;
         if (isAdd) {
             return this.insertSQL(tableName,CARITEMTABLECOLUMNNAME[2],values);
         } else {
@@ -651,12 +643,12 @@ public class SQLCipherHelper implements IDataStoreHelper {
         }
     }
 
-    public Boolean deleteCarItem(String user, int id) {
-        if (TextUtils.isEmpty(user)) {
+    public Boolean deleteCarItem(int id) {
+        if (TextUtils.isEmpty(this.mCurrentLoginUserID)) {
             return false;
         }
 
-        String sql = "DELETE FROM " + user + "_" + CARITEMTABLENAME + " WHERE id='" + id + "'";
+        String sql = "DELETE FROM " + this.mCurrentLoginUserID + "_" + CARITEMTABLENAME + " WHERE id='" + id + "'";
         return this.execSQL(sql);
     }
 
@@ -850,7 +842,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     private Boolean exportCSV_Home() {
 
-        BalanceSheetItem[] items = this.getAllBalanceSheetItems(this.mCurrentLoginUserID);
+        BalanceSheetItem[] items = this.getAllBalanceSheetItems();
 
         if (items.length > 0) {
             StringBuilder sb = new StringBuilder();
@@ -874,7 +866,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     private Boolean exportCSV_Summary() {
 
-        SummaryItem[] items = this.getAllSummaryItems(this.mCurrentLoginUserID);
+        SummaryItem[] items = this.getAllSummaryItems();
 
         if (items.length > 0) {
             StringBuilder sb = new StringBuilder();
@@ -899,7 +891,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     private Boolean exportCSV_Account() {
 
-        AccountItem[] items = this.getAllAccountItems(this.mCurrentLoginUserID);
+        AccountItem[] items = this.getAllAccountItems();
 
         if (items.length > 0) {
             StringBuilder sb = new StringBuilder();
@@ -935,7 +927,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     private Boolean exportCSV_Detail() {
 
-        DetailItem[] items = this.getAllDetailItems(this.mCurrentLoginUserID);
+        DetailItem[] items = this.getAllDetailItems();
 
         if (items.length > 0) {
             StringBuilder sb = new StringBuilder();
@@ -969,7 +961,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
 
     private Boolean exportCSV_Car() {
 
-        CarItem[] items = this.getAllCarItems(this.mCurrentLoginUserID);
+        CarItem[] items = this.getAllCarItems();
 
         if (items.length > 0) {
             StringBuilder sb = new StringBuilder();

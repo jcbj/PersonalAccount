@@ -117,7 +117,7 @@ public class FragmentCar extends Fragment implements IFragmentUI {
         try {
             id = Integer.parseInt(map.get(CarItem.mDataColumnName[0]).toString());
             if (id != -1) {
-                if (GlobalData.DataStoreHelper.deleteCarItem(GlobalData.CurrentUser,id)) {
+                if (GlobalData.DataStoreHelper.deleteCarItem(id)) {
 
                     mData.remove(map);
 
@@ -154,7 +154,7 @@ public class FragmentCar extends Fragment implements IFragmentUI {
     private List<Map<String, Object>> getData() {
         List<Map<String, Object>> list = new ArrayList<>();
 
-        CarItem[] datas = GlobalData.DataStoreHelper.getAllCarItems(GlobalData.CurrentUser);
+        CarItem[] datas = GlobalData.DataStoreHelper.getAllCarItems();
         if (null != datas) {
             for (int i = 0; i < datas.length; i++) {
                 list.add(datas[i].mapValue());

@@ -256,7 +256,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
             mCurrentInfo.imageThumb = mTempImageThumb;
         }
 
-        if (GlobalData.DataStoreHelper.editWorthItem(GlobalData.CurrentUser,mCurrentInfo,(-1 == mCurrentInfo.id))) {
+        if (GlobalData.DataStoreHelper.editWorthItem(mCurrentInfo,(-1 == mCurrentInfo.id))) {
             mEditCount++;
 
             Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);

@@ -118,7 +118,7 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         try {
             id = Integer.parseInt(map.get(DetailItem.mDataColumnName[0]).toString());
             if (id != -1) {
-                if (GlobalData.DataStoreHelper.deleteDetailItem(GlobalData.CurrentUser,id)) {
+                if (GlobalData.DataStoreHelper.deleteDetailItem(id)) {
 
                     mData.remove(map);
 
@@ -155,7 +155,7 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
     private List<Map<String, Object>> getData() {
         List<Map<String, Object>> list = new ArrayList<>();
 
-        DetailItem[] datas = GlobalData.DataStoreHelper.getAllDetailItems(GlobalData.CurrentUser);
+        DetailItem[] datas = GlobalData.DataStoreHelper.getAllDetailItems();
         if (null != datas) {
             for (int i = 0; i < datas.length; i++) {
                 list.add(datas[i].mapValue());

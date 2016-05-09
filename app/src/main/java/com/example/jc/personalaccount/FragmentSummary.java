@@ -174,7 +174,7 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
         try {
             id = Integer.parseInt(map.get(SummaryItem.mDataColumnName[0]).toString());
             if (id != -1) {
-                if (GlobalData.DataStoreHelper.deleteSummaryItem(GlobalData.CurrentUser,id)) {
+                if (GlobalData.DataStoreHelper.deleteSummaryItem(id)) {
 
                     mData.remove(map);
 
@@ -213,7 +213,7 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
     private List<Map<String, Object>> getData() {
         List<Map<String, Object>> list = new ArrayList<>();
 
-        SummaryItem[] datas = GlobalData.DataStoreHelper.getAllSummaryItems(GlobalData.CurrentUser);
+        SummaryItem[] datas = GlobalData.DataStoreHelper.getAllSummaryItems();
         if (null != datas) {
             for (int i = 0; i < datas.length; i++) {
                 list.add(datas[i].mapValue());

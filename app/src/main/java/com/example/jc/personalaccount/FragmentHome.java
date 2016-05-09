@@ -263,7 +263,7 @@ public class FragmentHome extends Fragment implements IFragmentUI {
         try {
             id = Integer.parseInt(map.get(BalanceSheetItem.mDataColumnName[0]).toString());
             if (id != -1) {
-                if (GlobalData.DataStoreHelper.deleteWorthItem(GlobalData.CurrentUser,id)) {
+                if (GlobalData.DataStoreHelper.deleteWorthItem(id)) {
 
                     this.refreshUIData();
                     Object path = map.get(BalanceSheetItem.mDataColumnName[5]);
@@ -363,7 +363,7 @@ public class FragmentHome extends Fragment implements IFragmentUI {
         result.listDebtItems = new ArrayList<Map<String, Object>>();
         result.dDebtAll = result.dPropertyAll = 0.0;
 
-        BalanceSheetItem[] infos = GlobalData.DataStoreHelper.getAllBalanceSheetItems(GlobalData.CurrentUser);
+        BalanceSheetItem[] infos = GlobalData.DataStoreHelper.getAllBalanceSheetItems();
 
         if (null != infos) {
             for (int i = 0; i < infos.length; i++) {
