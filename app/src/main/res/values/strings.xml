@@ -104,5 +104,7 @@
     <string name="fragment_setting_btn_export_database_XML">导出为XML</string>
     <string name="fragment_setting_export_success">导出成功</string>
     <string name="fragment_setting_export_failed">导出失败</string>
+    <string name="fragment_setting_btn_import_cardaccount">导入信用卡账单</string>
+    <string name="fragment_setting_open_file">打开文件</string>
 
 </resources>

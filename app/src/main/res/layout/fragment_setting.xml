@@ -2,26 +2,57 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-    android:orientation="vertical"
+             android:orientation="vertical"
+              android:padding="10dp"
              tools:context="com.example.jc.personalaccount.FragmentSetting">
 
     <Button
         android:id="@+id/fragment_setting_btn_export_database"
         android:text="@string/fragment_setting_btn_export_database"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <Spinner
         android:id="@+id/fragment_setting_spinner_item"
         android:layout_gravity="center"
+        android:layout_marginTop="30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></Spinner>
 
     <Button
         android:id="@+id/fragment_setting_btn_export_database_csv"
         android:text="@string/fragment_setting_btn_export_database_CSV"
-        android:layout_margin="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/fragment_setting_text_open_file_card_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/fragment_setting_btn_open_file"
+            android:text="..."
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/fragment_setting_btn_import_cardaccount"
+        android:text="@string/fragment_setting_btn_import_cardaccount"
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -32,8 +63,6 @@
         android:textColor="@color/white"
         android:background="@color/red"
         android:layout_marginTop="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
