@@ -2,6 +2,7 @@ package com.example.jc.personalaccount;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ public class FragmentSetting extends Fragment implements IFragmentUI {
     private Button mBtnExportDatabase;
     private Button mBtnExportCSV;
     private Spinner mSpinnerItem;
+    private Button mBtnExit;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,6 +50,7 @@ public class FragmentSetting extends Fragment implements IFragmentUI {
         this.mBtnExportDatabase = (Button)view.findViewById(R.id.fragment_setting_btn_export_database);
         this.mBtnExportCSV = (Button)view.findViewById(R.id.fragment_setting_btn_export_database_csv);
         this.mSpinnerItem = (Spinner)view.findViewById(R.id.fragment_setting_spinner_item);
+        this.mBtnExit = (Button)view.findViewById(R.id.fragment_setting_btn_exit);
 
         this.mSpinnerItem.setAdapter(new ArrayAdapter<String>(mActivity, android.R.layout.simple_spinner_item, new String[]{
                 this.getString(R.string.bottom_tab_home),
@@ -80,6 +83,17 @@ public class FragmentSetting extends Fragment implements IFragmentUI {
                 Boolean bIsSuccess = GlobalData.DataStoreHelper.exportCSV(mSpinnerItem.getSelectedItemPosition());
 
                 Toast.makeText(mActivity, (bIsSuccess ? R.string.fragment_setting_export_success : R.string.fragment_setting_export_failed),Toast.LENGTH_SHORT).show() ;
+            }
+        });
+
+        this.mBtnExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                GlobalData.DataStoreHelper.unlogin();
+
+                Intent intent = new Intent(mActivity,LoginActivity.class);
+                startActivity(intent);
             }
         });
     }
