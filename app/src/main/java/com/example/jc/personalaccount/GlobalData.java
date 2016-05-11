@@ -57,6 +57,8 @@ public class GlobalData {
     public static String EXTRA_CAR_EDIT_TYPE = "CAR_EDIT_TYPE";
     public static CarItem EXTRA_Car_Edit_Data;
 
+    //统一的日期处理格式
+    public static String DATEFORMAT = "yyyy-MM-dd";
     //*****************
 
     //当前登录用户名

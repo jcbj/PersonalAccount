@@ -113,7 +113,7 @@ public class  LoginActivity extends AppCompatActivity implements LoaderCallbacks
             String name = intent.getStringExtra(GlobalData.EXTRA_USERNAME);
             if (TextUtils.isEmpty(name)) {
                 if (!GlobalData.IsInitDatabase) {
-                    GlobalData.DataStoreHelper.unlogin();
+                    GlobalData.DataStoreHelper.logout();
 
                     GlobalData.IsInitDatabase = GlobalData.DataStoreHelper.initDataStore(this);
 

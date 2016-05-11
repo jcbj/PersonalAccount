@@ -140,12 +140,19 @@ public class EditDetailItemActivity extends AppCompatActivity {
             return;
         }
 
-        mCurrentItem.date = Utility.getFormatDate("yyyy-MM-dd");
+        mCurrentItem.date = Utility.getFormatDate(GlobalData.DATEFORMAT);
         mCurrentItem.from = mSpinnerAlias.getSelectedItem().toString();
         mCurrentItem.value = (int)(Double.parseDouble(mETValue.getText().toString()) * 100);
         mCurrentItem.description = mETDescription.getText().toString();
 
-        if (GlobalData.DataStoreHelper.editDetailItem(mCurrentItem,(-1 == mCurrentItem.id))) {
+        boolean bIsSuccess = false;
+        if (-1 == mCurrentItem.id) {
+            bIsSuccess = GlobalData.DataStoreHelper.addDetailItem(new DetailItem[]{mCurrentItem});
+        } else {
+            bIsSuccess = GlobalData.DataStoreHelper.editDetailItem(mCurrentItem);
+        }
+
+        if (bIsSuccess) {
             mEditCount++;
 
             Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);

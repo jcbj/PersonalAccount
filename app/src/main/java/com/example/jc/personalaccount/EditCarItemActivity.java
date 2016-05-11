@@ -153,7 +153,7 @@ public class EditCarItemActivity extends AppCompatActivity {
             return;
         }
 
-        mCurrentItem.date = Utility.getFormatDate("yyyy-MM-dd");
+        mCurrentItem.date = Utility.getFormatDate(GlobalData.DATEFORMAT);
         mCurrentItem.type = mSpinnerType.getSelectedItem().toString();
         mCurrentItem.value = (int)(Double.parseDouble(mETValue.getText().toString()) * 100);
         mCurrentItem.description = mETDescription.getText().toString();

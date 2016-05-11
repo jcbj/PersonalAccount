@@ -24,7 +24,7 @@ public interface IDataStoreHelper {
 
     String getCurrentUserID();
 
-    void unlogin();
+    void logout();
 
     //注册
     Boolean register(String name, String password, String email);
@@ -55,7 +55,9 @@ public interface IDataStoreHelper {
     //Detail
     DetailItem[] getAllDetailItems();
 
-    Boolean editDetailItem(DetailItem info, Boolean isAdd);
+    Boolean addDetailItem(DetailItem[] infos);
+
+    Boolean editDetailItem(DetailItem info);
 
     Boolean deleteDetailItem(int id);
 

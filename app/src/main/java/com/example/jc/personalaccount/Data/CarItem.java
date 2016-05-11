@@ -1,5 +1,6 @@
 package com.example.jc.personalaccount.Data;
 
+import com.example.jc.personalaccount.GlobalData;
 import com.example.jc.personalaccount.Utility;
 
 import java.util.Hashtable;
@@ -26,7 +27,7 @@ public class CarItem {
         Map<String, Object> map = new Hashtable<String, Object>();
 
         map.put(mDataColumnName[0],this.id);
-        map.put(mDataColumnName[1], Utility.getWeek("yyyy-MM-dd",this.date));
+        map.put(mDataColumnName[1], Utility.getWeek(GlobalData.DATEFORMAT,this.date));
         map.put(mDataColumnName[2],this.date.substring(5));
         map.put(mDataColumnName[3],Double.toString(this.value / 100.0));
         map.put(mDataColumnName[4],this.type);

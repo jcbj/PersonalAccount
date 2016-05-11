@@ -165,7 +165,7 @@ public class EditAccountItemActivity extends AppCompatActivity {
             return;
         }
 
-        mCurrentItem.date = Utility.getFormatDate("yyyy-MM-dd", new Date(this.mDate.getYear() - 1900,this.mDate.getMonth(),this.mDate.getDayOfMonth()));
+        mCurrentItem.date = Utility.getFormatDate(GlobalData.DATEFORMAT, new Date(this.mDate.getYear() - 1900,this.mDate.getMonth(),this.mDate.getDayOfMonth()));
         mCurrentItem.value = (int)(Double.parseDouble(mETValue.getText().toString()) * 100);
         mCurrentItem.from = mSpinnerFrom.getSelectedItem().toString();
         mCurrentItem.type = mSpinnerType.getSelectedItemPosition();

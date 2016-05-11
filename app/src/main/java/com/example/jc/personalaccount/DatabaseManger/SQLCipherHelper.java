@@ -209,7 +209,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
         return bIsSuccess;
     }
 
-    public void unlogin() {
+    public void logout() {
         this.mCurrentLoginUserID = null;
     }
 
@@ -543,13 +543,44 @@ public class SQLCipherHelper implements IDataStoreHelper {
         return list.toArray(new DetailItem[list.size()]);
     }
 
+    public Boolean addDetailItem(DetailItem[] infos) {
+        try {
+            if ((TextUtils.isEmpty(this.mCurrentLoginUserID)) || (null == infos)) {
+                return false;
+            }
+
+            boolean bIsSuccess = false;
+
+            String tableName = this.mCurrentLoginUserID + "_" + DETAILITEMTABLENAME;
+            for (int i = 0; i < infos.length; i++) {
+
+                ContentValues values = new ContentValues();
+                values.put(DETAILITEMTABLECOLUMNNAME[1],infos[i].date);
+                values.put(DETAILITEMTABLECOLUMNNAME[2],infos[i].value);
+                values.put(DETAILITEMTABLECOLUMNNAME[3],infos[i].from);
+                values.put(DETAILITEMTABLECOLUMNNAME[4],infos[i].description);
+
+                bIsSuccess = this.insertSQL(tableName,DETAILITEMTABLECOLUMNNAME[2],values);
+                if (!bIsSuccess) {
+                    break;
+                }
+            }
+
+            return bIsSuccess;
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     /**
      * 添加或编辑详细消费表中记录
      * @param info： 待保存的数据
-     * @param isAdd：是新添加，还是编辑
      * @return： 是否成功
      */
-    public Boolean editDetailItem(DetailItem info, Boolean isAdd) {
+    public Boolean editDetailItem(DetailItem info) {
 
         if ((TextUtils.isEmpty(this.mCurrentLoginUserID)) || (null == info)) {
             return false;
@@ -562,12 +593,9 @@ public class SQLCipherHelper implements IDataStoreHelper {
         values.put(DETAILITEMTABLECOLUMNNAME[4],info.description);
 
         String tableName = this.mCurrentLoginUserID + "_" + DETAILITEMTABLENAME;
-        if (isAdd) {
-            return this.insertSQL(tableName,DETAILITEMTABLECOLUMNNAME[2],values);
-        } else {
-            return this.updateSQL(tableName, values, DETAILITEMTABLECOLUMNNAME[0] + "=?", new String[]{String.valueOf
+
+        return this.updateSQL(tableName, values, DETAILITEMTABLECOLUMNNAME[0] + "=?", new String[]{String.valueOf
                     (info.id)});
-        }
     }
 
     public Boolean deleteDetailItem(int id) {

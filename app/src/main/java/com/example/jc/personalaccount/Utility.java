@@ -42,6 +42,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by jc on 16/4/12.
@@ -506,7 +508,7 @@ public class Utility {
 
     /**
      * 返回指定格式的日期字符串
-     * @param format "yyyy-MM-dd"
+     * @param format
      * @return 2016-04-25
      */
     public static String getFormatDate(String format) {
@@ -574,6 +576,38 @@ public class Utility {
             lResult.clear();
         }
         return lResult;
+    }
+
+    // 判断一个字符串是否都为数字
+    public static boolean isDigit(String strNum) {
+        return strNum.matches("[0-9]{1,}");
+    }
+
+    // 判断一个字符串是否都为数字
+    public static boolean isDigit2(String strNum) {
+        Pattern pattern = Pattern.compile("[0-9]{1,}");
+        Matcher matcher = pattern.matcher((CharSequence) strNum);
+        return matcher.matches();
+    }
+
+    //截取数字
+    public static String getNumbers(String content) {
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(content);
+        while (matcher.find()) {
+            return matcher.group(0);
+        }
+        return "";
+    }
+
+    // 截取非数字
+    public static String getNotNumber(String content) {
+        Pattern pattern = Pattern.compile("\\D+");
+        Matcher matcher = pattern.matcher(content);
+        while (matcher.find()) {
+            return matcher.group(0);
+        }
+        return "";
     }
 
     /**

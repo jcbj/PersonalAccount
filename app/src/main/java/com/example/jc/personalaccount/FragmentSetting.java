@@ -35,9 +35,6 @@ import java.util.StringTokenizer;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link FragmentSetting.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FragmentSetting#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class FragmentSetting extends Fragment implements IFragmentUI {
@@ -121,28 +118,17 @@ public class FragmentSetting extends Fragment implements IFragmentUI {
             @Override
             public void onClick(View v) {
                 String fileName = mETCardAccountPath.getText().toString();
+                //TODO:测试，使用DialogFragment
+                String destPath = Environment.getExternalStorageDirectory().getPath();
+                fileName = destPath + "/PersonalAccount/2016-05CardAccount.csv";
+
                 if (TextUtils.isEmpty(fileName)) {
                     return;
                 }
 
-                try {
-                    FileInputStream fileInputStream = new FileInputStream(fileName);
-                    DataInputStream dataIO = new DataInputStream(fileInputStream);
-                    String strLine = null;
+                Boolean bIsSuccess = ParserImportDataToDB.saveCardAccountCSVToDataStore(fileName);
 
-                    while((strLine =  dataIO.readLine()) != null) {
-
-                        //TODO:csv -> DataStore
-
-
-
-                    }
-                    dataIO.close();
-                    fileInputStream.close();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Toast.makeText(mActivity, (bIsSuccess ? R.string.fragment_setting_import_success : R.string.fragment_setting_import_failed),Toast.LENGTH_SHORT).show() ;
             }
         });
 
@@ -150,13 +136,14 @@ public class FragmentSetting extends Fragment implements IFragmentUI {
             @Override
             public void onClick(View v) {
 
-                GlobalData.DataStoreHelper.unlogin();
+                GlobalData.DataStoreHelper.logout();
 
                 Intent intent = new Intent(mActivity,LoginActivity.class);
                 startActivity(intent);
             }
         });
     }
+
 
     @Override
     public void onAttach(Context context) {
