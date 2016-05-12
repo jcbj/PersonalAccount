@@ -36,7 +36,7 @@
 
         <EditText
             android:id="@+id/fragment_setting_text_open_file_card_account"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 

@@ -1,7 +1,8 @@
 package com.example.jc.personalaccount;
 
-import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.app.Dialog;
+//import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
@@ -37,9 +38,9 @@ import java.util.StringTokenizer;
  * Activities that contain this fragment must implement the
  * create an instance of this fragment.
  */
-public class FragmentSetting extends Fragment implements IFragmentUI {
+public class FragmentSetting extends Fragment implements IFragmentUI,OpenSelectPathFragment.CallbackBundle {
 
-    protected Activity mActivity;
+    protected FragmentActivity mActivity;
     private Button mBtnExportDatabase;
     private Button mBtnExportCSV;
     private Spinner mSpinnerItem;
@@ -47,6 +48,7 @@ public class FragmentSetting extends Fragment implements IFragmentUI {
     private Button mBtnImportCardAccount;
     private Button mBtnOpenCardAccountFile;
     private EditText mETCardAccountPath;
+    private OpenSelectPathFragment mOpenPathFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,6 +63,9 @@ public class FragmentSetting extends Fragment implements IFragmentUI {
         this.mBtnImportCardAccount = (Button)view.findViewById(R.id.fragment_setting_btn_import_cardaccount);
         this.mBtnOpenCardAccountFile = (Button)view.findViewById(R.id.fragment_setting_btn_open_file);
         this.mETCardAccountPath = (EditText)view.findViewById(R.id.fragment_setting_text_open_file_card_account);
+
+        mOpenPathFragment = new OpenSelectPathFragment();
+        mOpenPathFragment.mBundle = this;
 
         this.mSpinnerItem.setAdapter(new ArrayAdapter<String>(mActivity, android.R.layout.simple_spinner_item, new String[]{
                 this.getString(R.string.bottom_tab_home),
@@ -99,18 +104,7 @@ public class FragmentSetting extends Fragment implements IFragmentUI {
         this.mBtnOpenCardAccountFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog dialog = Utility.MyOpenFileDialog.createDialog(0, mActivity, getString(R.string
-                        .fragment_setting_open_file)
-                        , new
-                        Utility.MyOpenFileDialog.CallbackBundle() {
-                            @Override
-                            public void callback(Bundle bundle) {
-                                mETCardAccountPath.setText(bundle.getString("path"));
-                            }
-                        },
-                        ".csv;",
-                        null);
-                dialog.show();
+                mOpenPathFragment.show(mActivity.getSupportFragmentManager(),getString(R.string.fragment_setting_open_file));
             }
         });
 
@@ -144,14 +138,18 @@ public class FragmentSetting extends Fragment implements IFragmentUI {
         });
     }
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.mActivity = (Activity)context;
+        this.mActivity = (FragmentActivity) context;
     }
 
     public void refreshUIData() {
         return;
+    }
+
+    @Override
+    public void callback(Bundle bundle) {
+        mETCardAccountPath.setText(bundle.getString("path"));
     }
 }
