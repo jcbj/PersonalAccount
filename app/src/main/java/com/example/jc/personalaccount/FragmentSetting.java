@@ -112,9 +112,9 @@ public class FragmentSetting extends Fragment implements IFragmentUI,OpenSelectP
             @Override
             public void onClick(View v) {
                 String fileName = mETCardAccountPath.getText().toString();
-                //TODO:测试，使用DialogFragment
-                String destPath = Environment.getExternalStorageDirectory().getPath();
-                fileName = destPath + "/PersonalAccount/2016-05CardAccount.csv";
+//                //TODO:测试，使用DialogFragment
+//                String destPath = Environment.getExternalStorageDirectory().getPath();
+//                fileName = destPath + "/PersonalAccount/2016-05CardAccount.csv";
 
                 if (TextUtils.isEmpty(fileName)) {
                     return;

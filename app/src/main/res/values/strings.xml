@@ -35,7 +35,7 @@
     <string name="common_save_failed">保存失败</string>
     <string name="common_load_failed">加载失败</string>
     <string name="common_repeat_back_key_exit">再按一次退出</string>
-    <string name="common_btn_exit">退        出</string>
+    <string name="common_btn_exit">切换用户</string>
 
     <string name="permission_rationale">"电子邮件需要获取联系人权限."
     </string>
