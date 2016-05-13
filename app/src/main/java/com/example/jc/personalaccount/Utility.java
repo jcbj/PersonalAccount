@@ -218,7 +218,6 @@ public class Utility {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
 
-                // TODO handle non-primary volumes
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
@@ -353,11 +352,9 @@ public class Utility {
             out.flush();
             out.close();
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
         }
@@ -473,7 +470,6 @@ public class Utility {
         try {
             c.setTime(sdFormat.parse(date));
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return "N/A";
         }

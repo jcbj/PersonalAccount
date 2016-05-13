@@ -403,7 +403,7 @@ public class FragmentHome extends Fragment implements IFragmentUI {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+
 
             try {
                 //执行异步的代码，后台线程中执行，执行完调用onPostExecute
