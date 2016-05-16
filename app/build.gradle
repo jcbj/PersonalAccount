@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -19,6 +23,17 @@ android {
     }
     dexOptions {
         preDexLibraries = false
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                //这里修改apk文件名
+                def fileName = "PersonalAccount_${defaultConfig.versionName}_${releaseTime() }.apk"
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
+        }
     }
 }
 
