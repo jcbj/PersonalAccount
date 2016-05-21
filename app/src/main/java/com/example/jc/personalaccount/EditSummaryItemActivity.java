@@ -132,7 +132,7 @@ public class EditSummaryItemActivity extends AppCompatActivity {
             return;
         }
 
-        mCurrentInfo.date = Utility.getFormatDate(GlobalData.DATEFORMAT);
+        mCurrentInfo.date = Utility.getFormatDate(GlobalData.DATEFORMAT, new Date(this.mDate.getYear() - 1900,this.mDate.getMonth(),this.mDate.getDayOfMonth()));
         mCurrentInfo.name = mETName.getText().toString();
         mCurrentInfo.alias = mETAlias.getText().toString();
         mCurrentInfo.value = (int)(Double.parseDouble(mETValue.getText().toString()) * 100);

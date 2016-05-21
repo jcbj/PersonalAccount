@@ -20,6 +20,8 @@ import com.example.jc.personalaccount.Data.EditCommonOperType;
 import com.example.jc.personalaccount.Data.FragmentID;
 import com.example.jc.personalaccount.Data.SummaryItem;
 
+import java.util.Date;
+
 public class EditDetailItemActivity extends AppCompatActivity {
 
     private int mEditCount;
@@ -140,7 +142,7 @@ public class EditDetailItemActivity extends AppCompatActivity {
             return;
         }
 
-        mCurrentItem.date = Utility.getFormatDate(GlobalData.DATEFORMAT);
+        mCurrentItem.date = Utility.getFormatDate(GlobalData.DATEFORMAT, new Date(this.mDate.getYear() - 1900,this.mDate.getMonth(),this.mDate.getDayOfMonth()));
         mCurrentItem.from = mSpinnerAlias.getSelectedItem().toString();
         mCurrentItem.value = (int)(Double.parseDouble(mETValue.getText().toString()) * 100);
         mCurrentItem.description = mETDescription.getText().toString();

@@ -513,7 +513,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
      */
     public DetailItem[] getAllDetailItems() {
         String tableName = this.mCurrentLoginUserID + "_" + DETAILITEMTABLENAME;
-        String sql = "SELECT * FROM " + tableName;
+        String sql = "SELECT * FROM " + tableName + " ORDER BY DATE(" + DETAILITEMTABLECOLUMNNAME[1] + ") DESC";
         ArrayList<DetailItem> list = new ArrayList<>();
 
         Cursor cursor = this.querySQL(sql,null);
