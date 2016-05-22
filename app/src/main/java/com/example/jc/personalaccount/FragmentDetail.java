@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.ParcelUuid;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -206,5 +208,38 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         protected void onCancelled() {
             mAuthTask = null;
         }
+    }
+
+    private class DetailListAdapter extends BaseAdapter {
+
+        private List<String> mListTags = null;
+        private List<DetailItem> mListData = null;
+
+        public DetailListAdapter(Context context, List<DetailItem> objects, List<String> tags) {
+            super();
+            this.mListData = objects;
+            this.mListTags = tags;
+        }
+
+        @Override
+        public int getCount() {
+            return this.mListData.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return this.mListData.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return null;
+        }
+
     }
 }
