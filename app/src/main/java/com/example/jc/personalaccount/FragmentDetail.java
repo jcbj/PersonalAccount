@@ -32,8 +32,8 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
     protected Activity mActivity;
     private RefreshTask mAuthTask;
     private SwipeMenuListView mListView;
-    private List<Map<String, Object>> mData;
-    private SimpleAdapter mAdapter;
+    private List<DetailItem> mData;
+    private DetailListAdapter mAdapter;
     private Button mAddBtn;
 
     @Override
@@ -78,8 +78,8 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
                         break;
                     case 1:
                         //delete
-                        if (position < mData.size()) {
-                            deleteClick((Map<String,Object>)((mData.toArray())[position]));
+                        if (position < mAdapter.mListData.size()) {
+                            deleteClick(mAdapter.mListData.get(position));
                         }
                         break;
                 }
@@ -101,25 +101,24 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         intent.putExtra(GlobalData.EXTRA_DETAIL_EDIT_TYPE, operType.value());
 
         if (-1 != position) {
-            int iListItemsLength = this.mData.size();
+            int iListItemsLength = mAdapter.mListData.size();
             if (position < iListItemsLength) {
-                GlobalData.EXTRA_Detail_Edit_Data = new DetailItem((Map<String, Object>) ((this.mData.toArray())
-                        [position]));
+                GlobalData.EXTRA_Detail_Edit_Data = mAdapter.mListData.get(position);
             }
         }
 
         mActivity.startActivityForResult(intent, FragmentID.DETAIL.value());
     }
 
-    private void deleteClick(Map<String,Object> map) {
+    private void deleteClick(DetailItem detailItem) {
 
         int id = -1;
         try {
-            id = Integer.parseInt(map.get(DetailItem.mDataColumnName[0]).toString());
+            id = Integer.parseInt(detailItem.mapValue().get(DetailItem.mDataColumnName[0]).toString());
             if (id != -1) {
                 if (GlobalData.DataStoreHelper.deleteDetailItem(id)) {
 
-                    mData.remove(map);
+                    mAdapter.mListData.remove(detailItem);
 
                     mAdapter.notifyDataSetChanged();
                 }
@@ -131,26 +130,9 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
 
     private void setData() {
 
-//        mAdapter = new SimpleAdapter(
-//                mActivity,
-//                this.mData,
-//                R.layout.fragment_detail_list_item,
-//                new String[]{
-//                        DetailItem.mDataColumnName[1],
-//                        DetailItem.mDataColumnName[2],
-//                        DetailItem.mDataColumnName[3],
-//                        DetailItem.mDataColumnName[4],
-//                        DetailItem.mDataColumnName[5]},
-//                new int[]{
-//                        R.id.fragment_detail_list_item_week,
-//                        R.id.fragment_detail_list_item_date,
-//                        R.id.fragment_detail_list_item_value,
-//                        R.id.fragment_detail_list_item_from,
-//                        R.id.fragment_detail_list_item_description});
+        this.mAdapter = new DetailListAdapter(mActivity,this.getAllData());
 
-        DetailListAdapter adapter = new DetailListAdapter(mActivity,this.getAllData());
-
-        this.mListView.setAdapter(adapter);
+        this.mListView.setAdapter(this.mAdapter);
     }
 
     private List<Map<String, Object>> getData() {
@@ -204,7 +186,7 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         protected Boolean doInBackground(Void... params) {
 
             try {
-                mData = getData();
+                mData = getAllData();
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -255,6 +237,15 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         @Override
         public int getItemViewType(int position) {
             return this.mListData.get(position).listItemType;
+        }
+
+        @Override
+        public boolean isEnabled(int position) {
+            if (this.getItemViewType(position) == GlobalData.LISTGROUPTYPE) {
+                return false;
+            }
+
+            return true;
         }
 
         @Override
