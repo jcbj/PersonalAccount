@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.ParcelUuid;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,11 +19,9 @@ import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
-import com.example.jc.personalaccount.Data.AccountItem;
 import com.example.jc.personalaccount.Data.DetailItem;
 import com.example.jc.personalaccount.Data.EditCommonOperType;
 import com.example.jc.personalaccount.Data.FragmentID;
-import com.example.jc.personalaccount.Data.SummaryItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,24 +131,26 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
 
     private void setData() {
 
-        mAdapter = new SimpleAdapter(
-                mActivity,
-                this.mData,
-                R.layout.fragment_detail_list_item,
-                new String[]{
-                        DetailItem.mDataColumnName[1],
-                        DetailItem.mDataColumnName[2],
-                        DetailItem.mDataColumnName[3],
-                        DetailItem.mDataColumnName[4],
-                        DetailItem.mDataColumnName[5]},
-                new int[]{
-                        R.id.fragment_detail_list_item_week,
-                        R.id.fragment_detail_list_item_date,
-                        R.id.fragment_detail_list_item_value,
-                        R.id.fragment_detail_list_item_from,
-                        R.id.fragment_detail_list_item_description});
+//        mAdapter = new SimpleAdapter(
+//                mActivity,
+//                this.mData,
+//                R.layout.fragment_detail_list_item,
+//                new String[]{
+//                        DetailItem.mDataColumnName[1],
+//                        DetailItem.mDataColumnName[2],
+//                        DetailItem.mDataColumnName[3],
+//                        DetailItem.mDataColumnName[4],
+//                        DetailItem.mDataColumnName[5]},
+//                new int[]{
+//                        R.id.fragment_detail_list_item_week,
+//                        R.id.fragment_detail_list_item_date,
+//                        R.id.fragment_detail_list_item_value,
+//                        R.id.fragment_detail_list_item_from,
+//                        R.id.fragment_detail_list_item_description});
 
-        this.mListView.setAdapter(mAdapter);
+        DetailListAdapter adapter = new DetailListAdapter(mActivity,this.getAllData());
+
+        this.mListView.setAdapter(adapter);
     }
 
     private List<Map<String, Object>> getData() {
@@ -165,6 +164,29 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         }
 
         return list;
+    }
+
+    private List<DetailItem> getAllData() {
+        List<DetailItem> listData = new ArrayList<>();
+
+        DetailItem[] datas = GlobalData.DataStoreHelper.getAllDetailItems();
+        String lastYear = "";
+        if (null != datas) {
+            for (int i = 0; i < datas.length; i++) {
+                String year = datas[i].date.substring(0,4);
+                if (0 != year.compareTo(lastYear)) {
+                    DetailItem detailItem = new DetailItem();
+                    detailItem.listItemType = GlobalData.LISTGROUPTYPE;
+                    detailItem.date = year;
+                    lastYear = year;
+                    listData.add(detailItem);
+                }
+
+                listData.add(datas[i]);
+            }
+        }
+
+        return listData;
     }
 
     public void refreshUIData() {
@@ -212,13 +234,12 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
 
     private class DetailListAdapter extends BaseAdapter {
 
-        private List<String> mListTags = null;
         private List<DetailItem> mListData = null;
+        private LayoutInflater mInflater;
 
-        public DetailListAdapter(Context context, List<DetailItem> objects, List<String> tags) {
-            super();
+        public DetailListAdapter(Context context, List<DetailItem> objects) {
+            this.mInflater = LayoutInflater.from(context);
             this.mListData = objects;
-            this.mListTags = tags;
         }
 
         @Override
@@ -232,14 +253,119 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         }
 
         @Override
+        public int getItemViewType(int position) {
+            return this.mListData.get(position).listItemType;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 2;
+        }
+
+        @Override
         public long getItemId(int position) {
             return position;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return null;
+
+            DetailItem detailItem = this.mListData.get(position);
+
+            GroupHolder groupHolder = null;
+            DetailItemHolder detailItemHolder = null;
+
+            if (null == convertView) {
+                switch (detailItem.listItemType) {
+                    case GlobalData.LISTGROUPTYPE:
+                    {
+                        convertView = this.mInflater.inflate(R.layout.group_list_item_tag,null);
+
+                        groupHolder = new GroupHolder(convertView);
+
+                        convertView.setTag(groupHolder);
+
+                        break;
+                    }
+                    case GlobalData.LISTITEMTYPE:
+                    {
+                        convertView = this.mInflater.inflate(R.layout.fragment_detail_list_item,null);
+
+                        detailItemHolder = new DetailItemHolder(convertView);
+
+                        convertView.setTag(detailItemHolder);
+
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            } else {
+                switch (detailItem.listItemType) {
+                    case GlobalData.LISTGROUPTYPE:
+                    {
+                        groupHolder = (GroupHolder)convertView.getTag();
+
+                        break;
+                    }
+                    case GlobalData.LISTITEMTYPE:
+                    {
+                        detailItemHolder = (DetailItemHolder)convertView.getTag();
+
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+
+            if (null != groupHolder) {
+                groupHolder.resetData(detailItem);
+            }
+
+            if (null != detailItemHolder) {
+                detailItemHolder.resetData(detailItem);
+            }
+
+            return convertView;
         }
 
+        private class GroupHolder {
+            TextView mTVDate;
+
+            GroupHolder(View view) {
+                this.mTVDate = (TextView)view.findViewById(R.id.group_list_item_text);
+            }
+
+            public void resetData(DetailItem detailItem) {
+                this.mTVDate.setText(detailItem.date);
+            }
+        }
+
+        private class DetailItemHolder {
+
+            TextView mTVWeek;
+            TextView mTVDate;
+            TextView mTVValue;
+            TextView mTVFrom;
+            TextView mTVDescription;
+
+            DetailItemHolder(View view) {
+
+                this.mTVWeek = (TextView) view.findViewById(R.id.fragment_detail_list_item_week);
+                this.mTVDate = (TextView) view.findViewById(R.id.fragment_detail_list_item_date);
+                this.mTVValue = (TextView) view.findViewById(R.id.fragment_detail_list_item_value);
+                this.mTVFrom = (TextView) view.findViewById(R.id.fragment_detail_list_item_from);
+                this.mTVDescription = (TextView) view.findViewById(R.id.fragment_detail_list_item_description);
+            }
+
+            public void resetData(DetailItem detailItem) {
+                this.mTVWeek.setText(detailItem.mapValue().get(DetailItem.mDataColumnName[1]).toString());
+                this.mTVDate.setText(detailItem.mapValue().get(DetailItem.mDataColumnName[2]).toString());
+                this.mTVValue.setText(detailItem.mapValue().get(DetailItem.mDataColumnName[3]).toString());
+                this.mTVFrom.setText(detailItem.mapValue().get(DetailItem.mDataColumnName[4]).toString());
+                this.mTVDescription.setText(detailItem.mapValue().get(DetailItem.mDataColumnName[5]).toString());
+            }
+        }
     }
 }

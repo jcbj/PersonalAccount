@@ -59,6 +59,9 @@ public class GlobalData {
 
     //统一的日期处理格式
     public static String DATEFORMAT = "yyyy-MM-dd";
+
+    public static final int LISTGROUPTYPE = 0;
+    public static final int LISTITEMTYPE = 1;
     //*****************
 
     //当前登录用户名

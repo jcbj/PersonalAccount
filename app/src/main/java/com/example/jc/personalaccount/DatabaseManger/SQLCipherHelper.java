@@ -683,87 +683,94 @@ public class SQLCipherHelper implements IDataStoreHelper {
     //Database
     //每个注册用户，都有自己单独的表来存储数据；以注册用户名来区别
     private Boolean createdUserIDDataStore(String user) {
-        //1，创建资产负债表
-        String tableName = user + "_" + BALANCESHEETTABLENAME;
-        String sql = "CREATE TABLE IF NOT EXISTS " + tableName +
-                " (" + BALANCESHEETTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                BALANCESHEETTABLECOLUMNNAME[1] + " INT," +
-                BALANCESHEETTABLECOLUMNNAME[2] + "  TEXT," +
-                BALANCESHEETTABLECOLUMNNAME[3] + " INT," +
-                BALANCESHEETTABLECOLUMNNAME[4] + " TEXT," +
-                BALANCESHEETTABLECOLUMNNAME[5] + " BLOB," +
-                BALANCESHEETTABLECOLUMNNAME[6] + " TEXT)";
-        this.execSQL(sql);
+        try {
 
-        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
-        if (!this.checkIsExist(sql,null)) {
-            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+            //1，创建资产负债表
+            String tableName = user + "_" + BALANCESHEETTABLENAME;
+            String sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                    " (" + BALANCESHEETTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    BALANCESHEETTABLECOLUMNNAME[1] + " INT," +
+                    BALANCESHEETTABLECOLUMNNAME[2] + "  TEXT," +
+                    BALANCESHEETTABLECOLUMNNAME[3] + " INT," +
+                    BALANCESHEETTABLECOLUMNNAME[4] + " TEXT," +
+                    BALANCESHEETTABLECOLUMNNAME[5] + " BLOB," +
+                    BALANCESHEETTABLECOLUMNNAME[6] + " TEXT)";
+            this.execSQL(sql);
+
+            sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+            if (!this.checkIsExist(sql,null)) {
+                Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+            }
+
+            //2,创建账户概要表
+            tableName = user + "_" + SUMMARYITEMTABLENAME;
+            sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                    " (" + SUMMARYITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    SUMMARYITEMTABLECOLUMNNAME[1] + " TEXT," +
+                    SUMMARYITEMTABLECOLUMNNAME[2] + "  INT," +
+                    SUMMARYITEMTABLECOLUMNNAME[3] + " TEXT," +
+                    SUMMARYITEMTABLECOLUMNNAME[4] + " TEXT," +
+                    SUMMARYITEMTABLECOLUMNNAME[5] + " TEXT)";
+            this.execSQL(sql);
+
+            sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+            if (!this.checkIsExist(sql,null)) {
+                Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+            }
+
+            //3,创建账户表
+            tableName = user + "_" + ACCOUNTITEMTABLENAME;
+            sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                    " (" + ACCOUNTITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    ACCOUNTITEMTABLECOLUMNNAME[1] + " TEXT," +
+                    ACCOUNTITEMTABLECOLUMNNAME[2] + "  INT," +
+                    ACCOUNTITEMTABLECOLUMNNAME[3] + " TEXT," +
+                    ACCOUNTITEMTABLECOLUMNNAME[4] + " INT," +
+                    ACCOUNTITEMTABLECOLUMNNAME[5] + " TEXT," +
+                    ACCOUNTITEMTABLECOLUMNNAME[6] + " TEXT)";
+            this.execSQL(sql);
+
+            sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+            if (!this.checkIsExist(sql,null)) {
+                Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+            }
+
+            //4,创建详细消费表
+            tableName = user + "_" + DETAILITEMTABLENAME;
+            sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                    " (" + DETAILITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    DETAILITEMTABLECOLUMNNAME[1] + " TEXT," +
+                    DETAILITEMTABLECOLUMNNAME[2] + "  INT," +
+                    DETAILITEMTABLECOLUMNNAME[3] + " TEXT," +
+                    DETAILITEMTABLECOLUMNNAME[4] + " TEXT)";
+            this.execSQL(sql);
+
+            sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+            if (!this.checkIsExist(sql,null)) {
+                Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+            }
+
+            //5,创建汽车费用表
+            tableName = user + "_" + CARITEMTABLENAME;
+            sql = "CREATE TABLE IF NOT EXISTS " + tableName +
+                    " (" + CARITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    CARITEMTABLECOLUMNNAME[1] + " TEXT," +
+                    CARITEMTABLECOLUMNNAME[2] + "  INT," +
+                    CARITEMTABLECOLUMNNAME[3] + " TEXT," +
+                    CARITEMTABLECOLUMNNAME[4] + " TEXT)";
+            this.execSQL(sql);
+
+            sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
+            if (!this.checkIsExist(sql,null)) {
+                Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
+            }
+        } catch (Exception ex) {
+
+            Log.e(ID + ".createdUserIDDataStore",ex.getMessage());
+            return false;
         }
 
-        //2,创建账户概要表
-        tableName = user + "_" + SUMMARYITEMTABLENAME;
-        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
-                " (" + SUMMARYITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                SUMMARYITEMTABLECOLUMNNAME[1] + " TEXT," +
-                SUMMARYITEMTABLECOLUMNNAME[2] + "  INT," +
-                SUMMARYITEMTABLECOLUMNNAME[3] + " TEXT," +
-                SUMMARYITEMTABLECOLUMNNAME[4] + " TEXT," +
-                SUMMARYITEMTABLECOLUMNNAME[5] + " TEXT)";
-        this.execSQL(sql);
-
-        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
-        if (!this.checkIsExist(sql,null)) {
-            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
-        }
-
-        //3,创建账户表
-        tableName = user + "_" + ACCOUNTITEMTABLENAME;
-        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
-                " (" + ACCOUNTITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                ACCOUNTITEMTABLECOLUMNNAME[1] + " TEXT," +
-                ACCOUNTITEMTABLECOLUMNNAME[2] + "  INT," +
-                ACCOUNTITEMTABLECOLUMNNAME[3] + " TEXT," +
-                ACCOUNTITEMTABLECOLUMNNAME[4] + " INT," +
-                ACCOUNTITEMTABLECOLUMNNAME[5] + " TEXT," +
-                ACCOUNTITEMTABLECOLUMNNAME[6] + " TEXT)";
-        this.execSQL(sql);
-
-        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
-        if (!this.checkIsExist(sql,null)) {
-            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
-        }
-
-        //4,创建详细消费表
-        tableName = user + "_" + DETAILITEMTABLENAME;
-        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
-                " (" + DETAILITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                DETAILITEMTABLECOLUMNNAME[1] + " TEXT," +
-                DETAILITEMTABLECOLUMNNAME[2] + "  INT," +
-                DETAILITEMTABLECOLUMNNAME[3] + " TEXT," +
-                DETAILITEMTABLECOLUMNNAME[4] + " TEXT)";
-        this.execSQL(sql);
-
-        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
-        if (!this.checkIsExist(sql,null)) {
-            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
-        }
-
-        //3,创建汽车费用表
-        tableName = user + "_" + CARITEMTABLENAME;
-        sql = "CREATE TABLE IF NOT EXISTS " + tableName +
-                " (" + CARITEMTABLECOLUMNNAME[0] + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                CARITEMTABLECOLUMNNAME[1] + " TEXT," +
-                CARITEMTABLECOLUMNNAME[2] + "  INT," +
-                CARITEMTABLECOLUMNNAME[3] + " TEXT," +
-                CARITEMTABLECOLUMNNAME[4] + " TEXT)";
-        this.execSQL(sql);
-
-        sql = "SELECT * FROM " + SQLITE_MASTER + " WHERE type = 'table' and name = '" + tableName + "'";
-        if (!this.checkIsExist(sql,null)) {
-            Log.e(ID + ".createdUserIDDataStore", "create " + tableName + " is failed.");
-        }
-
-        return false;
+        return true;
     }
 
     private Boolean insertSQL(String table, String nullColumnHack, ContentValues values) {

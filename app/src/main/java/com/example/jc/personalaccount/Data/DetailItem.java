@@ -4,6 +4,7 @@ import com.example.jc.personalaccount.GlobalData;
 import com.example.jc.personalaccount.MainActivity;
 import com.example.jc.personalaccount.Utility;
 
+import java.lang.annotation.ElementType;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -20,6 +21,8 @@ public class DetailItem {
     public int value;
     public String from;
     public String description;
+
+    public int listItemType = GlobalData.LISTITEMTYPE;
 
     public DetailItem() { this.id = -1; }
 
