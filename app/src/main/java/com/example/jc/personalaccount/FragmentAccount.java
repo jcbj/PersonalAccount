@@ -341,10 +341,26 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
 
         public void deleteItemByUser(AccountItem curItem) {
 
+            for (AccountItem item : this.mMapAllData.keySet()) {
+                if (0 == item.date.compareTo(curItem.date.substring(0,4))) {
+                    this.mMapAllData.get(item).remove(curItem);
+                    break;
+                }
+            }
+
+            this.getAllListItems();
         }
 
         public void changedGroupItemUnfold(AccountItem curItem) {
 
+            for (AccountItem item : this.mMapAllData.keySet()) {
+                if (0 == item.date.compareTo(curItem.date)) {
+                    item.bIsUnfold = !curItem.bIsUnfold;
+                    break;
+                }
+            }
+
+            this.getAllListItems();
         }
 
         private void getAllListItems() {
