@@ -34,6 +34,9 @@ public class AccountItem {
     public String to;
     public String description;
 
+    public int listItemType = GlobalData.LISTITEMTYPE;
+    public boolean bIsUnfold = false;
+
     public AccountItem() { this.id = -1; }
 
     public Map<String, Object> mapValue() {

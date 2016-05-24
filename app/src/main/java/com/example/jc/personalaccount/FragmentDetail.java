@@ -135,19 +135,6 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         this.mListView.setAdapter(this.mAdapter);
     }
 
-    private List<Map<String, Object>> getData() {
-        List<Map<String, Object>> list = new ArrayList<>();
-
-        DetailItem[] datas = GlobalData.DataStoreHelper.getAllDetailItems();
-        if (null != datas) {
-            for (int i = 0; i < datas.length; i++) {
-                list.add(datas[i].mapValue());
-            }
-        }
-
-        return list;
-    }
-
     private List<DetailItem> getAllData() {
         List<DetailItem> listData = new ArrayList<>();
 
