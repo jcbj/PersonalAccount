@@ -174,6 +174,8 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
                     groupItem.date = year;
                     groupItem.bIsUnfold = false;
 
+                    lastYear = year;
+
                     listData = new ArrayList<>();
 
                     mapAllData.put(groupItem, listData);
@@ -232,7 +234,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
     private class AccountListAdapter extends BaseAdapter {
 
         private Map<AccountItem,List<AccountItem>> mMapAllData;
-        private List<AccountItem> mListData = null;
+        private List<AccountItem> mListData = new ArrayList<>();
         private LayoutInflater mInflater;
 
         public AccountListAdapter(Context context, Map<AccountItem,List<AccountItem>> mapAllData) {
@@ -260,7 +262,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
         @Override
         public boolean isEnabled(int position) {
             if (this.getItemViewType(position) == GlobalData.LISTGROUPTYPE) {
-                return false;
+//                return false;
             }
 
             return true;

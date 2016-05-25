@@ -436,7 +436,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
      */
     public AccountItem[] getAllAccountItems() {
         String tableName = this.mCurrentLoginUserID + "_" + ACCOUNTITEMTABLENAME;
-        String sql = "SELECT * FROM " + tableName;
+        String sql = "SELECT * FROM " + tableName + " ORDER BY DATE(" + ACCOUNTITEMTABLECOLUMNNAME[1] + ") DESC";
         ArrayList<AccountItem> list = new ArrayList<>();
 
         Cursor cursor = this.querySQL(sql,null);
