@@ -373,13 +373,6 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
             GroupHolder(View view) {
 
                 this.mTVDate = (TextView)view.findViewById(R.id.group_list_item_text);
-                this.mTVDate.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AccountItem item = (AccountItem) v.getTag();
-                        changedGroupItemUnfold(item);
-                    }
-                });
             }
 
             public void resetData(AccountItem item) {
