@@ -260,15 +260,6 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
         }
 
         @Override
-        public boolean isEnabled(int position) {
-            if (this.getItemViewType(position) == GlobalData.LISTGROUPTYPE) {
-//                return false;
-            }
-
-            return true;
-        }
-
-        @Override
         public int getViewTypeCount() {
             return 2;
         }
@@ -380,11 +371,21 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
             TextView mTVDate;
 
             GroupHolder(View view) {
+
                 this.mTVDate = (TextView)view.findViewById(R.id.group_list_item_text);
+                this.mTVDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AccountItem item = (AccountItem) v.getTag();
+                        changedGroupItemUnfold(item);
+                    }
+                });
             }
 
             public void resetData(AccountItem item) {
+
                 this.mTVDate.setText(item.date);
+                this.mTVDate.setTag(item);
             }
         }
 
