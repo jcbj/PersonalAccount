@@ -13,17 +13,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.example.jc.personalaccount.Data.AccountItem;
 import com.example.jc.personalaccount.Data.DetailItem;
 import com.example.jc.personalaccount.Data.EditCommonOperType;
 import com.example.jc.personalaccount.Data.FragmentID;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +35,8 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
     protected Activity mActivity;
     private RefreshTask mAuthTask;
     private SwipeMenuListView mListView;
-    private List<DetailItem> mData;
+    private Map<DetailItem, List<DetailItem>> mData;
+    private List<DetailItem> mGroups;
     private DetailListAdapter mAdapter;
     private Button mAddBtn;
 
@@ -71,6 +75,12 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         this.mListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+
+                DetailItem curItem = (DetailItem) (mAdapter.getItem(position));
+                if (curItem.listItemType == GlobalData.LISTGROUPTYPE) {
+                    return false;
+                }
+
                 switch (index) {
                     case 0:
                         //open
@@ -78,8 +88,8 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
                         break;
                     case 1:
                         //delete
-                        if (position < mAdapter.mListData.size()) {
-                            deleteClick(mAdapter.mListData.get(position));
+                        if (position < mAdapter.mListDatas.size()) {
+                            deleteClick(curItem);
                         }
                         break;
                 }
@@ -90,7 +100,14 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         this.mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showEditDetailActivity(position, EditCommonOperType.VIEW);
+
+                DetailItem curItem = (DetailItem) (mAdapter.getItem(position));
+                if (curItem.listItemType == GlobalData.LISTGROUPTYPE) {
+                    mAdapter.changedGroupItemUnfold(curItem);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    showEditDetailActivity(position, EditCommonOperType.VIEW);
+                }
             }
         });
     }
@@ -101,24 +118,24 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         intent.putExtra(GlobalData.EXTRA_DETAIL_EDIT_TYPE, operType.value());
 
         if (-1 != position) {
-            int iListItemsLength = mAdapter.mListData.size();
+            int iListItemsLength = mAdapter.mListDatas.size();
             if (position < iListItemsLength) {
-                GlobalData.EXTRA_Detail_Edit_Data = mAdapter.mListData.get(position);
+                GlobalData.EXTRA_Detail_Edit_Data = mAdapter.mListDatas.get(position);
             }
         }
 
         mActivity.startActivityForResult(intent, FragmentID.DETAIL.value());
     }
 
-    private void deleteClick(DetailItem detailItem) {
+    private void deleteClick(DetailItem curItem) {
 
         int id = -1;
         try {
-            id = Integer.parseInt(detailItem.mapValue().get(DetailItem.mDataColumnName[0]).toString());
+            id = Integer.parseInt(curItem.mapValue().get(DetailItem.mDataColumnName[0]).toString());
             if (id != -1) {
                 if (GlobalData.DataStoreHelper.deleteDetailItem(id)) {
 
-                    mAdapter.mListData.remove(detailItem);
+                    mAdapter.deleteItemByUser(curItem);
 
                     mAdapter.notifyDataSetChanged();
                 }
@@ -130,32 +147,41 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
 
     private void setData() {
 
-        this.mAdapter = new DetailListAdapter(mActivity,this.getAllData());
+        this.mAdapter = new DetailListAdapter(mActivity, this.mGroups, this.mData);
 
         this.mListView.setAdapter(this.mAdapter);
     }
 
-    private List<DetailItem> getAllData() {
-        List<DetailItem> listData = new ArrayList<>();
+    private void getAllData() {
+
+        this.mData = new HashMap<>();
+        this.mGroups = new ArrayList<>();
 
         DetailItem[] datas = GlobalData.DataStoreHelper.getAllDetailItems();
+        List<DetailItem> listData = new ArrayList<>();
         String lastYear = "";
         if (null != datas) {
             for (int i = 0; i < datas.length; i++) {
                 String year = datas[i].date.substring(0,4);
+
                 if (0 != year.compareTo(lastYear)) {
-                    DetailItem detailItem = new DetailItem();
-                    detailItem.listItemType = GlobalData.LISTGROUPTYPE;
-                    detailItem.date = year;
+                    DetailItem groupItem = new DetailItem();
+                    groupItem.listItemType = GlobalData.LISTGROUPTYPE;
+                    groupItem.date = year;
+                    groupItem.bIsExpand = false;
+
+                    this.mGroups.add(groupItem);
+
                     lastYear = year;
-                    listData.add(detailItem);
+
+                    listData = new ArrayList<>();
+
+                    this.mData.put(groupItem, listData);
                 }
 
                 listData.add(datas[i]);
             }
         }
-
-        return listData;
     }
 
     public void refreshUIData() {
@@ -173,7 +199,7 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         protected Boolean doInBackground(Void... params) {
 
             try {
-                mData = getAllData();
+                getAllData();
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -203,36 +229,33 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
 
     private class DetailListAdapter extends BaseAdapter {
 
-        private List<DetailItem> mListData = null;
+        private List<DetailItem> mListDatas = new ArrayList<>();
+        private List<DetailItem> mListGroups = new ArrayList<>();
+        private Map<DetailItem,List<DetailItem>> mMapAllData = new HashMap<>();
         private LayoutInflater mInflater;
 
-        public DetailListAdapter(Context context, List<DetailItem> objects) {
+        public DetailListAdapter(Context context, List<DetailItem> listGroups, Map<DetailItem,List<DetailItem>>
+                mapDatas) {
             this.mInflater = LayoutInflater.from(context);
-            this.mListData = objects;
+            this.mListGroups = listGroups;
+            this.mMapAllData = mapDatas;
+
+            this.getAllListItems();
         }
 
         @Override
         public int getCount() {
-            return this.mListData.size();
+            return this.mListDatas.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return this.mListData.get(position);
+            return this.mListDatas.get(position);
         }
 
         @Override
         public int getItemViewType(int position) {
-            return this.mListData.get(position).listItemType;
-        }
-
-        @Override
-        public boolean isEnabled(int position) {
-            if (this.getItemViewType(position) == GlobalData.LISTGROUPTYPE) {
-                return false;
-            }
-
-            return true;
+            return this.mListDatas.get(position).listItemType;
         }
 
         @Override
@@ -248,7 +271,7 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            DetailItem detailItem = this.mListData.get(position);
+            DetailItem detailItem = this.mListDatas.get(position);
 
             GroupHolder groupHolder = null;
             DetailItemHolder detailItemHolder = null;
@@ -308,15 +331,67 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
             return convertView;
         }
 
+        public void deleteItemByUser(DetailItem curItem) {
+
+            for (DetailItem item : this.mMapAllData.keySet()) {
+                if (0 == item.date.compareTo(curItem.date.substring(0,4))) {
+                    this.mMapAllData.get(item).remove(curItem);
+                    break;
+                }
+            }
+
+            this.getAllListItems();
+        }
+
+        public void changedGroupItemUnfold(DetailItem curItem) {
+
+            for (DetailItem item : this.mMapAllData.keySet()) {
+                if (0 == item.date.compareTo(curItem.date)) {
+                    item.bIsExpand = !curItem.bIsExpand;
+                    break;
+                }
+            }
+
+            this.getAllListItems();
+        }
+
+        private void getAllListItems() {
+            this.mListDatas.clear();
+
+            List<DetailItem> listRemoves = new ArrayList<>();
+            for (DetailItem groupItem : this.mListGroups) {
+                if (this.mMapAllData.get(groupItem).size() > 0) {
+                    this.mListDatas.add(groupItem);
+                    if (groupItem.bIsExpand) {
+                        this.mListDatas.addAll(this.mMapAllData.get(groupItem));
+                    }
+                } else {
+                    listRemoves.add(groupItem);
+                }
+            }
+
+            for (DetailItem groupItem : listRemoves) {
+                this.mListGroups.remove(groupItem);
+            }
+        }
+
         private class GroupHolder {
             TextView mTVDate;
+            ImageView mImageUnfold;
 
             GroupHolder(View view) {
                 this.mTVDate = (TextView)view.findViewById(R.id.group_list_item_text);
+                this.mImageUnfold = (ImageView)view.findViewById(R.id.group_list_item_image);
             }
 
-            public void resetData(DetailItem detailItem) {
-                this.mTVDate.setText(detailItem.date);
+            public void resetData(DetailItem item) {
+                this.mTVDate.setText(item.date);
+
+                if (item.bIsExpand) {
+                    this.mImageUnfold.setImageResource(R.drawable.arrow_down_gray);
+                } else {
+                    this.mImageUnfold.setImageResource(R.drawable.arrow_right_gray);
+                }
             }
         }
 

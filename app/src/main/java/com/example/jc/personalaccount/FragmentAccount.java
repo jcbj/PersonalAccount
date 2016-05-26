@@ -174,7 +174,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
                     AccountItem groupItem = new AccountItem();
                     groupItem.listItemType = GlobalData.LISTGROUPTYPE;
                     groupItem.date = year;
-                    groupItem.bIsUnfold = false;
+                    groupItem.bIsExpand = false;
 
                     this.mGroups.add(groupItem);
 
@@ -353,7 +353,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
 
             for (AccountItem item : this.mMapAllData.keySet()) {
                 if (0 == item.date.compareTo(curItem.date)) {
-                    item.bIsUnfold = !curItem.bIsUnfold;
+                    item.bIsExpand = !curItem.bIsExpand;
                     break;
                 }
             }
@@ -368,7 +368,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
             for (AccountItem groupItem : this.mListGroups) {
                 if (this.mMapAllData.get(groupItem).size() > 0) {
                     this.mListDatas.add(groupItem);
-                    if (groupItem.bIsUnfold) {
+                    if (groupItem.bIsExpand) {
                         this.mListDatas.addAll(this.mMapAllData.get(groupItem));
                     }
                 } else {
@@ -396,10 +396,10 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
                 this.mTVDate.setText(item.date);
                 this.mTVDate.setTag(item);
 
-                if (item.bIsUnfold) {
-                    this.mImageUnfold.setImageResource(R.drawable.arrow_down);
+                if (item.bIsExpand) {
+                    this.mImageUnfold.setImageResource(R.drawable.arrow_down_gray);
                 } else {
-                    this.mImageUnfold.setImageResource(R.drawable.arrow_right);
+                    this.mImageUnfold.setImageResource(R.drawable.arrow_right_gray);
                 }
             }
         }

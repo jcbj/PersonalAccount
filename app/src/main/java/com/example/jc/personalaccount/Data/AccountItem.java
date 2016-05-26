@@ -35,7 +35,7 @@ public class AccountItem {
     public String description;
 
     public int listItemType = GlobalData.LISTITEMTYPE;
-    public boolean bIsUnfold = false;
+    public boolean bIsExpand = false;
 
     public AccountItem() { this.id = -1; }
 
