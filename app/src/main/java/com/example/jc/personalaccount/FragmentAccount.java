@@ -383,16 +383,24 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
 
         private class GroupHolder {
             TextView mTVDate;
+            ImageView mImageUnfold;
 
             GroupHolder(View view) {
 
                 this.mTVDate = (TextView)view.findViewById(R.id.group_list_item_text);
+                this.mImageUnfold = (ImageView)view.findViewById(R.id.group_list_item_image);
             }
 
             public void resetData(AccountItem item) {
 
                 this.mTVDate.setText(item.date);
                 this.mTVDate.setTag(item);
+
+                if (item.bIsUnfold) {
+                    this.mImageUnfold.setImageResource(R.drawable.arrow_down);
+                } else {
+                    this.mImageUnfold.setImageResource(R.drawable.arrow_right);
+                }
             }
         }
 
