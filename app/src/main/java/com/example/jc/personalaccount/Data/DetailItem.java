@@ -23,6 +23,7 @@ public class DetailItem {
     public String description;
 
     public int listItemType = GlobalData.LISTITEMTYPE;
+    public boolean bIsUnfold = false;
 
     public DetailItem() { this.id = -1; }
 

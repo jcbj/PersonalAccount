@@ -42,6 +42,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
     private RefreshTask mAuthTask;
     private SwipeMenuListView mListView;
     private Map<AccountItem, List<AccountItem>> mData;
+    private List<AccountItem> mGroups;
     private AccountListAdapter mAdapter;
     private Button mAddBtn;
 
@@ -93,7 +94,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
                         break;
                     case 1:
                         //delete
-                        if (position < mData.size()) {
+                        if (position < mAdapter.mListDatas.size()) {
                             deleteClick(curItem);
                         }
                         break;
@@ -152,14 +153,15 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
 
     private void setData() {
 
-        mAdapter = new AccountListAdapter(mActivity,this.mData);
+        mAdapter = new AccountListAdapter(mActivity,this.mGroups,this.mData);
 
         this.mListView.setAdapter(mAdapter);
     }
 
-    private Map<AccountItem, List<AccountItem>> getAllData() {
+    private void getAllData() {
 
-        Map<AccountItem, List<AccountItem>> mapAllData = new HashMap<>();
+        this.mData = new HashMap<>();
+        this.mGroups = new ArrayList<>();
 
         AccountItem[] datas = GlobalData.DataStoreHelper.getAllAccountItems();
         List<AccountItem> listData = new ArrayList<>();
@@ -174,18 +176,18 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
                     groupItem.date = year;
                     groupItem.bIsUnfold = false;
 
+                    this.mGroups.add(groupItem);
+
                     lastYear = year;
 
                     listData = new ArrayList<>();
 
-                    mapAllData.put(groupItem, listData);
+                    this.mData.put(groupItem, listData);
                 }
 
                 listData.add(datas[i]);
             }
         }
-
-        return mapAllData;
     }
 
     public void refreshUIData() {
@@ -203,7 +205,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
         protected Boolean doInBackground(Void... params) {
 
             try {
-                mData = getAllData();
+                getAllData();
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -234,29 +236,32 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
     private class AccountListAdapter extends BaseAdapter {
 
         private Map<AccountItem,List<AccountItem>> mMapAllData;
-        private List<AccountItem> mListData = new ArrayList<>();
+        //显示到界面实时数据
+        private List<AccountItem> mListDatas = new ArrayList<>();
         private LayoutInflater mInflater;
+        private List<AccountItem> mListGroups = new ArrayList<>();
 
-        public AccountListAdapter(Context context, Map<AccountItem,List<AccountItem>> mapAllData) {
+        public AccountListAdapter(Context context, List<AccountItem> listGroups, Map<AccountItem,List<AccountItem>> mapAllData) {
             this.mInflater = LayoutInflater.from(context);
             this.mMapAllData = mapAllData;
+            this.mListGroups = listGroups;
 
             this.getAllListItems();
         }
 
         @Override
         public int getCount() {
-            return this.mListData.size();
+            return this.mListDatas.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return this.mListData.get(position);
+            return this.mListDatas.get(position);
         }
 
         @Override
         public int getItemViewType(int position) {
-            return this.mListData.get(position).listItemType;
+            return this.mListDatas.get(position).listItemType;
         }
 
         @Override
@@ -272,7 +277,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            AccountItem curItem = this.mListData.get(position);
+            AccountItem curItem = this.mListDatas.get(position);
 
             GroupHolder groupHolder = null;
             AccountItemHolder itemHolder = null;
@@ -357,13 +362,22 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
         }
 
         private void getAllListItems() {
-            this.mListData.clear();
+            this.mListDatas.clear();
 
-            for (AccountItem groupItem : this.mMapAllData.keySet()) {
-                this.mListData.add(groupItem);
-                if (groupItem.bIsUnfold) {
-                    this.mListData.addAll(this.mMapAllData.get(groupItem));
+            List<AccountItem> listRemoves = new ArrayList<>();
+            for (AccountItem groupItem : this.mListGroups) {
+                if (this.mMapAllData.get(groupItem).size() > 0) {
+                    this.mListDatas.add(groupItem);
+                    if (groupItem.bIsUnfold) {
+                        this.mListDatas.addAll(this.mMapAllData.get(groupItem));
+                    }
+                } else {
+                    listRemoves.add(groupItem);
                 }
+            }
+
+            for (AccountItem groupItem : listRemoves) {
+                this.mListGroups.remove(groupItem);
             }
         }
 
@@ -414,8 +428,8 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
 
                 this.mTVFrom.setText(item.mapValue().get(AccountItem.mDataColumnName[4]).toString());
                 this.mImageType.setImageResource(AccountItem.mTypeImageID[item.type]);
-                this.mTVTo.setText(item.mapValue().get(AccountItem.mDataColumnName[5]).toString());
-                this.mTVDescription.setText(item.mapValue().get(AccountItem.mDataColumnName[6]).toString());
+                this.mTVTo.setText(item.mapValue().get(AccountItem.mDataColumnName[6]).toString());
+                this.mTVDescription.setText(item.mapValue().get(AccountItem.mDataColumnName[7]).toString());
             }
         }
     }
