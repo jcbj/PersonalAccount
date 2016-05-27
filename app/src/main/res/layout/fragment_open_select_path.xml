@@ -27,7 +27,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/lightgray192">
+        android:background="@color/lightgray240">
 
         <Button
             android:id="@+id/fragment_open_select_path_btn_cancel"

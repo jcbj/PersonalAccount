@@ -17,7 +17,6 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/lightgray"
             android:orientation="vertical"
             android:scrollbars="vertical"
             tools:context="com.example.jc.personalaccount.FragmentHome">
@@ -27,7 +26,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/lightgray192">
+                android:background="@color/lightgray240">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -51,6 +50,7 @@
                 <Button
                     android:id="@+id/fragment_home_property_add_button"
                     android:text="+"
+                    android:background="@color/lightgray240"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
@@ -69,7 +69,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/lightgray192">
+                android:background="@color/lightgray240">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -93,6 +93,7 @@
                 <Button
                     android:id="@+id/fragment_home_debt_add_button"
                     android:text="+"
+                    android:background="@color/lightgray240"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
@@ -115,14 +116,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/gray">
+        android:background="@color/lightgray240">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:textSize="25sp"
-            android:textColor="@color/white"
             android:text="@string/fragment_home_net_assets_title"
             android:layout_gravity="center_vertical"
             />
@@ -130,7 +130,6 @@
         <TextView
             android:id="@+id/fragment_home_net_assets_tv"
             android:textSize="20sp"
-            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
