@@ -40,10 +40,9 @@
     <string name="permission_rationale">"电子邮件需要获取联系人权限."
     </string>
 
-
-    <string name="bottom_tab_home">主页</string>
-    <string name="bottom_tab_account">帐户</string>
-    <string name="bottom_tab_summary">总帐</string>
+    <string name="bottom_tab_home">资产</string>
+    <string name="bottom_tab_summary">帐户</string>
+    <string name="bottom_tab_account">收支</string>
     <string name="bottom_tab_detail">明细</string>
     <string name="bottom_tab_car">汽车</string>
     <string name="bottom_tab_setting">设置</string>

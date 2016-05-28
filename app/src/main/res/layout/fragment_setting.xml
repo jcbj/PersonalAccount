@@ -65,7 +65,7 @@
         android:text="@string/common_btn_exit"
         android:textSize="30sp"
         android:textColor="@color/white"
-        android:background="@color/red"
+        android:background="@color/skyblue"
         android:layout_marginTop="50dp"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
