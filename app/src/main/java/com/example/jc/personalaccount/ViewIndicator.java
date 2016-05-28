@@ -68,9 +68,9 @@ public class ViewIndicator extends LinearLayout implements View.OnClickListener 
     };
 
     // 未选中状态
-    private static final int COLOR_UNSELECT = Color.argb(100, 0xff, 0xff, 0xff);
+    private static final int COLOR_UNSELECT = Color.argb(255, 146, 146, 146);
     // 选中状态
-    private static final int COLOR_SELECT = Color.WHITE;
+    private static final int COLOR_SELECT = Color.argb(255, 153, 215, 239);
 
     //构造函数
     public ViewIndicator(Context context) {
