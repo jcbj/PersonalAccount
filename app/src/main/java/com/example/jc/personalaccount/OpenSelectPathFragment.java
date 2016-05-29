@@ -45,11 +45,14 @@ public class OpenSelectPathFragment extends DialogFragment {
     private String mTempRootPath;
     private List<Map<String,Object>> mTempList;
     private String suffix = ".csv;";
-    static final public String sRoot = "/";
-    static final public String sParent = "..";
-    static final public String sFolder = ".";
-    static final public String sEmpty = "";
-    static final private String sOnErrorMsg = "No rights to access!";
+    private static final String sOnErrorMsg = "No rights to access!";
+
+    private static final String sRoot = "/";
+    private static final String sParent = "..";
+    private static final String sFolder = ".";
+    private static final String sEmpty = "";
+
+    private Map<String, Integer> imageMap = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,12 @@ public class OpenSelectPathFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_open_select_path, container, false);
+
+        this.imageMap = new HashMap<>();
+        this.imageMap.put(OpenSelectPathFragment.sRoot,R.drawable.filedialog_root);
+        this.imageMap.put(OpenSelectPathFragment.sParent,R.drawable.filedialog_folder_up);
+        this.imageMap.put(OpenSelectPathFragment.sFolder,R.drawable.filedialog_folder);
+        this.imageMap.put(OpenSelectPathFragment.sEmpty,R.drawable.filedialog_file);
 
         mTVPath = (TextView)view.findViewById(R.id.fragment_open_select_path_text);
         mBtnBack = (Button)view.findViewById(R.id.fragment_open_select_path_btn_cancel);
@@ -118,6 +127,21 @@ public class OpenSelectPathFragment extends DialogFragment {
         }
     }
 
+    private int getImageId(String s){
+        if(null == this.imageMap){
+            return 0;
+        }
+        else if(this.imageMap.containsKey(s)){
+            return this.imageMap.get(s);
+        }
+        else if(this.imageMap.containsKey(sEmpty)){
+            return this.imageMap.get(sEmpty);
+        }
+        else {
+            return 0;
+        }
+    }
+
     private int refreshFileList()
     {
         // 刷新文件列表
@@ -149,13 +173,13 @@ public class OpenSelectPathFragment extends DialogFragment {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("name", sRoot);
             map.put("path", sRoot);
-            map.put("img", 0);
+            map.put("img", this.getImageId(sRoot));
             mTempList.add(map);
 
             map = new HashMap<String, Object>();
             map.put("name", sParent);
             map.put("path", mTempRootPath);
-            map.put("img", 0);
+            map.put("img", this.getImageId(sParent));
             mTempList.add(map);
         }
 
@@ -166,7 +190,7 @@ public class OpenSelectPathFragment extends DialogFragment {
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("name", file.getName());
                 map.put("path", file.getPath());
-                map.put("img", 0);
+                map.put("img", this.getImageId(sFolder));
                 lfolders.add(map);
             }
             else if(file.isFile()){
@@ -176,7 +200,7 @@ public class OpenSelectPathFragment extends DialogFragment {
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put("name", file.getName());
                     map.put("path", file.getPath());
-                    map.put("img", 0);
+                    map.put("img", this.getImageId(sEmpty));
                     lfiles.add(map);
                 }
             }

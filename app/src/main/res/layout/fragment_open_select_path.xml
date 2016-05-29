@@ -9,16 +9,16 @@
         android:id="@+id/fragment_open_select_path_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:padding="2dp"
         android:text="当前路径"
+        android:textSize="20sp"
         android:background="@color/lightgray224"/>
 
     <ListView
         android:id="@+id/fragment_open_select_path_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/lightgray240"
         android:layout_weight="1">
 
     </ListView>
