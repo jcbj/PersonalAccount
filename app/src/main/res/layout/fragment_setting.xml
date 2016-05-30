@@ -38,6 +38,7 @@
         <Button
             android:id="@+id/fragment_setting_btn_export_database"
             android:text="@string/fragment_setting_btn_export_database"
+            android:enabled="false"
             android:background="@color/lightgray240"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -81,6 +82,7 @@
         <Button
             android:id="@+id/fragment_setting_btn_export_database_csv"
             android:text="@string/fragment_setting_btn_export_database_CSV"
+            android:enabled="false"
             android:background="@color/lightgray240"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -118,6 +120,7 @@
         <Button
             android:id="@+id/fragment_setting_btn_import_cardaccount"
             android:text="@string/fragment_setting_btn_import_cardaccount"
+            android:enabled="false"
             android:background="@color/lightgray240"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

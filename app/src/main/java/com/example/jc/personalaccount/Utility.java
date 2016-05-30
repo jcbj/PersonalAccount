@@ -805,4 +805,18 @@ public class Utility {
             }
         }
     }
+
+    /**
+     * 判断文件名是否合法
+     * @param fileName
+     * @return
+     */
+    public static boolean isValidFileName(String fileName) {
+
+        if (fileName == null || fileName.length() > 255) {
+            return false;
+        } else {
+            return fileName.matches("[^\\s\\\\/:\\*\\?\\\"<>\\|](\\x20|[^\\s\\\\/:\\*\\?\\\"<>\\|])*[^\\s\\\\/:\\*\\?\\\"<>\\|\\.]$");
+        }
+    }
 }

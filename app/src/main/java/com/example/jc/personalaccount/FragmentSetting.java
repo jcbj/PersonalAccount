@@ -10,7 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,6 +111,28 @@ public class FragmentSetting extends Fragment implements IFragmentUI,OpenSelectP
             }
         });
 
+        this.mETExportDBPath.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String path = mETExportDBPath.getText().toString();
+                if (!TextUtils.isEmpty(path) && Utility.isValidFileName(path)) {
+
+                    mBtnExportDatabase.setEnabled(true);
+                } else {
+                    mBtnExportDatabase.setEnabled(false);
+                }
+            }
+        });
+
         this.mBtnExportCSV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,6 +145,50 @@ public class FragmentSetting extends Fragment implements IFragmentUI,OpenSelectP
                 }
 
                 Toast.makeText(mActivity, (bIsSuccess ? R.string.fragment_setting_export_success : R.string.fragment_setting_export_failed),Toast.LENGTH_SHORT).show() ;
+            }
+        });
+
+        this.mETExportCSVPath.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String path = mETExportCSVPath.getText().toString();
+                if (!TextUtils.isEmpty(path) && Utility.isValidFileName(path)) {
+
+                    mBtnExportCSV.setEnabled(true);
+                } else {
+                    mBtnExportCSV.setEnabled(false);
+                }
+            }
+        });
+
+        this.mETCardAccountPath.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String path = mETCardAccountPath.getText().toString();
+                if (!TextUtils.isEmpty(path) && Utility.isValidFileName(path)) {
+
+                    mBtnImportCardAccount.setEnabled(true);
+                } else {
+                    mBtnImportCardAccount.setEnabled(false);
+                }
             }
         });
 
