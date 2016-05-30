@@ -69,7 +69,7 @@ public interface IDataStoreHelper {
     Boolean deleteCarItem(int id);
 
     //Export
-    Boolean exportDataStore();
+    Boolean exportDataStore(String path);
 
-    Boolean exportCSV(int type);
+    Boolean exportCSV(int type, String path);
 }

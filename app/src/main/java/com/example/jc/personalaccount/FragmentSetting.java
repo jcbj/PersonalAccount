@@ -44,11 +44,19 @@ public class FragmentSetting extends Fragment implements IFragmentUI,OpenSelectP
     private Button mBtnExportDatabase;
     private Button mBtnExportCSV;
     private Spinner mSpinnerItem;
+    private Button mBtnOpenExportCSVPath;
+    private EditText mETExportCSVPath;
+    private Button mBtnOpenExportDBPath;
+    private EditText mETExportDBPath;
     private Button mBtnExit;
     private Button mBtnImportCardAccount;
     private Button mBtnOpenCardAccountFile;
     private EditText mETCardAccountPath;
-    private OpenSelectPathFragment mOpenPathFragment;
+    private OpenSelectPathFragment mOpenPathFragmentOpen;
+
+    private static final int INVOKE_TYPE_DB = 0;
+    private static final int INVOKE_TYPE_CSV = 1;
+    private static final int INVOKE_TYPE_IMPORT_ACCOUNT_CSV = 2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,20 +67,25 @@ public class FragmentSetting extends Fragment implements IFragmentUI,OpenSelectP
         this.mBtnExportDatabase = (Button)view.findViewById(R.id.fragment_setting_btn_export_database);
         this.mBtnExportCSV = (Button)view.findViewById(R.id.fragment_setting_btn_export_database_csv);
         this.mSpinnerItem = (Spinner)view.findViewById(R.id.fragment_setting_spinner_item);
+        this.mBtnOpenExportCSVPath = (Button)view.findViewById(R.id.fragment_setting_btn_export_folder_csv);
+        this.mETExportCSVPath = (EditText)view.findViewById(R.id.fragment_setting_text_path_export_csv);
+        this.mBtnOpenExportDBPath = (Button)view.findViewById(R.id.fragment_setting_btn_open_export_database_path);
+        this.mETExportDBPath = (EditText)view.findViewById(R.id.fragment_setting_export_database_path_text);
         this.mBtnExit = (Button)view.findViewById(R.id.fragment_setting_btn_exit);
         this.mBtnImportCardAccount = (Button)view.findViewById(R.id.fragment_setting_btn_import_cardaccount);
         this.mBtnOpenCardAccountFile = (Button)view.findViewById(R.id.fragment_setting_btn_open_file);
         this.mETCardAccountPath = (EditText)view.findViewById(R.id.fragment_setting_text_open_file_card_account);
 
-        mOpenPathFragment = new OpenSelectPathFragment();
-        mOpenPathFragment.mBundle = this;
+        mOpenPathFragmentOpen = new OpenSelectPathFragment();
+        mOpenPathFragmentOpen.mCallbackBundle = this;
 
         this.mSpinnerItem.setAdapter(new ArrayAdapter<String>(mActivity, android.R.layout.simple_spinner_item, new String[]{
                 this.getString(R.string.bottom_tab_home),
                 this.getString(R.string.bottom_tab_summary),
                 this.getString(R.string.bottom_tab_account),
                 this.getString(R.string.bottom_tab_detail),
-                this.getString(R.string.bottom_tab_car)
+                this.getString(R.string.bottom_tab_car),
+                this.getString(R.string.common_all)
         }));
 
         this.bindingUIEvent();
@@ -85,7 +98,12 @@ public class FragmentSetting extends Fragment implements IFragmentUI,OpenSelectP
             @Override
             public void onClick(View v) {
 
-                Boolean bIsSuccess = GlobalData.DataStoreHelper.exportDataStore();
+                Boolean bIsSuccess = false;
+
+                String path = mETExportDBPath.getText().toString();
+                if (!TextUtils.isEmpty(path)) {
+                    bIsSuccess = GlobalData.DataStoreHelper.exportDataStore(path);
+                }
 
                 Toast.makeText(mActivity, (bIsSuccess ? R.string.fragment_setting_export_success : R.string.fragment_setting_export_failed),Toast.LENGTH_SHORT).show() ;
             }
@@ -95,16 +113,38 @@ public class FragmentSetting extends Fragment implements IFragmentUI,OpenSelectP
             @Override
             public void onClick(View v) {
 
-                Boolean bIsSuccess = GlobalData.DataStoreHelper.exportCSV(mSpinnerItem.getSelectedItemPosition());
+                Boolean bIsSuccess = false;
+
+                String path = mETExportCSVPath.getText().toString();
+                if (!TextUtils.isEmpty(path)) {
+                    bIsSuccess = GlobalData.DataStoreHelper.exportCSV(mSpinnerItem.getSelectedItemPosition(),mETExportCSVPath.getText().toString());
+                }
 
                 Toast.makeText(mActivity, (bIsSuccess ? R.string.fragment_setting_export_success : R.string.fragment_setting_export_failed),Toast.LENGTH_SHORT).show() ;
+            }
+        });
+
+        this.mBtnOpenExportDBPath.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOpenPathFragmentOpen.setDialogSetting(false,"",INVOKE_TYPE_DB);
+                mOpenPathFragmentOpen.show(mActivity.getSupportFragmentManager(),getString(R.string.fragment_setting_open_folder));
+            }
+        });
+
+        this.mBtnOpenExportCSVPath.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOpenPathFragmentOpen.setDialogSetting(false,"",INVOKE_TYPE_CSV);
+                mOpenPathFragmentOpen.show(mActivity.getSupportFragmentManager(),getString(R.string.fragment_setting_open_folder));
             }
         });
 
         this.mBtnOpenCardAccountFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mOpenPathFragment.show(mActivity.getSupportFragmentManager(),getString(R.string.fragment_setting_open_file));
+                mOpenPathFragmentOpen.setDialogSetting(true,".csv;",INVOKE_TYPE_IMPORT_ACCOUNT_CSV);
+                mOpenPathFragmentOpen.show(mActivity.getSupportFragmentManager(),getString(R.string.fragment_setting_open_file));
             }
         });
 
@@ -147,6 +187,13 @@ public class FragmentSetting extends Fragment implements IFragmentUI,OpenSelectP
 
     @Override
     public void callback(Bundle bundle) {
-        mETCardAccountPath.setText(bundle.getString("path"));
+        int type = bundle.getInt(OpenSelectPathFragment.EXTRA_INVOKETYPE);
+        if (INVOKE_TYPE_IMPORT_ACCOUNT_CSV == type) {
+            mETCardAccountPath.setText(bundle.getString(OpenSelectPathFragment.EXTRA_SELECTPATH));
+        } else if(INVOKE_TYPE_CSV == type) {
+            mETExportCSVPath.setText(bundle.getString(OpenSelectPathFragment.EXTRA_SELECTPATH));
+        } else if (INVOKE_TYPE_DB == type) {
+            mETExportDBPath.setText(bundle.getString(OpenSelectPathFragment.EXTRA_SELECTPATH));
+        }
     }
 }

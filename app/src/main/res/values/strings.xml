@@ -47,6 +47,8 @@
     <string name="bottom_tab_car">汽车</string>
     <string name="bottom_tab_setting">设置</string>
 
+    <string name="common_all">全部</string>
+
     <!-- fragment home -->
     <string name="fragment_home_property_title">资产</string>
     <string name="fragment_home_debt_title">负债</string>
@@ -107,5 +109,6 @@
     <string name="fragment_setting_import_failed">导入失败</string>
     <string name="fragment_setting_btn_import_cardaccount">导入信用卡账单</string>
     <string name="fragment_setting_open_file">打开文件</string>
+    <string name="fragment_setting_open_folder">选择文件夹</string>
 
 </resources>

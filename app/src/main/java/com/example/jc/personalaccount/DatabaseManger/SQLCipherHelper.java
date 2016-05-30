@@ -218,29 +218,33 @@ public class SQLCipherHelper implements IDataStoreHelper {
     }
 
     //Export
-    public Boolean exportDataStore() {
+    public Boolean exportDataStore(String path) {
 
-        String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + DATABASENAME;
+        String destPath = this.getExportPath(path) + Utility.getFormatDate(CURRENTDATETOFILENAME) + DATABASENAME;
 
         return Utility.copyFile(this.mDatabasePath,destPath);
     }
 
-    public Boolean exportCSV(int type) {
+    public Boolean exportCSV(int type, String path) {
 
-        switch (type) {
-            case 0:
-                return this.exportCSV_Home();
-            case 1:
-                return this.exportCSV_Summary();
-            case 2:
-                return this.exportCSV_Account();
-            case 3:
-                return this.exportCSV_Detail();
-            case 4:
-                return this.exportCSV_Car();
-            default:
-                return false;
+        boolean bIsSuccess = false;
+        if (TextUtils.isEmpty(path)) {
+            return bIsSuccess;
         }
+
+        if (5 == type) {
+            //导出全部
+            for (int i = 0; i < type; i++) {
+                bIsSuccess = this.exportCSVSingle(i,this.getExportPath(path));
+                if (!bIsSuccess) {
+                    break;
+                }
+            }
+        } else {
+            bIsSuccess = this.exportCSVSingle(type,this.getExportPath(path));
+        }
+
+        return bIsSuccess;
     }
 
     //Worth
@@ -862,9 +866,11 @@ public class SQLCipherHelper implements IDataStoreHelper {
     }
 
     //./PersonalAccount/
-    private String getExportPath() {
+    private String getExportPath(String destPath) {
 
-        String destPath = Environment.getExternalStorageDirectory().getPath();
+        if (TextUtils.isEmpty(destPath)) {
+            destPath = Environment.getExternalStorageDirectory().getPath();
+        }
 
         destPath = destPath + "/PersonalAccount/";
         File file = new File(destPath);
@@ -875,154 +881,195 @@ public class SQLCipherHelper implements IDataStoreHelper {
         return destPath;
     }
 
-    private Boolean exportCSV_Home() {
+    private boolean exportCSVSingle(int type, String path) {
 
-        BalanceSheetItem[] items = this.getAllBalanceSheetItems();
+        switch (type) {
+            case 0:
+                return this.exportCSV_Home(path);
+            case 1:
+                return this.exportCSV_Summary(path);
+            case 2:
+                return this.exportCSV_Account(path);
+            case 3:
+                return this.exportCSV_Detail(path);
+            case 4:
+                return this.exportCSV_Car(path);
+            default:
+                return false;
+        }
+    }
 
-        if (items.length > 0) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("id,name,description,type,value" + LINEEND);
-            for (int i = 0; i < items.length; i++) {
-                sb.append(
-                    items[i].id + ",'" +
-                    items[i].name + "','" +
-                    items[i].description + "'," +
-                    ((BalanceSheetItem.WorthType.Property == items[i].worthType) ? 0 : 1) + "," +
-                    items[i].value + LINEEND
-                );
+    private Boolean exportCSV_Home(String destPath) {
+
+        try {
+            BalanceSheetItem[] items = this.getAllBalanceSheetItems();
+
+            if (null != items) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("id,name,description,type,value" + LINEEND);
+                for (int i = 0; i < items.length; i++) {
+                    sb.append(
+                            items[i].id + ",'" +
+                                    items[i].name + "','" +
+                                    items[i].description + "'," +
+                                    ((BalanceSheetItem.WorthType.Property == items[i].worthType) ? 0 : 1) + "," +
+                                    items[i].value + LINEEND
+                    );
+                }
+
+                destPath = destPath + Utility.getFormatDate(CURRENTDATETOFILENAME) + BALANCESHEETTABLENAME + ".csv";
+                return Utility.writeStringToFile(destPath, sb.toString(), false);
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
 
-            String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + BALANCESHEETTABLENAME + ".csv";
-            return Utility.writeStringToFile (destPath,sb.toString(),false);
+    private Boolean exportCSV_Summary(String destPath) {
+
+        try {
+
+            SummaryItem[] items = this.getAllSummaryItems();
+
+            if (null != items) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("id,date,name,alias,description,value" + LINEEND);
+                for (int i = 0; i < items.length; i++) {
+                    sb.append(
+                            items[i].id + "," +
+                                    items[i].date + ",'" +
+                                    items[i].name + "','" +
+                                    items[i].alias + "','" +
+                                    items[i].description + "'," +
+                                    items[i].value + LINEEND
+                    );
+                }
+
+                destPath = destPath + Utility.getFormatDate(CURRENTDATETOFILENAME) + SUMMARYITEMTABLENAME + ".csv";
+                return Utility.writeStringToFile (destPath,sb.toString(),false);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return false;
     }
 
-    private Boolean exportCSV_Summary() {
+    private Boolean exportCSV_Account(String destPath) {
 
-        SummaryItem[] items = this.getAllSummaryItems();
+        try {
 
-        if (items.length > 0) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("id,date,name,alias,description,value" + LINEEND);
-            for (int i = 0; i < items.length; i++) {
-                sb.append(
-                        items[i].id + "," +
-                        items[i].date + ",'" +
-                        items[i].name + "','" +
-                        items[i].alias + "','" +
-                        items[i].description + "'," +
-                        items[i].value + LINEEND
-                );
-            }
+            AccountItem[] items = this.getAllAccountItems();
 
-            String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + SUMMARYITEMTABLENAME + ".csv";
-            return Utility.writeStringToFile (destPath,sb.toString(),false);
-        }
+            if (null != items) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("id,date,type,value,from,to,description" + LINEEND);
 
-        return false;
-    }
+                destPath = destPath + Utility.getFormatDate(CURRENTDATETOFILENAME) + ACCOUNTITEMTABLENAME + ".csv";
 
-    private Boolean exportCSV_Account() {
+                for (int i = 0; i < items.length; i++) {
+                    sb.append(
+                            items[i].id + "," +
+                                    items[i].date + "," +
+                                    items[i].type + "," +
+                                    items[i].value + ",'" +
+                                    items[i].from + "','" +
+                                    items[i].to + "','" +
+                                    items[i].description + "'" + LINEEND
+                    );
 
-        AccountItem[] items = this.getAllAccountItems();
-
-        if (items.length > 0) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("id,date,type,value,from,to,description" + LINEEND);
-
-            String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + ACCOUNTITEMTABLENAME + ".csv";
-
-            for (int i = 0; i < items.length; i++) {
-                sb.append(
-                        items[i].id + "," +
-                        items[i].date + "," +
-                        items[i].type + "," +
-                        items[i].value + ",'" +
-                        items[i].from + "','" +
-                        items[i].to + "','" +
-                        items[i].description + "'" + LINEEND
-                );
-
-                if (0 == i % 500) {
-                    if (Utility.writeStringToFile (destPath,sb.toString(),true)) {
-                        sb = new StringBuilder();
-                    } else {
-                        return false;
+                    if (0 == i % 500) {
+                        if (Utility.writeStringToFile (destPath,sb.toString(),true)) {
+                            sb = new StringBuilder();
+                        } else {
+                            return false;
+                        }
                     }
                 }
-            }
 
-            return Utility.writeStringToFile (destPath,sb.toString(),true);
+                return Utility.writeStringToFile (destPath,sb.toString(),true);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return false;
     }
 
-    private Boolean exportCSV_Detail() {
+    private Boolean exportCSV_Detail(String destPath) {
 
-        DetailItem[] items = this.getAllDetailItems();
+        try {
 
-        if (items.length > 0) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("id,date,value,from,description" + LINEEND);
+            DetailItem[] items = this.getAllDetailItems();
 
-            String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + DETAILITEMTABLENAME + ".csv";
+            if (null != items) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("id,date,value,from,description" + LINEEND);
 
-            for (int i = 0; i < items.length; i++) {
-                sb.append(
-                        items[i].id + "," +
-                                items[i].date + "," +
-                                items[i].value + ",'" +
-                                items[i].from + "','" +
-                                items[i].description + "'" + LINEEND
-                );
+                destPath = destPath + Utility.getFormatDate(CURRENTDATETOFILENAME) + DETAILITEMTABLENAME + ".csv";
 
-                if (0 == i % 500) {
-                    if (Utility.writeStringToFile (destPath,sb.toString(),true)) {
-                        sb = new StringBuilder();
-                    } else {
-                        return false;
+                for (int i = 0; i < items.length; i++) {
+                    sb.append(
+                            items[i].id + "," +
+                                    items[i].date + "," +
+                                    items[i].value + ",'" +
+                                    items[i].from + "','" +
+                                    items[i].description + "'" + LINEEND
+                    );
+
+                    if (0 == i % 500) {
+                        if (Utility.writeStringToFile (destPath,sb.toString(),true)) {
+                            sb = new StringBuilder();
+                        } else {
+                            return false;
+                        }
                     }
                 }
-            }
 
-            return Utility.writeStringToFile (destPath,sb.toString(),true);
+                return Utility.writeStringToFile (destPath,sb.toString(),true);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return false;
     }
 
-    private Boolean exportCSV_Car() {
+    private Boolean exportCSV_Car(String destPath) {
 
-        CarItem[] items = this.getAllCarItems();
+        try {
 
-        if (items.length > 0) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("id,date,value,type,description" + LINEEND);
+            CarItem[] items = this.getAllCarItems();
 
-            String destPath = this.getExportPath() + Utility.getFormatDate(CURRENTDATETOFILENAME) + CARITEMTABLENAME + ".csv";
+            if (null != items) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("id,date,value,type,description" + LINEEND);
 
-            for (int i = 0; i < items.length; i++) {
-                sb.append(
-                        items[i].id + "," +
-                        items[i].date + "," +
-                        items[i].value + ",'" +
-                        items[i].type + "','" +
-                        items[i].description + "'" + LINEEND
-                );
+                destPath = destPath + Utility.getFormatDate(CURRENTDATETOFILENAME) + CARITEMTABLENAME + ".csv";
 
-                if (0 == i % 500) {
-                    if (Utility.writeStringToFile (destPath,sb.toString(),true)) {
-                        sb = new StringBuilder();
-                    } else {
-                        return false;
+                for (int i = 0; i < items.length; i++) {
+                    sb.append(
+                            items[i].id + "," +
+                                    items[i].date + "," +
+                                    items[i].value + ",'" +
+                                    items[i].type + "','" +
+                                    items[i].description + "'" + LINEEND
+                    );
+
+                    if (0 == i % 500) {
+                        if (Utility.writeStringToFile (destPath,sb.toString(),true)) {
+                            sb = new StringBuilder();
+                        } else {
+                            return false;
+                        }
                     }
                 }
-            }
 
-            return Utility.writeStringToFile (destPath,sb.toString(),true);
+                return Utility.writeStringToFile (destPath,sb.toString(),true);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return false;

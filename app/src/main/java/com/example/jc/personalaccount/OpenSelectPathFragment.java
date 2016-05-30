@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,11 +41,15 @@ public class OpenSelectPathFragment extends DialogFragment {
     private Button mBtnBack;
     private ListView mLVPaths;
 
-    public CallbackBundle mBundle;
+    public CallbackBundle mCallbackBundle;
 
     private String mTempRootPath;
     private List<Map<String,Object>> mTempList;
-    private String suffix = ".csv;";
+    private String mSuffix = "";
+    private Map<String, Integer> imageMap = null;
+    private boolean mIsSelectFile = true;
+    private int mInvokeType = -1;
+
     private static final String sOnErrorMsg = "No rights to access!";
 
     private static final String sRoot = "/";
@@ -52,7 +57,18 @@ public class OpenSelectPathFragment extends DialogFragment {
     private static final String sFolder = ".";
     private static final String sEmpty = "";
 
-    private Map<String, Integer> imageMap = null;
+    public static final String EXTRA_ISSELECTFILE = "IsSelectFile";
+    public static final String EXTRA_SELECTPATH = "SelectPath";
+    public static final String EXTRA_INVOKETYPE = "InvokeType";
+
+    public void setDialogSetting(boolean bIsSelectFile, String suffix, int type) {
+
+        this.mInvokeType = type;
+        this.mIsSelectFile = bIsSelectFile;
+        if (!TextUtils.isEmpty(suffix)) {
+            this.mSuffix = suffix;
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +94,8 @@ public class OpenSelectPathFragment extends DialogFragment {
         mBtnOK = (Button)view.findViewById(R.id.fragment_open_select_path_btn_ok);
         mLVPaths = (ListView)view.findViewById(R.id.fragment_open_select_path_list);
 
+        this.mBtnOK.setEnabled(false);
+
         this.bindingUIEvent();
 
         this.mTempRootPath = sRoot;
@@ -100,10 +118,10 @@ public class OpenSelectPathFragment extends DialogFragment {
 
                 // 设置回调的返回值
                 Bundle bundle = new Bundle();
-                bundle.putString("path", mTempRootPath);
-//                bundle.putString("name", fn);
+                bundle.putString(OpenSelectPathFragment.EXTRA_SELECTPATH, mTempRootPath);
+                bundle.putInt(OpenSelectPathFragment.EXTRA_INVOKETYPE,mInvokeType);
                 // 调用事先设置的回调函数
-                mBundle.callback(bundle);
+                mCallbackBundle.callback(bundle);
 
                 dismiss();
             }
@@ -194,9 +212,14 @@ public class OpenSelectPathFragment extends DialogFragment {
                 lfolders.add(map);
             }
             else if(file.isFile()){
+
+                if (!this.mIsSelectFile) {
+                    continue;
+                }
+
                 // 添加文件
                 String sf = getSuffix(file.getName()).toLowerCase();
-                if(suffix == null || suffix.length()==0 || (sf.length()>0 && suffix.indexOf("."+sf+";")>=0)){
+                if(mSuffix == null || mSuffix.length()==0 || (sf.length()>0 && mSuffix.indexOf("."+sf+";")>=0)){
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put("name", file.getName());
                     map.put("path", file.getPath());
@@ -215,6 +238,7 @@ public class OpenSelectPathFragment extends DialogFragment {
     }
 
     private void folderItemClick(int position) {
+        this.mBtnOK.setEnabled(false);
         // 条目选择
         String pt = (String) mTempList.get(position).get("path");
         String fn = (String) mTempList.get(position).get("name");
@@ -235,19 +259,17 @@ public class OpenSelectPathFragment extends DialogFragment {
             File fl = new File(pt);
             if(fl.isFile()){
 
-                // 设置回调的返回值
-                Bundle bundle = new Bundle();
-                bundle.putString("path", pt);
-                bundle.putString("name", fn);
-                // 调用事先设置的回调函数
-                this.mBundle.callback(bundle);
-                dismiss();
+                this.mBtnOK.setEnabled(true);
             }
             else if(fl.isDirectory()){
                 // 如果是文件夹
                 // 那么进入选中的文件夹
                 mTempRootPath = pt;
                 mTVPath.setText(mTempRootPath);
+
+                if (!this.mIsSelectFile) {
+                    this.mBtnOK.setEnabled(true);
+                }
             }
         }
         this.refreshFileList();
