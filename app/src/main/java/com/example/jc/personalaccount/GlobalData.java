@@ -136,22 +136,28 @@ public class GlobalData {
                 // create "open" item
                 SwipeMenuItem openItem = new SwipeMenuItem(context);
                 // set item background
-                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9, 0xCE)));
+                openItem.setBackground(new ColorDrawable(Color.argb(0xFF,0xF0,0xF0,0xF0)));
                 // set item width
                 openItem.setWidth(dp2px(90,context));
                 // set item title
-                openItem.setTitle("Edit");
+//                openItem.setTitle("Edit");
                 // set item title fontsize
-                openItem.setTitleSize(18);
+//                openItem.setTitleSize(18);
                 // set item title font color
-                openItem.setTitleColor(Color.WHITE);
+//                openItem.setTitleColor(Color.WHITE);
                 // add to menu
+                openItem.setIcon(R.drawable.ic_edit);
                 menu.addMenuItem(openItem);
+
+                SwipeMenuItem speaceItem = new SwipeMenuItem(context);
+                speaceItem.setBackground(new ColorDrawable(Color.rgb(0xD3,0xD3,0xD3)));
+                speaceItem.setWidth(1);
+                menu.addMenuItem(speaceItem);
 
                 // create "delete" item
                 SwipeMenuItem deleteItem = new SwipeMenuItem(context);//getApplicationContext()
                 // set item background
-                deleteItem.setBackground(new ColorDrawable(Color.rgb(0x80, 0x80, 0x80)));
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF0, 0xF0, 0xF0)));
                 // set item width
                 deleteItem.setWidth(dp2px(90,context));
                 // set a icon

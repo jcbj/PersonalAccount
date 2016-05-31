@@ -145,11 +145,18 @@ public class  LoginActivity extends AppCompatActivity implements LoaderCallbacks
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            System.exit(0);
+            exit();
             return true;
         }
 
         return super.onKeyDown(keyCode,keyEvent);
+    }
+
+    private void exit() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
+        System.exit(0);
     }
 
     private void populateAutoComplete() {

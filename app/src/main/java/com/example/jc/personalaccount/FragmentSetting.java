@@ -239,6 +239,8 @@ public class FragmentSetting extends Fragment implements IFragmentUI,OpenSelectP
 
                 Intent intent = new Intent(mActivity,LoginActivity.class);
                 startActivity(intent);
+
+                mActivity.finish();
             }
         });
     }

@@ -816,7 +816,7 @@ public class Utility {
         if (fileName == null || fileName.length() > 255) {
             return false;
         } else {
-            return fileName.matches("[^\\s\\\\/:\\*\\?\\\"<>\\|](\\x20|[^\\s\\\\/:\\*\\?\\\"<>\\|])*[^\\s\\\\/:\\*\\?\\\"<>\\|\\.]$");
+            return true;//fileName.matches("/^([\\/] [\\w-]+)*$/");
         }
     }
 }

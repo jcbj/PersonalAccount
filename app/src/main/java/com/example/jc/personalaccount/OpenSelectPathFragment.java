@@ -259,6 +259,9 @@ public class OpenSelectPathFragment extends DialogFragment {
             File fl = new File(pt);
             if(fl.isFile()){
 
+                mTempRootPath = pt;
+                mTVPath.setText(mTempRootPath);
+
                 this.mBtnOK.setEnabled(true);
             }
             else if(fl.isDirectory()){
