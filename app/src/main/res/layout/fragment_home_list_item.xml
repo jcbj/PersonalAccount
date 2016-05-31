@@ -25,18 +25,17 @@
                 android:id="@+id/fragment_home_list_item_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/cornflowerblue"
                 android:layout_weight="1"
-                android:textSize="22sp"/>
+                android:textSize="18sp"/>
 
             <TextView
                 android:gravity="right"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="5dp"
                 android:id="@+id/fragment_home_list_item_worth"
-                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
+                android:textColor="@color/green_title"
+                android:textSize="22sp"
                 android:width="100dp"/>
 
         </LinearLayout>
