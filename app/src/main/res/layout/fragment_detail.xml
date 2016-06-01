@@ -25,6 +25,8 @@
         <Button
             android:id="@+id/fragment_detail_add_button"
             android:text="+"
+            android:textSize="30sp"
+            android:textColor="@color/gray"
             android:background="@color/lightgray240"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

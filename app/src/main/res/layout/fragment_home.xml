@@ -50,6 +50,8 @@
                 <Button
                     android:id="@+id/fragment_home_property_add_button"
                     android:text="+"
+                    android:textSize="30sp"
+                    android:textColor="@color/gray"
                     android:background="@color/lightgray240"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -93,6 +95,8 @@
                 <Button
                     android:id="@+id/fragment_home_debt_add_button"
                     android:text="+"
+                    android:textColor="@color/gray"
+                    android:textSize="30sp"
                     android:background="@color/lightgray240"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
