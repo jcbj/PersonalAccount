@@ -184,6 +184,10 @@ public class EditAccountItemActivity extends AppCompatActivity {
             mSpinnerType.setSelection(0,true);
             mSpinnerTo.setSelection(0,true);
             mETDescription.setText("");
+
+            if (-1 != mCurrentItem.id) {
+                this.backClick();
+            }
         } else {
             new AlertDialog.Builder(getApplicationContext()).setTitle(getString(R.string.common_str_information))
                     .setMessage(getString(R.string.common_save_failed))

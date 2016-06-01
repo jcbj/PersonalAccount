@@ -190,7 +190,7 @@ public class FragmentHome extends Fragment implements IFragmentUI {
                         // open
                         showEditNetAssetsActivity(position,HomeEditOperType.EDITPROPERTY);
                         break;
-                    case 1:
+                    case 2:
                         // delete
                         if (position < mAdapterData.listPropertyItems.size()) {
                             deleteClick((Map<String,Object>)((mAdapterData.listPropertyItems.toArray())[position]));
@@ -210,7 +210,7 @@ public class FragmentHome extends Fragment implements IFragmentUI {
                         // open
                         showEditNetAssetsActivity(position,HomeEditOperType.EDITDEBT);
                         break;
-                    case 1:
+                    case 2:
                         // delete
                         if (position < mAdapterData.listDebtItems.size()) {
                             deleteClick((Map<String,Object>)((mAdapterData.listDebtItems.toArray())[position]));

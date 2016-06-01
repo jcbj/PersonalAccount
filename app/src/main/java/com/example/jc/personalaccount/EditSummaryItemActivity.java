@@ -149,6 +149,10 @@ public class EditSummaryItemActivity extends AppCompatActivity {
             mETAlias.setText("");
             mETValue.setText("");
             mETDescription.setText("");
+
+            if (-1 != mCurrentInfo.id) {
+                this.backClick();
+            }
         } else {
             new AlertDialog.Builder(getApplicationContext()).setTitle(getString(R.string.common_str_information))
                     .setMessage(getString(R.string.common_save_failed))

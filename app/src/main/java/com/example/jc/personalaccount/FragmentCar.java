@@ -77,7 +77,7 @@ public class FragmentCar extends Fragment implements IFragmentUI {
                         //open
                         showEditCarActivity(position,EditCommonOperType.EDIT);
                         break;
-                    case 1:
+                    case 2:
                         //delete
                         if (position < mData.size()) {
                             deleteClick((Map<String,Object>)((mData.toArray())[position]));

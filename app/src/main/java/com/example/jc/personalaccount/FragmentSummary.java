@@ -133,7 +133,7 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
                         // open
                         showEditSummaryActivity(position, EditCommonOperType.EDIT);
                         break;
-                    case 1:
+                    case 2:
                         // delete
                         if (position < mData.size()) {
                             deleteClick((Map<String,Object>)((mData.toArray())[position]));

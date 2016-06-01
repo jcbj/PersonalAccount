@@ -39,7 +39,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
     private Button mBackBtn;
     private Button mAddPictureBtn;
     private Button mRemovePictureBtn;
-    private BalanceSheetItem mCurrentInfo;
+    private BalanceSheetItem mCurrentItem;
     private ImageView mImageView;
     private int mWindowHeight;
     private int mWindowWidth;
@@ -132,7 +132,7 @@ public class EditNetAssetsActivity extends AppCompatActivity {
 
         this.mRemovePictureBtn.setEnabled(false);
 
-        this.mCurrentInfo = new BalanceSheetItem();
+        this.mCurrentItem = new BalanceSheetItem();
         this.mImageIsChanged = false;
 
         Intent intent = this.getIntent();
@@ -197,22 +197,22 @@ public class EditNetAssetsActivity extends AppCompatActivity {
         this.mTypeSpinner.setSelection(iTypeSpinnerSelectIndex,true);
 
         if (isEdit || isView) {
-            this.mCurrentInfo = GlobalData.EXTRA_Home_Edit_Data;
+            this.mCurrentItem = GlobalData.EXTRA_Home_Edit_Data;
 
-            mETName.setText(this.mCurrentInfo.name);
-            mETWorth.setText(Double.toString(this.mCurrentInfo.value / 100.0));
-            mETDescription.setText(this.mCurrentInfo.description);
+            mETName.setText(this.mCurrentItem.name);
+            mETWorth.setText(Double.toString(this.mCurrentItem.value / 100.0));
+            mETDescription.setText(this.mCurrentItem.description);
 
-            if ((!TextUtils.isEmpty(this.mCurrentInfo.imagePath)) && ((new File(this.mCurrentInfo.imagePath)).exists())) {
-                Bitmap bitmap = Utility.extractMiniThumb(this.mCurrentInfo.imagePath,this.mWindowWidth,this.mWindowHeight,true);
+            if ((!TextUtils.isEmpty(this.mCurrentItem.imagePath)) && ((new File(this.mCurrentItem.imagePath)).exists())) {
+                Bitmap bitmap = Utility.extractMiniThumb(this.mCurrentItem.imagePath,this.mWindowWidth,this.mWindowHeight,true);
                 if (null != bitmap) {
                     this.mImageView.setImageBitmap(bitmap);
                     if (isEdit) {
                         mRemovePictureBtn.setEnabled(true);
                     }
                 }
-            } else if (null != this.mCurrentInfo.imageThumb) {
-                this.mImageView.setImageBitmap(this.mCurrentInfo.imageThumb);
+            } else if (null != this.mCurrentItem.imageThumb) {
+                this.mImageView.setImageBitmap(this.mCurrentItem.imageThumb);
                 if (isEdit) {
                     mRemovePictureBtn.setEnabled(true);
                 }
@@ -233,30 +233,30 @@ public class EditNetAssetsActivity extends AppCompatActivity {
             return;
         }
 
-        mCurrentInfo.worthType = ((mTypeSpinner.getSelectedItem().toString()).equals(mTypeSpinnerItems[0])) ? BalanceSheetItem.WorthType.Property : BalanceSheetItem.WorthType.Debt;
-        mCurrentInfo.name = mETName.getText().toString();
-        mCurrentInfo.value = (int)(Double.parseDouble(mETWorth.getText().toString()) * 100);
-        mCurrentInfo.description = mETDescription.getText().toString();
+        mCurrentItem.worthType = ((mTypeSpinner.getSelectedItem().toString()).equals(mTypeSpinnerItems[0])) ? BalanceSheetItem.WorthType.Property : BalanceSheetItem.WorthType.Debt;
+        mCurrentItem.name = mETName.getText().toString();
+        mCurrentItem.value = (int)(Double.parseDouble(mETWorth.getText().toString()) * 100);
+        mCurrentItem.description = mETDescription.getText().toString();
 
-        String tempPath = mCurrentInfo.imagePath;
+        String tempPath = mCurrentItem.imagePath;
 
         if (mImageIsChanged) {
 
-            mCurrentInfo.imagePath = null;
-            mCurrentInfo.imageThumb = null;
+            mCurrentItem.imagePath = null;
+            mCurrentItem.imageThumb = null;
 
             if ((null != mTempImagePath) && (!TextUtils.isEmpty(mTempImagePath))) {
                 //复制图片，保存缩略图
                 String curAppPath = GlobalData.ImagePath + "/" + Long.toString(System.currentTimeMillis());
                 if (Utility.copyFile(mTempImagePath,curAppPath)) {
-                    mCurrentInfo.imagePath = curAppPath;
+                    mCurrentItem.imagePath = curAppPath;
                 }
             }
 
-            mCurrentInfo.imageThumb = mTempImageThumb;
+            mCurrentItem.imageThumb = mTempImageThumb;
         }
 
-        if (GlobalData.DataStoreHelper.editWorthItem(mCurrentInfo,(-1 == mCurrentInfo.id))) {
+        if (GlobalData.DataStoreHelper.editWorthItem(mCurrentItem,(-1 == mCurrentItem.id))) {
             mEditCount++;
 
             Toast toast = Toast.makeText(getApplicationContext(),getString(R.string.common_save_success),Toast.LENGTH_SHORT);
@@ -271,13 +271,15 @@ public class EditNetAssetsActivity extends AppCompatActivity {
             mTempImagePath = null;
             mTempImageThumb = null;
 
-            if (-1 != mCurrentInfo.id) {
+            if (-1 != mCurrentItem.id) {
                 if (mImageIsChanged) {
                     //如果是编辑，则需要删除当前本地文件
                     if ((null != tempPath) && (!TextUtils.isEmpty(tempPath))) {
                         Utility.deleteFile(tempPath);
                     }
                 }
+
+                this.backClick();
             }
         } else {
             new AlertDialog.Builder(getApplicationContext()).setTitle(getString(R.string.common_str_information))

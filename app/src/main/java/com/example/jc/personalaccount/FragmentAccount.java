@@ -92,7 +92,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
                         //open
                         showEditAccountActivity(position,EditCommonOperType.EDIT);
                         break;
-                    case 1:
+                    case 2:
                         //delete
                         if (position < mAdapter.mListDatas.size()) {
                             deleteClick(curItem);
