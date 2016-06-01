@@ -124,7 +124,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
         intent.putExtra(GlobalData.EXTRA_ACCOUNT_EDIT_TYPE, operType.value());
 
         if (-1 != position) {
-            int iListItemsLength = this.mData.size();
+            int iListItemsLength = this.mAdapter.mListDatas.size();
             if (position < iListItemsLength) {
                 GlobalData.EXTRA_Account_Edit_Data = (AccountItem) mAdapter.getItem(position);
             }
