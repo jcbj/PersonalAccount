@@ -20,15 +20,15 @@ public class AccountItem {
     public static final String[] mDataColumnName = new String[]{"id","week","date","value","from","image","to",
             "description","sourcedate","sourcetype"};
     public static final int[] mTypeImageID = new int[]{
-            R.drawable.fromto32,
-            R.drawable.fromtovirtual32,
-            R.drawable.tofrom32,
-            R.drawable.tofromvirtual32};
+            R.drawable.arrow_from_red,
+            R.drawable.arrow_from_gray,
+            R.drawable.arrow_to_green,
+            R.drawable.arrow_to_gray};
     public static final int[] mTypeTextColor = new int[]{
-            Color.argb(0xFF,0xFF,0x00,0x00),
-            Color.argb(0xFF,0x91,0x91,0x91),
-            Color.argb(0xFF,0x7C,0xBC,0x28),
-            Color.argb(0xFF,0x91,0x91,0x91)};
+            Color.argb(0xFF,0xF2,0x8E,0x7F),
+            Color.argb(0xFF,0x71,0x71,0x71),
+            Color.argb(0xFF,0x57,0xC8,0xA3),
+            Color.argb(0xFF,0x71,0x71,0x71)};
 
     public int id;
     //2016-04-21

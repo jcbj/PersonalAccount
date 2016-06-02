@@ -36,7 +36,6 @@
     <string name="common_load_failed">加载失败</string>
     <string name="common_repeat_back_key_exit">再按一次退出</string>
     <string name="common_btn_exit">切换用户</string>
-    <string name="common_title_total">总计</string>
     <string name="common_value_unit_wan">万</string>
     <string name="common_value_unit_yuan">元</string>
 
