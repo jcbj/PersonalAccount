@@ -352,9 +352,9 @@ public class FragmentHome extends Fragment implements IFragmentUI {
         });
         this.mListViewDebt.setAdapter(adapterDebt);
 
-        this.mPropertyTV.setText((this.mAdapterData.dPropertyAll / 10000.0) + " 万");
-        this.mDebtTV.setText((this.mAdapterData.dDebtAll / 10000.0) + " 万");
-        this.mNetAssetsTV.setText(((this.mAdapterData.dPropertyAll - this.mAdapterData.dDebtAll) / 10000.0) + " 万");
+        this.mPropertyTV.setText((this.mAdapterData.dPropertyAll / 10000.0) + " " + this.getString(R.string.common_value_unit_wan));
+        this.mDebtTV.setText((this.mAdapterData.dDebtAll / 10000.0) + " " + this.getString(R.string.common_value_unit_wan));
+        this.mNetAssetsTV.setText(((this.mAdapterData.dPropertyAll - this.mAdapterData.dDebtAll) / 10000.0) + " " + this.getString(R.string.common_value_unit_wan));
     }
 
     private CalculateBalanceSheetData getData() {

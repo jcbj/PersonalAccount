@@ -1,6 +1,7 @@
 package com.example.jc.personalaccount.Data;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 
 import com.example.jc.personalaccount.GlobalData;
 import com.example.jc.personalaccount.R;
@@ -23,6 +24,11 @@ public class AccountItem {
             R.drawable.fromtovirtual32,
             R.drawable.tofrom32,
             R.drawable.tofromvirtual32};
+    public static final int[] mTypeTextColor = new int[]{
+            Color.argb(0xFF,0xFF,0x00,0x00),
+            Color.argb(0xFF,0x91,0x91,0x91),
+            Color.argb(0xFF,0x7C,0xBC,0x28),
+            Color.argb(0xFF,0x91,0x91,0x91)};
 
     public int id;
     //2016-04-21

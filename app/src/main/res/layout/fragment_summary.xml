@@ -5,11 +5,62 @@
               android:orientation="vertical"
     tools:context="com.example.jc.personalaccount.FragmentSummary">
 
-    <!-- title -->
+    <ScrollView
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:fadingEdge="vertical">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- title -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/lightgray240">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="25sp"
+                    android:layout_weight="1"
+                    android:text="@string/fragment_summary_title"
+                    android:layout_gravity="center_vertical"
+                    />
+
+                <Button
+                    android:id="@+id/fragment_summary_add_button"
+                    android:text="+"
+                    android:textSize="30sp"
+                    android:textColor="@color/gray"
+                    android:background="@color/lightgray240"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    />
+            </LinearLayout>
+
+            <com.example.jc.personalaccount.NoScrollListView
+                android:id="@+id/fragment_summary_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </com.example.jc.personalaccount.NoScrollListView>
+
+        </LinearLayout>
+    </ScrollView>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:background="@color/lightgray240">
 
         <TextView
@@ -17,28 +68,18 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:textSize="25sp"
-            android:layout_weight="1"
-            android:text="@string/fragment_summary_title"
+            android:text="@string/common_title_total"
             android:layout_gravity="center_vertical"
             />
 
-        <Button
-            android:id="@+id/fragment_summary_add_button"
-            android:text="+"
-            android:textSize="30sp"
-            android:textColor="@color/gray"
-            android:background="@color/lightgray240"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/fragment_summary_total_value"
+            android:textSize="20sp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            />
+            android:gravity="right"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_vertical"/>
+
     </LinearLayout>
-
-    <com.baoyz.swipemenulistview.SwipeMenuListView
-        android:id="@+id/fragment_summary_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </com.baoyz.swipemenulistview.SwipeMenuListView>
-
 </LinearLayout>

@@ -36,6 +36,8 @@ public class FragmentCar extends Fragment implements IFragmentUI {
     private List<Map<String, Object>> mData;
     private SimpleAdapter mAdapter;
     private Button mAddBtn;
+    private TextView mTVTotalValue;
+    private Double mTotalValue;
 
     @Override
     public void onAttach(Context context) {
@@ -51,6 +53,7 @@ public class FragmentCar extends Fragment implements IFragmentUI {
 
         this.mListView = (SwipeMenuListView)view.findViewById(R.id.fragment_car_list_view);
         this.mAddBtn = (Button)view.findViewById(R.id.fragment_car_add_button);
+        this.mTVTotalValue = (TextView)view.findViewById(R.id.fragment_car_total_value);
 
         //设置每项滑动后的菜单
         this.mListView.setMenuCreator(GlobalData.buildSwipeMenuCreator(mActivity));
@@ -122,6 +125,7 @@ public class FragmentCar extends Fragment implements IFragmentUI {
                     mData.remove(map);
 
                     mAdapter.notifyDataSetChanged();
+                    this.refreshTotalValue(this.mTotalValue - Double.parseDouble(map.get(CarItem.mDataColumnName[3]).toString()) * 100);
                 }
             }
         } catch (Exception ex) {
@@ -149,14 +153,24 @@ public class FragmentCar extends Fragment implements IFragmentUI {
                         R.id.fragment_car_list_item_description});
 
         this.mListView.setAdapter(mAdapter);
+
+        this.refreshTotalValue(this.mTotalValue);
+    }
+
+    private void refreshTotalValue(Double value) {
+
+        this.mTotalValue = value;
+        this.mTVTotalValue.setText(Double.toString(value / 100.0) + " " + this.getString(R.string.common_value_unit_yuan));
     }
 
     private List<Map<String, Object>> getData() {
         List<Map<String, Object>> list = new ArrayList<>();
 
+        this.mTotalValue = 0.0;
         CarItem[] datas = GlobalData.DataStoreHelper.getAllCarItems();
         if (null != datas) {
             for (int i = 0; i < datas.length; i++) {
+                this.mTotalValue = this.mTotalValue + datas[i].value;
                 list.add(datas[i].mapValue());
             }
         }

@@ -3,6 +3,7 @@ package com.example.jc.personalaccount;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -45,6 +46,8 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
     private List<AccountItem> mGroups;
     private AccountListAdapter mAdapter;
     private Button mAddBtn;
+    private TextView mTVTotalValue;
+    private Double mTotalValue;
 
     @Override
     public void onAttach(Context context) {
@@ -60,6 +63,7 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
 
         this.mListView = (SwipeMenuListView)view.findViewById(R.id.fragment_account_list_view);
         this.mAddBtn = (Button)view.findViewById(R.id.fragment_account_add_button);
+        this.mTVTotalValue = (TextView)view.findViewById(R.id.fragment_account_total_value);
 
         //设置每项滑动后的菜单
         this.mListView.setMenuCreator(GlobalData.buildSwipeMenuCreator(mActivity));
@@ -144,6 +148,14 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
                     mAdapter.deleteItemByUser(curItem);
 
                     mAdapter.notifyDataSetChanged();
+
+                    if ((0 == curItem.type) || (1 == curItem.type)) {
+
+                        this.refreshTotalValue(this.mTotalValue + curItem.value);
+                    } else {
+
+                        this.refreshTotalValue(this.mTotalValue - curItem.value);
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -156,12 +168,21 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
         mAdapter = new AccountListAdapter(mActivity,this.mGroups,this.mData);
 
         this.mListView.setAdapter(mAdapter);
+
+        this.refreshTotalValue(this.mTotalValue);
+    }
+
+    private void refreshTotalValue(Double value) {
+
+        this.mTotalValue = value;
+        this.mTVTotalValue.setText(Double.toString(value / 100.0) + " " + this.getString(R.string.common_value_unit_yuan));
     }
 
     private void getAllData() {
 
         this.mData = new HashMap<>();
         this.mGroups = new ArrayList<>();
+        this.mTotalValue = 0.0;
 
         AccountItem[] datas = GlobalData.DataStoreHelper.getAllAccountItems();
         List<AccountItem> listData = new ArrayList<>();
@@ -169,6 +190,12 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
         if (null != datas) {
             for (int i = 0; i < datas.length; i++) {
                 String year = datas[i].date.substring(0,4);
+
+                if ((0 == datas[i].type) || (1 == datas[i].type)) {
+                    this.mTotalValue = this.mTotalValue - datas[i].value;
+                } else {
+                    this.mTotalValue = this.mTotalValue + datas[i].value;
+                }
 
                 if (0 != year.compareTo(lastYear)) {
                     AccountItem groupItem = new AccountItem();
@@ -428,12 +455,8 @@ public class FragmentAccount extends Fragment implements IFragmentUI {
             public void resetData(AccountItem item) {
                 this.mTVWeek.setText(item.mapValue().get(AccountItem.mDataColumnName[1]).toString());
                 this.mTVDate.setText(item.mapValue().get(AccountItem.mDataColumnName[2]).toString());
-                String value = item.mapValue().get(AccountItem.mDataColumnName[3]).toString();
-                this.mTVValue.setText(value);
-                if (value.contains("-")) {
-                    this.mTVValue.setTextColor(getResources().getColor(R.color.red));
-                }
-
+                this.mTVValue.setText(item.mapValue().get(AccountItem.mDataColumnName[3]).toString());
+                this.mTVValue.setTextColor(AccountItem.mTypeTextColor[item.type]);
                 this.mTVFrom.setText(item.mapValue().get(AccountItem.mDataColumnName[4]).toString());
                 this.mImageType.setImageResource(AccountItem.mTypeImageID[item.type]);
                 this.mTVTo.setText(item.mapValue().get(AccountItem.mDataColumnName[6]).toString());

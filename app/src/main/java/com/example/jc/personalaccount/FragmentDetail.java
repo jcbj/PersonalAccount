@@ -39,6 +39,8 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
     private List<DetailItem> mGroups;
     private DetailListAdapter mAdapter;
     private Button mAddBtn;
+    private TextView mTVTotalValue;
+    private Double mTotalValue;
 
     @Override
     public void onAttach(Context context) {
@@ -54,6 +56,7 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
 
         this.mListView = (SwipeMenuListView)view.findViewById(R.id.fragment_detail_list_view);
         this.mAddBtn = (Button)view.findViewById(R.id.fragment_detail_add_button);
+        this.mTVTotalValue = (TextView)view.findViewById(R.id.fragment_detail_total_value);
 
         //设置每项滑动后的菜单
         this.mListView.setMenuCreator(GlobalData.buildSwipeMenuCreator(mActivity));
@@ -138,6 +141,7 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
                     mAdapter.deleteItemByUser(curItem);
 
                     mAdapter.notifyDataSetChanged();
+                    this.refreshTotalValue(this.mTotalValue - curItem.value);
                 }
             }
         } catch (Exception ex) {
@@ -150,12 +154,21 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
         this.mAdapter = new DetailListAdapter(mActivity, this.mGroups, this.mData);
 
         this.mListView.setAdapter(this.mAdapter);
+
+        this.refreshTotalValue(this.mTotalValue);
+    }
+
+    private void refreshTotalValue(Double value) {
+
+        this.mTotalValue = value;
+        this.mTVTotalValue.setText(Double.toString(value / 100.0) + " " + this.getString(R.string.common_value_unit_yuan));
     }
 
     private void getAllData() {
 
         this.mData = new HashMap<>();
         this.mGroups = new ArrayList<>();
+        this.mTotalValue = 0.0;
 
         DetailItem[] datas = GlobalData.DataStoreHelper.getAllDetailItems();
         List<DetailItem> listData = new ArrayList<>();
@@ -164,6 +177,7 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
             for (int i = 0; i < datas.length; i++) {
                 String year = datas[i].date.substring(0,4);
 
+                this.mTotalValue = this.mTotalValue + datas[i].value;
                 if (0 != year.compareTo(lastYear)) {
                     DetailItem groupItem = new DetailItem();
                     groupItem.listItemType = GlobalData.LISTGROUPTYPE;

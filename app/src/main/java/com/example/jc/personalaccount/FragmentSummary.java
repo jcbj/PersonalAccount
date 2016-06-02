@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -34,6 +35,8 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
     private List<Map<String, Object>> mData;
     private SimpleAdapter mAdapter;
     private Button mAddBtn;
+    private TextView mTVTotalValue;
+    private Double mTotalValue;
 
     @Override
     public void onAttach(Context context) {
@@ -107,6 +110,7 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
 
         this.mListView = (SwipeMenuListView)view.findViewById(R.id.fragment_summary_list_view);
         this.mAddBtn = (Button)view.findViewById(R.id.fragment_summary_add_button);
+        this.mTVTotalValue = (TextView)view.findViewById(R.id.fragment_summary_total_value);
 
         //设置没项滑动后的菜单
         this.mListView.setMenuCreator(GlobalData.buildSwipeMenuCreator(mActivity));
@@ -179,6 +183,8 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
                     mData.remove(map);
 
                     mAdapter.notifyDataSetChanged();
+
+                    this.refreshTotalValue(this.mTotalValue - Double.parseDouble(map.get(SummaryItem.mDataColumnName[3]).toString()) * 100);
                 }
             }
         } catch (Exception ex) {
@@ -208,15 +214,25 @@ public class FragmentSummary extends Fragment implements IFragmentUI {
                         R.id.fragment_summary_list_item_description});
 
         this.mListView.setAdapter(mAdapter);
+
+        this.refreshTotalValue(this.mTotalValue);
+    }
+
+    private void refreshTotalValue(Double value) {
+
+        this.mTotalValue = value;
+        this.mTVTotalValue.setText(Double.toString(value / 100.0) + " " + this.getString(R.string.common_value_unit_yuan));
     }
 
     private List<Map<String, Object>> getData() {
         List<Map<String, Object>> list = new ArrayList<>();
 
+        mTotalValue = 0.0;
         SummaryItem[] datas = GlobalData.DataStoreHelper.getAllSummaryItems();
         if (null != datas) {
             for (int i = 0; i < datas.length; i++) {
                 list.add(datas[i].mapValue());
+                mTotalValue = mTotalValue + datas[i].value;
             }
         }
 
