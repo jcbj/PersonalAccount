@@ -161,7 +161,7 @@ public class FragmentDetail extends Fragment implements IFragmentUI {
     private void refreshTotalValue(Double value) {
 
         this.mTotalValue = value;
-        this.mTVTotalValue.setText(Double.toString(value / 100.0) + " " + this.getString(R.string.common_value_unit_yuan));
+        this.mTVTotalValue.setText(Double.toString(value) + " " + this.getString(R.string.common_value_unit_yuan));
     }
 
     private void getAllData() {

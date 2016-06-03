@@ -20,6 +20,7 @@ import com.example.jc.personalaccount.Data.EditCommonOperType;
 import com.example.jc.personalaccount.Data.FragmentID;
 import com.example.jc.personalaccount.Data.SummaryItem;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class EditDetailItemActivity extends AppCompatActivity {
@@ -120,7 +121,7 @@ public class EditDetailItemActivity extends AppCompatActivity {
                 mDate.init(Integer.parseInt(lines[0]),Integer.parseInt(lines[1]) - 1,Integer.parseInt(lines[2]),null);
             }
 
-            mETValue.setText(Double.toString(this.mCurrentItem.value / 100.0));
+            mETValue.setText(Double.toString(this.mCurrentItem.value));
             int index = Utility.getFindArrayIndex(this.mSpinnerItemsFromAndTo,this.mCurrentItem.from);
             if (-1 == index) {
                 index = 0;
@@ -144,7 +145,7 @@ public class EditDetailItemActivity extends AppCompatActivity {
 
         mCurrentItem.date = Utility.getFormatDate(GlobalData.DATEFORMAT, new Date(this.mDate.getYear() - 1900,this.mDate.getMonth(),this.mDate.getDayOfMonth()));
         mCurrentItem.from = mSpinnerAlias.getSelectedItem().toString();
-        mCurrentItem.value = (int)(Double.parseDouble(mETValue.getText().toString()) * 100);
+        mCurrentItem.value = Double.parseDouble(mETValue.getText().toString());
         mCurrentItem.description = mETDescription.getText().toString();
 
         boolean bIsSuccess = false;

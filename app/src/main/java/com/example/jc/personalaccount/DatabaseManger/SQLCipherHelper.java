@@ -529,7 +529,7 @@ public class SQLCipherHelper implements IDataStoreHelper {
                     info = new DetailItem();
                     info.id = cursor.getInt(0);
                     info.date = cursor.getString(1);
-                    info.value = cursor.getInt(2);
+                    info.value = cursor.getDouble(2);
                     info.from = cursor.getString(3);
                     info.description = cursor.getString(4);
 

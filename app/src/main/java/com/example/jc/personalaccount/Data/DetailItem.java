@@ -18,7 +18,7 @@ public class DetailItem {
 
     public int id;
     public String date;
-    public int value;
+    public double value;
     public String from;
     public String description;
 
@@ -34,7 +34,7 @@ public class DetailItem {
         map.put(mDataColumnName[0],this.id);
         map.put(mDataColumnName[1], Utility.getWeek(GlobalData.DATEFORMAT,this.date));
         map.put(mDataColumnName[2],this.date.substring(5));
-        map.put(mDataColumnName[3],Double.toString(this.value / 100.0));
+        map.put(mDataColumnName[3],this.value);
         map.put(mDataColumnName[4],this.from);
         map.put(mDataColumnName[5],this.description);
         map.put(mDataColumnName[6],this.date);
@@ -46,7 +46,7 @@ public class DetailItem {
         try {
             this.id = Integer.parseInt(mapValue.get(mDataColumnName[0]).toString());
             this.date = mapValue.get(mDataColumnName[6]).toString();
-            this.value = (int)(Double.parseDouble(mapValue.get(mDataColumnName[3]).toString()) * 100);
+            this.value = Double.parseDouble(mapValue.get(mDataColumnName[3]).toString());
             this.from = mapValue.get(mDataColumnName[4]).toString();
             this.description = mapValue.get(mDataColumnName[5]).toString();
         } catch (Exception ex){
